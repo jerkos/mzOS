@@ -1,0 +1,99 @@
+Program emass calculates accurate masses and intensities of isotopic
+peaks.
+
+Rockwood, A.L. and Haimi, P.: "Efficient calculation of Accurate 
+Masses of Isotopic Peaks",
+Journal of The American Society for Mass Spectrometry
+JASMS 03-2263, in press
+
+
+Build instructions:
+-------------------
+
+In Linux/Unix systems with gcc and gnu make, type "make".
+In Microsoft Windows systems with Visual Studio 7.0 or greater, open
+the project file emass.vcproj from Visual Studio and select build
+solution from build -menu.
+
+
+Using:
+------
+
+Program emass reads the isotope distributions of elements from a file
+called "ISOTOPE.DAT", which must reside in the directory where the
+program is started.
+
+The program takes the molecular formula and optionally the charge of
+the molecule from standard input (typically the keyboard). The charge 
+must be separated from the formula by a comma. The program prints the 
+masses and intensities of the isotopic peaks to the standard output 
+(typically the screen). The molecular formula may contain parentheses 
+and spaces. 
+
+Examples of valid inputs:
+
+H2O
+CH3 (CH2)5 COO, -1
+HOCH2 HCNH3, 1
+
+Input is terminated by pressing the enter key on the keyboard. Output 
+is displayed on the screen. For example if the input is:
+
+C2H6
+
+then the output would appear on the screen as
+
+formula: C2H6 charge : 0 limit: 0.000000e+000
+30.046948 100.000000
+31.050416 2.328797
+32.054076 0.014579
+33.060123 0.000012
+
+If the charge is left unspecified or is specified as zero then the 
+output is in the form of mass, abundance pairs. If a non-zero charge 
+is specified then the output is in the form of m/z ratio, abundance 
+pairs. The calculated result takes the electron mass into account.
+
+To generate an output file rather than a screen-based output please 
+use the appropriate redirection operator for your operating system. 
+For example invoking the ms Windows version of the program from the 
+command line as follows:
+
+emass >testfile
+
+would send the output to a file named "testfile" rather than to the 
+screen. 
+
+To quit the program when using it interactively, press ctrl-d (in
+Linux systems) or ctrl-z (in ms Windows systems).
+
+
+Command line options:
+---------------------
+-i         The name of the isotope data file, default ISOTOPE.DAT
+-l         The pruning limit, default 0
+-d         Number of significant significant digits  in the output, 
+           default 6
+
+In order to avoid possible loss of accuracy we recommend that you 
+use the default pruning option, although, for most purposes, a 
+pruning limit of 1e-30 gives sufficiently accurate results. These 
+options may be used singly or in combination. For example, to run 
+emass for the compound C2H6 with a pruning limit of 2e-5 and 4 
+significant digits use the following command line:
+
+emass -l 2e-5 -d 4
+
+This would generate an output of
+
+formula: C2H6 charge : 0 limit: 2.000000e-005
+30.0469 100.00000
+31.0504 2.3288
+32.0541 0.0145
+
+The number of significant digits is the number of digits to the 
+right of the decimal point for both mass and abundance. Note that 
+the number of significant figures for the base peak abundance is 
+actually greater than the number specified by the significant 
+digits parameter.
+
