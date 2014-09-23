@@ -30,6 +30,11 @@ request = "select formula, mono_mass from metabolite"
 
 
 def is_good_formula(formula, allowed_atoms={"C", "H", "N", "O", "P", "S"}):
+    """
+    :param formula:
+    :param allowed_atoms:
+    :return:
+    """
     atoms = [x[0] for x in ELEMENT_PATTERN.findall(formula)]
     if not all([a in allowed_atoms for a in atoms]):
         return False

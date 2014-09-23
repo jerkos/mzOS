@@ -19,19 +19,16 @@ __email__ = 'marc.dubois@omics-services.com'
 
 import logging
 import sys
-import multiprocessing
 from collections import defaultdict as ddict
 from collections import Counter
-from get_kegg_reactions import load_reactions
+from mzos.scripts.get_kegg_reactions import load_reactions
 from scipy.stats import norm
 import numpy as np
 import random as rdm
 import math
-from utils import calculate_rmsd
 
 
-def _sample_metabolite(args):#feature, mz_tol_ppm,
-                                    #probs_by_metab_id, counter):
+def _sample_metabolite(args):  #feature, mz_tol_ppm, probs_by_metab_id, counter):
         """
         Sample metabolites from previous assigned metabolites (assigned_features)
         assigned
@@ -124,7 +121,7 @@ class BayesianInferer(object):
         probabilities. Return a list of normalized probability
         """
         s = sum(probs)
-        return [p/s for p in probs]
+        return [p / s for p in probs]
         #s = np.sum(probs)
         #probs /= s
 
@@ -172,15 +169,9 @@ class BayesianInferer(object):
         In order to obtain a faster convergence, we use
         the prior probabilities to sample at the beginning
         """
-
-        # double dict
-        #prob_by_metab_by_feature = {}
-
         assigned_features = set()
 
         for f in self.features:
-
-            #prob_by_metab = {}
 
             f_mass = f.get_real_mass()
             metabs = f.get_metabolites()
@@ -281,6 +272,8 @@ class BayesianInferer(object):
     def infer_assignment_probabilities(self, n_samples=200, n_burning_sample=10):
         """
         Main function
+        :param n_samples:
+        :param n_burning_sample:
         """
         assert n_samples > n_burning_sample, "n_burning_samples seems to be > to n_samples"
         #assign obvious
@@ -330,7 +323,7 @@ class BayesianInferer(object):
         for f, prob_by_metab in prob_by_metab_by_feature.iteritems():
             for metab_id, prob in prob_by_metab.iteritems():
                 if math.isnan(prob):
-                    raise ValueError, "nan probability"
+                    raise ValueError("nan probability")
                 annotation_by_metab_id_by_feature[f][metab_id].score_network = prob
 
         logging.info("Done.")

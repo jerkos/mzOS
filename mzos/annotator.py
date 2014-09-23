@@ -25,9 +25,8 @@ from feature import Attribution
 
 class PeakelsAnnotator(object):
     """
-
+    Main function to annotates elution peak
     """
-
     massH = {1.003355: "Isotope C13",
              0.997035: "Isotope N15",
              1.995796: "Isotope S34"}
@@ -42,11 +41,17 @@ class PeakelsAnnotator(object):
         self.adducts_or_fragments = self.exp_settings.get_mass_to_check()
 
     def set_peakels(self, peakels):
+        """
+        :param peakels:
+        :return:
+        """
         self.peakels = peakels
 
     def get_nearest_peakel(self, moz, mz_tol_ppm):
         """
         proxy
+        :param mz_tol_ppm:
+        :param moz:
         """
         return self.index.get_nearest_peakel(moz, mz_tol_ppm)
 
@@ -209,9 +214,6 @@ class PeakelsAnnotator(object):
 
                 n_parents = len(parents)
 
-                # if peakel.id == 2440:
-                #     print "len(parents): {}, parents_id: {}".format(n_parents, ",".join([str(x.id) for x in parents]))
-
                 if n_parents > 1:
                     several_parents_conflicts += 1
 
@@ -252,8 +254,7 @@ class PeakelsAnnotator(object):
                     #set main tag and remove from wrong parents
                     best_parent = best_parents[0]
                     best_isos, callback, args = isos_by_parent[best_parent]
-                    # if peakel.id == 2440:
-                    #     print callback
+
                     i = None
                     if callback is not None:
                         i = callback(*args)
@@ -343,6 +344,7 @@ class PeakelsAnnotator(object):
         """
         todo could be done using multiprocessing or executor
         wrapper for each clusters
+        :param clusters:
         """
         l = list()
         for x in clusters:
@@ -353,6 +355,10 @@ class PeakelsAnnotator(object):
     def annotate(self, error_rt=6.0, max_charge=2, max_isotopes_nb=3, max_gap=0):
         """
         main function
+        :param error_rt:
+        :param max_charge:
+        :param max_isotopes_nb:
+        :param max_gap:
         """
         #  Note the new name 'feature'
         features = self._find_isotopes(self.peakels, error_rt,
@@ -370,8 +376,8 @@ class PeakelsAnnotator(object):
         return best_mos
 
     def annotate_(self, error_rt=6.0, max_charge=2, max_isotopes_nb=3, max_gap=0,
-                  distance_corr_shape=PeakelClusterer.default_shape_corr_distance,
-                  distance_corr_intensity=PeakelClusterer.default_intensity_corr_distance):
+                  distance_corr_shape=PeakelClusterer.DEFAULT_SHAPE_CORR,
+                  distance_corr_intensity=PeakelClusterer.DEFAULT_INT_CORR):
         """
 
         @param error_rt:

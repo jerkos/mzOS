@@ -30,12 +30,19 @@ Metabolite = namedtuple("Metabolite", "acession, name, formula, inchi, mono_mass
 
 class IDatabaseSearcher(object):
     """
-
+    Interface of databse search
     """
     def search_moz(self, moz, moz_tol_ppm):
+        """
+        :param moz:
+        :param moz_tol_ppm:
+        """
         raise NotImplementedError
 
     def search_formula(self, molecular_formula):
+        """
+        :param molecular_formula:
+        """
         raise NotImplementedError
 
 

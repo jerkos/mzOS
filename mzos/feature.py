@@ -51,6 +51,11 @@ class Annotation(object):
     Annotation is the result of a matching metabolite
     to one detected feature.
     """
+    ADDUCTS = {'+NA': '[M+Na]',
+               '+H': '[M+H]',
+               '-H': '[M-H]'
+               }
+
     def __init__(self,
                  metabolite,
                  score_isos=0.0,
@@ -59,11 +64,14 @@ class Annotation(object):
         self.metabolite = metabolite
         self.score_isos = score_isos
         self.score_network = score_network
+        self.annot_for_adduct = None
 
     def has_br_atom(self):
+        """could be introduced in the model """
         return 'Br' in self.metabolite.formula
 
     def has_s_atom(self):
+        """could be introduced in the model """
         return 'S' in self.metabolite.formula
 
 
@@ -123,6 +131,7 @@ class Peakel(object):
         self.peaks = []
 
     def get_metabolites(self):
+        """return metabolites from annotations"""
         return [a.metabolite for a in self.annotations]
 
     # @staticmethod
@@ -170,7 +179,7 @@ class Peakel(object):
             attrib = ""
             try:
                 attrib += son.get_attributions_by_parent_id[parent.id][0].attribution
-            except KeyError:
+            except KeyError:  #see index error
                 attrib += son.main_attribution.attribution
 
             s += str(son.id) + "=" + attrib
@@ -235,9 +244,6 @@ class Peakel(object):
             #b = True
             s += "{} of {} ".format(p.main_attribution.attribution, p.main_attribution.parent_id)
             p = feature_by_id[p.main_attribution.parent_id]
-
-        #if b:
-        #    s += str(p.id)
         return s
 
     @staticmethod
@@ -254,10 +260,6 @@ class Peakel(object):
             #b = True
             s += "{} of {} ".format(p.main_attribution.attribution, p.main_attribution.parent_id)
             p = feature_by_id[p.main_attribution.parent_id]
-
-        #if b:
-        #    s += str(p.id)
-        #    s += " of"
         return s
 
     # def fill_peaks(self):
@@ -275,9 +277,15 @@ class Peakel(object):
         return {k: list(v) for k, v in groupby(self.attributions, callable_)}
 
     def get_attributions_by_parent_id(self):
+        """
+        :return:
+        """
         return {k: list(v) for k, v in groupby(self.attributions, lambda x: x.parent_id)}
 
     def get_attributions_by_charge(self):
+        """
+        :return:
+        """
         return {k: list(v) for k, v in groupby(self.attributions, lambda x: x.charge)}
 
     def remove_attribution_with_parent(self, parent_id):
@@ -320,9 +328,15 @@ class Peakel(object):
 
     #--------------------------------------------
     def get_areas(self):
+        """
+        :return:
+        """
         return self.area_by_sample_name.values()
 
     def get_median_area(self):
+        """
+        :return:
+        """
         return np.median(self.get_areas())
 
     def corr_intensity_against(self, peakel):
@@ -334,15 +348,25 @@ class Peakel(object):
         return np.corrcoef(self.area_by_sample_name.values(), values)[1, 0]
 
     def corr_shape_against(self, peakel):
+        """
+        :param peakel:
+        :return:
+        """
         pass
 
     def get_isotopic_pattern(self):
+        """
+        :return:
+        """
         isos = [(iso.moz, iso.area) for iso in self.isotopes]
         isos.append((self.moz, self.area))
         isos.sort(key=lambda x: x[1])
         return isos
 
     def get_isotopic_pattern_as_peakel(self):
+        """
+        :return:
+        """
         isos = list(self.isotopes)[:]
         isos.insert(0, self)
         return isos
@@ -355,6 +379,12 @@ class Peakel(object):
 
 
 class Feature(object):
+    """
+    :param mono_mz:
+    :param rt:
+    :param peakels:
+    """
+
     def __init__(self, mono_mz, rt, peakels=[]):
         self.moz = mono_mz
         self.rt = rt
@@ -395,8 +425,8 @@ class PeakelIndex(object):
 
     def get_nearest_peakel(self, moz, mz_tol_ppm):
         """
-        moz : mass over charge
-        mzTolPPM : mass tolerance in ppm
+        :param moz:
+        :param mz_tol_ppm:
         could return a None value
         """
         if moz < self.min_moz or moz > self.max_moz:

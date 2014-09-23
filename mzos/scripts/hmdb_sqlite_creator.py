@@ -31,6 +31,10 @@ ELEMENT_PATTERN = re.compile(r'''
 
 
 def build_sqlite3_file(sqlite_filepath):
+    """
+    :param sqlite_filepath:
+    :return:
+    """
     conn = sqlite3.connect(sqlite_filepath)
     c = conn.cursor()
     try:
@@ -45,7 +49,6 @@ def build_sqlite3_file(sqlite_filepath):
 
 def parse_metabolite_card(filepath):
     """
-
     @param filepath:  str
     @return:
     """
@@ -84,7 +87,12 @@ def parse_metabolite_card(filepath):
     return tuple(metab)
 
 
-def build_library(sqlite_filepath, cards_directory, nb_procs=4):
+def build_library(sqlite_filepath, cards_directory, nb_procs=multiprocessing.cpu_count()):
+    """
+    :param sqlite_filepath:
+    :param cards_directory:
+    :param nb_procs:
+    """
     files = glob.glob(cards_directory + "\\*.xml")
     if not files:
         print("No metabolites card found")
@@ -102,7 +110,11 @@ def build_library(sqlite_filepath, cards_directory, nb_procs=4):
 
 def get_theo_ip(formula, min_rel_int=5.0, polarity=1):
     """
+    # todo ask wich adducts to pass in parameter
     formula is a string meaning compound
+    :param formula:
+    :param min_rel_int:
+    :param polarity:
     """
     if not isinstance(formula, str):
         raise Exception("[generate theoritical isotopic pattern]"
@@ -148,5 +160,9 @@ def get_theo_ip(formula, min_rel_int=5.0, polarity=1):
     return iso
 
 if __name__ == '__main__':
+    import sys
+    if not len(sys.argv) > 1:
+        logging.error("""Usage: hmdb_sqlite_creator path/to/hmdb/directory""")
+    hmdb_cards_dir = sys.argv[1]
     logging.basicConfig(level=logging.INFO)
     build_library('hmdb.sqlite', 'hmdb_metabolites')

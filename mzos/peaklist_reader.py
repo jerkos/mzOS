@@ -23,12 +23,12 @@ import numpy as np
 
 class PeakListReader(object):
     """
+    peaklist reader
     """
     KEYS = ['mz', 'mzmin', 'mzmax', 'rt', 'rtmin', 'rtmax', 'npeaks']
     
     def __init__(self, filepath, exp_design):
         """
-
         @param filepath:
         @param exp_design @type ExperimentalSettings
         """
@@ -37,8 +37,9 @@ class PeakListReader(object):
         self.directories = self._find_directories()  #
 
     def get_peakels(self):
+        """return peakels objects """
         reader = csv.DictReader(open(self.peaklist_filepath, 'rb'), delimiter="\t")
-        return [self._to_peakel_object(row) for row in reader]
+        return [self._to_peakel_obj(row) for row in reader]
     
     def _find_directories(self):
         import os
@@ -57,12 +58,9 @@ class PeakListReader(object):
             c_dir, dirs, files = gen.next()
             self.exp_design.create_group(c_dir, files)
 
-        #_allUpper = lambda z: all([y.isupper() for y in z])
-        #return [x for x in group_directories if _allUpper(x)]
-
         return group_directories
 
-    def _to_peakel_object(self, d):
+    def _to_peakel_obj(self, d):
         """        
         """
         p = Peakel(float(d[PeakListReader.KEYS[0]]),
@@ -80,9 +78,10 @@ class PeakListReader(object):
             p.polarity = self.exp_design.polarity
 
         #  remove keys
-        for k in (PeakListReader.KEYS + self.directories +
-                      ["", "BIO", "mzmed", "rt.minutes", "Var", "Blc.Ext", "BLC", "Mode", "Correlation_Dilution_Log",
-                       "NOT_M.QC", "NOT_M.Blc", "NOT_QC.Blc", "NOT_CV..","NOT_CV", "NOT_Correl", "Correl", "NOT_BIO.Blc","NOT_nom", "rt.min"]):
+        for k in (PeakListReader.KEYS + self.directories + ["", "BIO", "mzmed", "rt.minutes", "Var", "Blc.Ext", "BLC",
+                                                            "Mode", "Correlation_Dilution_Log", "NOT_M.QC", "NOT_M.Blc",
+                                                            "NOT_QC.Blc", "NOT_CV..", "NOT_CV", "NOT_Correl", "Correl",
+                                                            "NOT_BIO.Blc", "NOT_nom", "rt.min"]):
             try:
                 del d[k]
             except KeyError:

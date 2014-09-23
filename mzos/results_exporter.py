@@ -130,7 +130,6 @@ class ResultsExporter(object):
 
     def write(self):
         """
-
         @param metabolites_scored_by_feature:
         @param metabolites_scored_by_feature_bayes:
         @return:

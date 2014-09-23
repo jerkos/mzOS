@@ -1,20 +1,9 @@
 import logging
 
-from clustering import clusterize_basic, clusterize_hierarchical
+import scipy as sp
+import numpy as np
 
-sp_np = False
-try:
-    import scipy as sp
-    import numpy as np
-    sp_np = True
-except ImportError:
-    print('no numpy, or scipy. Fallback to basic clustering')
-    
-
-CLUST_METHOD = {"b_clust": 1, "h_clust": 2}
-#==============================================================================
-# 
-#==============================================================================
+from clustering import clusterize_basic, clusterize_hierarchical, clusterize_dbscan
 
 
 class PeakelClusterer(object):
@@ -30,18 +19,18 @@ class PeakelClusterer(object):
     H_CLUST: hierarchical clustering
 
     """
-    default_shape_corr_distance = 0.4
-    default_intensity_corr_distance = 0.4  #0.3
-    
-    #for logging only    
-    which_clust_method = staticmethod(lambda x: "basic_clustering" if x == 1 else "hierarchical_clustering mlpy based")
-    
+    CLUST_METHOD = {"basic": 1, "hierarchical": 2, "dbscan": 3}
+    REV_CLUST_METHOD = {v: k for k, v in CLUST_METHOD.iteritems()}
+
+    DEFAULT_SHAPE_CORR = 0.4
+    DEFAULT_INT_CORR = 0.4
+
     #aggregation condition
-    rt_clust_callable = staticmethod(lambda x: True if abs(x[0].rt - x[1].rt) <= x[2] else False)
+    BASIC_RT_CALLABLE = staticmethod(lambda x, y, z: True if abs(x.rt - z.rt) <= z else False)
        
     #callable for correlation distance calculation
-    corr_clust_shape_callable = staticmethod(lambda x: True if x[0].corr_shape_against(x[1]) >= x[2] else False)
-    corr_clust_intensity_callable = staticmethod(lambda x: True if x[0].corr_intensity_against(x[1]) >= x[2] else False)
+    BASIC_CORR_SHAPE_CALLABLE = staticmethod(lambda x, y, z: True if x.corr_shape_against(y) >= z else False)
+    BASIC_CORR_INT_CALLABLE = staticmethod(lambda x, y, z: True if x.corr_intensity_against(y) >= z else False)
     
     def __init__(self, peakels, **kw):
         """
@@ -49,49 +38,54 @@ class PeakelClusterer(object):
         kw : string to use for clustering method
         """
         self.peakels = peakels
-        self.rt_clust_method = kw.get('rt_clust_method', 2)  # basic clustering by default
+        self.rt_method = kw.get('rt_clust_method', 3)  # dbscan clustering by default
         
-        self.corr_clust_method_shape = kw.get('corr_clust_method_shape', 2)  # mlpy based hierarchical clustering
-        self.corr_clust_method_intensity = kw.get('corr_clust_method_intensity', 2)
-        
+        self.corr_shape_method = kw.get('corr_shape_method')
+        self.corr_int_method = kw.get('corr_int_method')
+
+        # no correlation method provided
+        if not self.corr_shape_method and not self.corr_int_method:
+            raise ValueError("no correlation method found")
+
+        # the 2 correlations method are provided, just need one
+        if self.corr_int_method and self.corr_shape_method:
+            raise ValueError("both correlation method are defined")
+
+        corr_method_used = ""
+        if self.corr_shape_method:
+            corr_method_used += " ".join(["correlation shape", self.REV_CLUST_METHOD[self.corr_shape_method]])
+        else:
+            corr_method_used += " ".join(["correlation intensity", self.REV_CLUST_METHOD[self.corr_int_method]])
         #logger
-        logging.info("rt_clustering_method used:%s" % self.which_clust_method(self.rt_clust_method))
-        logging.info("correlation_clustering_method used:%s" %
-                     self.which_clust_method(self.corr_clust_method_intensity))
+        logging.info("rt clustering_method used: {}".format(self.REV_CLUST_METHOD[self.rt_method]))
+        logging.info("correlation clustering method used: {}".format(corr_method_used))
 
     def set_peakels(self, peakels):
         """
-        """        
+        :param peakels:
+        """
         self.peakels = peakels
     
     def clusterize_by_rt(self, error_rt):
         """
         PUBLIC function        
         Provide a basic clustering home made
-        return: list of clusters(as set) 
+        :param error_rt:
+        return: list of clusters(as set)
         
         """
-        if not isinstance(error_rt, float):
-            raise TypeError("[clusterize]: args[0] is not a float")
-        
-        if self.rt_clust_method == 1:
-            return clusterize_basic(self.peakels, self.rt_clust_callable, error_rt)  
+        if self.rt_method == 1:
+            if not isinstance(error_rt, float):
+                raise TypeError("[clusterize]: args[0] is not a float")
+            return clusterize_basic(self.peakels, self.BASIC_RT_CALLABLE, error_rt)
 
-        elif self.rt_clust_method == 2:
-            from sklearn.cluster import DBSCAN
-            from collections import defaultdict as ddict
+        elif self.rt_method == 2:
             rt = [[x.rt] for x in self.peakels]
-            db = DBSCAN(eps=0.2, min_samples=1).fit(np.array(rt))
-            labels = db.labels_
-            #print("len labels: {}, len peakels: {}".format(len(labels), len(self.peakels)))
-            clust_by_id = ddict(set)
-            for i, label in enumerate(labels):
-                clust_by_id[label].add(self.peakels[i])
-            return clust_by_id.values()
-            # rt = [[x.rt] for x in self.peakels]
-            # matrix_dist = sp.spatial.distance.pdist(np.array(rt))
-            # clust_by_id = clusterize_hierarchical(self.peakels, matrix_dist, "median", error_rt)
-            # return clust_by_id.values()
+            matrix_dist = sp.spatial.distance.pdist(np.array(rt))  #metric = eclidean by default
+            return clusterize_hierarchical(self.peakels, matrix_dist, "", error_rt).values()
+
+        elif self.rt_method == 3:
+            return clusterize_dbscan(self.peakels)
         else:
             raise ValueError("wrong clustering technique !")
 
@@ -102,112 +96,76 @@ class PeakelClusterer(object):
         to_split_from_cluster = clust_list[:-2]
         return main_peakels_set, to_split_from_cluster
         
-    def _check_update_corr_shape_in_rt_cluster(self, rt_cluster, distance_corr=default_shape_corr_distance):
+    def _check_update_corr_shape_in_rt_cluster(self, rt_cluster, distance_corr=DEFAULT_SHAPE_CORR):
         """
         PRIVATE function
         calculate corral        
         """
         clust_list = None
-        if self.corr_clust_method_shape == 1:
-            clust_list = clusterize_basic(rt_cluster, self.corr_clust_shape_callable, distance_corr)
+        if self.corr_shape_method == 1:
+            clust_list = clusterize_basic(rt_cluster, self.BASIC_CORR_SHAPE_CALLABLE, distance_corr)
         
-        elif self.corr_clust_method_shape == 2:
+        elif self.corr_shape_method == 2:
             ints = map(lambda x: map(lambda y: y.intensity, x.peaks) if len(x.peaks) else [0], rt_cluster)
             matrix_dist = sp.spatial.distance.pdist(np.array(ints), metric='correlation')
             clust_list = clusterize_hierarchical(rt_cluster, matrix_dist, 'complete', distance_corr).values()
         
         return self._split_rt_cluster(clust_list)
 
-    def _check_update_corr_intensity_in_rt_cluster(self, rt_cluster, distance_corr=default_intensity_corr_distance):
+    def _check_update_corr_intensity_in_rt_cluster(self, rt_cluster, distance_corr=DEFAULT_INT_CORR):
         """
         Private function
         """
         if len(rt_cluster) == 1:
-            return rt_cluster, []
+            return []  #rt_cluster, []
         
         clust_list = None
-        if self.corr_clust_method_intensity == 1:
-            clust_list = clusterize_basic(rt_cluster, self.corr_clust_intensity_callable, distance_corr)
+        if self.corr_int_method == 1:
+            clust_list = clusterize_basic(rt_cluster, self.BASIC_CORR_INT_CALLABLE, distance_corr)
         
-        elif self.corr_clust_method_intensity == 2:
+        elif self.corr_int_method == 2:
             ints = [x.area_by_sample_name.values() for x in rt_cluster]  #
             matrix_dist = sp.spatial.distance.pdist(np.array(ints), metric='correlation')
             clust_list = clusterize_hierarchical(rt_cluster, matrix_dist, 'median', distance_corr).values()
+        else:
+            raise ValueError("dbscan not supported for intensities correlation clustering")
         
-        return self._split_rt_cluster(clust_list)
+        return clust_list  #self._split_rt_cluster(clust_list)
 
-    def check_update_corrs(self, rt_clusters, distance_corr_shape, distance_corr_intensity):
+    def check_update_corrs(self, rt_clusters, corr_shape_dist, corr_int_dist):
         """
-        Private function        
-        
+        Private function
         """
-#        def split_now_if_needed(rt_cluster, callable_, distance_corr, curated_clusters):
-#            rt_cluster, to_split = callable_(rt_cluster, distance_corr)            
-#            #first add to split            
-#            if not to_split: #to split is empty 
-#                for rt_cluster_ in to_split:
-#                    curated_clusters.append(rt_cluster_)
-#            if not rt_cluster:
-#                raise Exception("Check correlation error")
-#            curated_clusters.append(rt_cluster)
-#            return curated_clusters
-        ##########################################################################
-#        curated_rt_clusters = []
-#        if abs(distance_corr_shape) > 1: 
-#            logging.info("shape_correlation skipped because wrong distance_correlation: abs(dist) > 1")
-#            curated_rt_clusters = rt_clusters
-#        elif all( [ not len(x.peaks) for x in self.peakels ] ):
-#            logging.info("shape_correlation skipped because of lacks of peak")
-#            curated_rt_clusters = rt_clusters
-#        else:
-#             for index, rt_cluster in enumerate(rt_clusters):
-#                split_now_if_needed(rt_cluster, 
-#                                    self._check_update_corr_shape_in_rt_cluster, 
-#                                    distance_corr_shape, 
-#                                    curated_rt_clusters)
-#                                    
-#        logging.info("Shape clustering done !")
-#        
-#        if not distance_corr_intensity:
-#            logging.info("shape_correlation skipped because wrong distance_correlation: abs(dist) > 1")
-#            return curated_rt_clusters
-#            
-#        elif all( [not len(x.area_by_sample_name.values()) for x in self.peakels] ):
-#            logging.info("intensity_correlation skipped because of lacks of intensities")
-#            return curated_rt_clusters
-#        
-#        else:
         new_curated_rt_clusters = []
-        for index, rt_cluster in enumerate(rt_clusters):  # curated_rt_clusters):
-            # split_now_if_needed(rt_cluster, self._check_update_corr_intensity_in_rt_cluster,
-            # distance_corr_intensity, new_curated_rt_clusters)
-            rt_cluster, to_split = self._check_update_corr_intensity_in_rt_cluster(rt_cluster, distance_corr_intensity)
-            #first add to split            
-            #if to_split: #to split is empty 
-            for rt_cluster_ in to_split:
-                new_curated_rt_clusters.append(rt_cluster_)
-            #if not rt_cluster:
-            #    raise Exception("Check correlation error")
-            new_curated_rt_clusters.append(rt_cluster)
+        if self.corr_shape_method:
+            for rt_cluster in rt_clusters:  # curated_rt_clusters):
+                new_curated_rt_clusters += self._check_update_corr_shape_in_rt_cluster(rt_cluster, corr_shape_dist)
+        else:
+            for rt_cluster in rt_clusters:
+                new_curated_rt_clusters += self._check_update_corr_intensity_in_rt_cluster(rt_cluster, corr_int_dist)
+
         return new_curated_rt_clusters
 
     def clusterize(self, error_rt=10.0,
-                   distance_corr_shape=default_shape_corr_distance,
-                   distance_corr_intensity=default_intensity_corr_distance):
+                   corr_shape_dist=DEFAULT_SHAPE_CORR,
+                   corr_int_dist=DEFAULT_INT_CORR):
         """
+        :param corr_shape_dist:
+        :param corr_int_dist:
+        :param error_rt:
         """
         
         rt_clusters = self.clusterize_by_rt(error_rt)
-        logging.info("Rt clustering done, nb clusters:%d" % len(rt_clusters))
+        logging.info("Rt clustering done, nb clusters: {}".format(len(rt_clusters)))
         if rt_clusters is None:
             logging.error("could not make rt clusters...")
             return []
             
-        curated = self.check_update_corrs(rt_clusters, distance_corr_shape, distance_corr_intensity)
-        logging.info("Intensity clustering done, nb clusters:%d" % len(curated))
+        curated = self.check_update_corrs(rt_clusters, corr_shape_dist, corr_int_dist)
+        logging.info("Intensity clustering done, nb clusters:{}".format(len(curated)))
         return curated
 
     def clusterize_(self, error_rt=10.0,
-                    distance_corr_shape=default_shape_corr_distance,
-                    distance_corr_intensity=default_intensity_corr_distance):
+                    distance_corr_shape=DEFAULT_SHAPE_CORR,
+                    distance_corr_intensity=DEFAULT_INT_CORR):
         pass
