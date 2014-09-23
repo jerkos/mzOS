@@ -4,6 +4,7 @@ python:
 # command to install dependencies
 install:
   - pip install numpy
+  - pip install scipy
   - pip install .
 
 script: nosetests
