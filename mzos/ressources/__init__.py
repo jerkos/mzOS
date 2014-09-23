@@ -1,1 +1,1 @@
-__author__ = 'Marc'
+__author__ = 'omics-services.com'
