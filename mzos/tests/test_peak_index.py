@@ -1,6 +1,6 @@
 __author__ = 'Marc'
 
-from ..feature import Feature, PeakelIndex
+from mzos.feature import Feature, PeakelIndex
 import unittest
 
 
