@@ -6,4 +6,4 @@ install:
   - pip install numpy
   - pip install .
 
-script: python mzos/tests/test_peak_index.py
+script: nosetests

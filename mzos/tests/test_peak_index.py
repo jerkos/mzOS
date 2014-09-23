@@ -4,7 +4,7 @@ from mzos.feature import Feature, PeakelIndex
 import unittest
 
 
-class RtClustererTest(unittest.TestCase):
+class TestPeakelIndex(unittest.TestCase):
 
     def setUp(self):
         self.features = []

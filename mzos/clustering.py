@@ -50,8 +50,10 @@ def clusterize_basic(peakels, dist_func, *args):
     return rt_clusters
     
 
-def clusterize_hierarchical(peakels, matrix_dist, method, cut):
+def clusterize_hierarchical(peakels, matrix_dist, cut, clip=False):
     """
+
+    :param clip:
     :param peakels:
     :param matrix_dist:
     :param method:
@@ -60,14 +62,14 @@ def clusterize_hierarchical(peakels, matrix_dist, method, cut):
     #having negative value in the matrix distance
     # leading to a valueerror
     # clip i order to prevent negative value in the matrix distance
-    np.clip(matrix_dist, 0, 1, matrix_dist)
+    if clip:
+        np.clip(matrix_dist, 0, 1, matrix_dist)
     k = linkage(matrix_dist, method='complete')
-
     #dist = maxdists(k)
     #fit = norm.fit(dist)
     #cut = np.percentile(dist, 10.0)  #norm.ppf(5.0, loc=fit[0], scale=fit[1])
 
-    k2 = fcluster(k, cut, criterion='distance')
+    k2 = fcluster(k, cut, criterion='distance')  #, criterion='distance')
     clust_by_id = ddict(list)
     for i, v in enumerate(k2):
         clust_by_id[v].append(peakels[i])
