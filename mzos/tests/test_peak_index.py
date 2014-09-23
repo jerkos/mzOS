@@ -20,7 +20,7 @@ class RtClustererTest(unittest.TestCase):
         findex = PeakelIndex(self.features)
         ppm = 1261.52 * 10 / 1e6
         p = findex.get_nearest_peakel(1261.52, 10)
-        print p.moz
+        self.assertAlmostEqual(p.moz, 1261.52)
 
     def test_fail(self):
         findex = PeakelIndex(self.features)
