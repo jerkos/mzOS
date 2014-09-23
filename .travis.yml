@@ -3,6 +3,7 @@ python:
   - "2.7"
 # command to install dependencies
 install:
+  - sudo apt-get install -qq libatlas-dev libatlas-base-dev liblapack-dev gfortran
   - pip install numpy
   - pip install scipy
   - pip install .
