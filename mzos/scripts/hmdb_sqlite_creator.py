@@ -108,7 +108,7 @@ def build_library(sqlite_filepath, cards_directory, nb_procs=multiprocessing.cpu
     logging.info("Finished, elpased time {} seconds".format(time.clock() - t1))
 
 
-def add_elements(f, element, n):
+def add_element(f, element, n):
     """
     :param f: dict key element, value number of element
     :param n: add or remove n element
@@ -158,23 +158,10 @@ def get_theo_ip(formula, min_rel_int=5.0, polarity=1):
         return
 
     f = {x[0]: x[1] for x in ELEMENT_PATTERN.findall(formula)}
-    if 'H' in f:
-        nb_h_str = f['H']
-        if nb_h_str:
-            nb_h = int(f['H'])
-            if polarity == 1:
-                f['H'] = str(nb_h + 1)
-            elif polarity == -1:
-                if nb_h - 1 == 0:
-                    f['H'] = ''  #  should never happen
-                else:
-                    f['H'] = str(nb_h - 1)
-        else:
-            if polarity == 1:
-                f['H'] = '2'
-            elif polarity == -1:
-                del f['H']
-        formula = "".join(["".join((k, v)) for k, v in f.iteritems()])
+    if polarity == 1:
+        formula = add_element(f, 'H', 1)
+    else:
+        formula = remove_element(f, 'H', 1)
 
     p = subprocess.Popen("emass/emass.exe", stdin=subprocess.PIPE, stdout=subprocess.PIPE)
     out, err = p.communicate(input=formula)
