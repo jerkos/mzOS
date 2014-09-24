@@ -27,17 +27,17 @@ class TestDatabaseSearch(unittest.TestCase):
         s = remove_element(f, 'C', 2)
         self.assertEqual('C4H6O12', s)
 
-    # def test_database_search(self):
-    #     mass_fruc_6p = 260.029718526
-    #     name = "Fructose 6-phosphate"
-    #     peakel = Peakel(mass_fruc_6p - 1.007276, 0.0, 0.0, 0.0)
-    #     peakel.charge = -1
-    #     peakels = [peakel]
-    #     dbSearch = DatabaseSearch('hmdb', None)
-    #     metabolites_by_feature = dbSearch.assign_formula(peakels)
-    #     m_names = set()
-    #     for f, metabs in metabolites_by_feature.iteritems():
-    #         for m in metabs:
-    #             m_names.add(m.name)
-    #     self.assertIn(name, m_names)
+    def test_database_search(self):
+        mass_fruc_6p = 260.029718526
+        name = "Fructose 6-phosphate"
+        peakel = Peakel(mass_fruc_6p - 1.007276, 0.0, 0.0, 0.0)
+        peakel.charge = -1
+        peakels = [peakel]
+        dbSearch = DatabaseSearch('hmdb', None)
+        metabolites_by_feature = dbSearch.assign_formula(peakels)
+        m_names = set()
+        for f, metabs in metabolites_by_feature.iteritems():
+            for m in metabs:
+                m_names.add(m.name)
+        self.assertIn(name, m_names)
 
