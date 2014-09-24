@@ -43,9 +43,10 @@ class PeakelClusterer(object):
         self.corr_shape_method = kw.get('corr_shape_method')
         self.corr_int_method = kw.get('corr_int_method')
 
-        # no correlation method provided
+        # no correlation method provided, default intensity method hierarchical clustering
         if not self.corr_shape_method and not self.corr_int_method:
-            raise ValueError("no correlation method found")
+            self.corr_int_method = self.CLUST_METHOD['hierarchical']
+            #raise ValueError("no correlation method found")
 
         # the 2 correlations method are provided, just need one
         if self.corr_int_method and self.corr_shape_method:
@@ -85,7 +86,8 @@ class PeakelClusterer(object):
             return clusterize_hierarchical(self.peakels, matrix_dist, "", error_rt).values()
 
         elif self.rt_method == 3:
-            return clusterize_dbscan(self.peakels)
+            return clusterize_dbscan(self.peakels, eps=error_rt, min_samples=1)
+
         else:
             raise ValueError("wrong clustering technique !")
 

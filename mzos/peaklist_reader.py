@@ -61,14 +61,14 @@ class PeakListReader(object):
         return group_directories
 
     def _to_peakel_obj(self, d):
-        """        
-        """
+        """ convert csv data to peakel objects  """
         p = Peakel(float(d[PeakListReader.KEYS[0]]),
                    float(d[PeakListReader.KEYS[1]]),
                    float(d[PeakListReader.KEYS[2]]),
                    float(d[PeakListReader.KEYS[3]]),
                    float(d[PeakListReader.KEYS[4]]),
                    float(d[PeakListReader.KEYS[5]]))
+
 
         #  set the right polarity
         polarity = None
@@ -81,7 +81,7 @@ class PeakListReader(object):
         for k in (PeakListReader.KEYS + self.directories + ["", "BIO", "mzmed", "rt.minutes", "Var", "Blc.Ext", "BLC",
                                                             "Mode", "Correlation_Dilution_Log", "NOT_M.QC", "NOT_M.Blc",
                                                             "NOT_QC.Blc", "NOT_CV..", "NOT_CV", "NOT_Correl", "Correl",
-                                                            "NOT_BIO.Blc", "NOT_nom", "rt.min"]):
+                                                            "NOT_BIO.Blc", "NOT_nom", "rt.min", "Negatifs"]):
             try:
                 del d[k]
             except KeyError:

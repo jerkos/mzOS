@@ -21,7 +21,8 @@ import logging
 import sys
 from collections import defaultdict as ddict
 from collections import Counter
-from mzos.scripts.get_kegg_reactions import load_reactions
+from scripts.get_kegg_reactions import load_reactions
+#from mzos.scripts.get_kegg_reactions import load_reactions
 from scipy.stats import norm
 import numpy as np
 import random as rdm
