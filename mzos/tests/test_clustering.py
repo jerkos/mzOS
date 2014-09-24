@@ -1,4 +1,4 @@
-__author__ = 'Marc'
+__author__ = 'marc.dubois@omics-services.com'
 
 import unittest
 import logging
