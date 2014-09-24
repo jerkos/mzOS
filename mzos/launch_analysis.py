@@ -90,7 +90,6 @@ if __name__ == '__main__':
     model.calculate_score()
     logging.info("Done")
 
-
     ##scoring 2##
     bi = BayesianInferer(peakels, exp_settings)
     logging.info("Compute score 2...")

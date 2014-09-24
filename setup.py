@@ -9,5 +9,5 @@ setup(
     license='',
     author='Marco',
     author_email='',
-    description='', requires=['bioservices', 'scipy', 'numpy']
+    description='', requires=['bioservices', 'scipy', 'numpy', 'pandas']
 )

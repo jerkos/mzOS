@@ -46,7 +46,7 @@ def clusterize_basic(peakels, dist_func, *args):
                     l.add(peakel_)
                     peakels_clustered.add(peakel_)
 
-        rt_clusters.append(l)
+        rt_clusters.append(list(l))
     return rt_clusters
     
 
@@ -65,6 +65,7 @@ def clusterize_hierarchical(peakels, matrix_dist, cut, clip=False):
     if clip:
         np.clip(matrix_dist, 0, 1, matrix_dist)
     k = linkage(matrix_dist, method='complete')
+
     #dist = maxdists(k)
     #fit = norm.fit(dist)
     #cut = np.percentile(dist, 10.0)  #norm.ppf(5.0, loc=fit[0], scale=fit[1])
@@ -73,20 +74,20 @@ def clusterize_hierarchical(peakels, matrix_dist, cut, clip=False):
     clust_by_id = ddict(list)
     for i, v in enumerate(k2):
         clust_by_id[v].append(peakels[i])
-    return clust_by_id
+    return clust_by_id.values()
 
 
-def clusterize_dbscan(peakels, eps=0.2, min_samples=1):
+def clusterize_dbscan(values, peakels, eps=0.2, min_samples=1):
     """
+    :param values:
     :param peakels:
     :param eps:
     :param min_samples:
     :return:
     """
-    rt = [[x.rt] for x in peakels]
-    db = DBSCAN(eps=eps, min_samples=min_samples).fit(np.array(rt))
+    db = DBSCAN(eps=eps, min_samples=min_samples).fit(np.array(values))
     labels = db.labels_
-    clust_by_id = ddict(set)
+    clust_by_id = ddict(list)
     for i, label in enumerate(labels):
-        clust_by_id[label].add(peakels[i])
+        clust_by_id[label].append(peakels[i])
     return clust_by_id.values()

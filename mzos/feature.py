@@ -178,13 +178,13 @@ class Peakel(object):
         if son is not self:
             attrib = ""
             try:
-                attrib += son.get_attributions_by_parent_id[parent.id][0].attribution
+                attrib += son.get_attributions_by_parent_id()[parent.id][0].attribution
             except KeyError:  #see index error
                 attrib += son.main_attribution.attribution
 
             s += str(son.id) + "=" + attrib
 
-        isos = set([si for si in son.isotopes if si.get_attributions_by_parent_id[son.id][0].charge == charge])
+        isos = set([si for si in son.isotopes if si.get_attributions_by_parent_id()[son.id][0].charge == charge])
         n_ = isos.union(son.adducts)
         nb_isos, nb_adducts = len(isos), len(son.adducts)
 

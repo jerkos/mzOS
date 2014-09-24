@@ -81,12 +81,13 @@ class PeakelClusterer(object):
             return clusterize_basic(self.peakels, self.BASIC_RT_CALLABLE, error_rt)
 
         elif self.rt_method == 2:
-            rt = [[x.rt] for x in self.peakels]
-            matrix_dist = sp.spatial.distance.pdist(np.array(rt))  #metric = eclidean by default
+            rts = [[x.rt] for x in self.peakels]
+            matrix_dist = sp.spatial.distance.pdist(np.array(rts))  #metric = eclidean by default
             return clusterize_hierarchical(self.peakels, matrix_dist, "", error_rt).values()
 
         elif self.rt_method == 3:
-            return clusterize_dbscan(self.peakels, eps=error_rt, min_samples=1)
+            rts = [[x.rt] for x in self.peakels]
+            return clusterize_dbscan(rts, self.peakels, eps=error_rt, min_samples=1)
 
         else:
             raise ValueError("wrong clustering technique !")
@@ -110,7 +111,7 @@ class PeakelClusterer(object):
         elif self.corr_shape_method == 2:
             ints = map(lambda x: map(lambda y: y.intensity, x.peaks) if len(x.peaks) else [0], rt_cluster)
             matrix_dist = sp.spatial.distance.pdist(np.array(ints), metric='correlation')
-            clust_list = clusterize_hierarchical(rt_cluster, matrix_dist, 'complete', distance_corr).values()
+            clust_list = clusterize_hierarchical(rt_cluster, matrix_dist, distance_corr, clip=True)
         
         return self._split_rt_cluster(clust_list)
 
@@ -128,7 +129,7 @@ class PeakelClusterer(object):
         elif self.corr_int_method == 2:
             ints = [x.area_by_sample_name.values() for x in rt_cluster]  #
             matrix_dist = sp.spatial.distance.pdist(np.array(ints), metric='correlation')
-            clust_list = clusterize_hierarchical(rt_cluster, matrix_dist, 'median', distance_corr).values()
+            clust_list = clusterize_hierarchical(rt_cluster, matrix_dist, distance_corr, clip=True)
         else:
             raise ValueError("dbscan not supported for intensities correlation clustering")
         
@@ -137,6 +138,9 @@ class PeakelClusterer(object):
     def check_update_corrs(self, rt_clusters, corr_shape_dist, corr_int_dist):
         """
         Private function
+        :param rt_clusters:
+        :param corr_shape_dist:
+        :param corr_int_dist:
         """
         new_curated_rt_clusters = []
         if self.corr_shape_method:
@@ -167,7 +171,7 @@ class PeakelClusterer(object):
         logging.info("Intensity clustering done, nb clusters:{}".format(len(curated)))
         return curated
 
-    def clusterize_(self, error_rt=10.0,
-                    distance_corr_shape=DEFAULT_SHAPE_CORR,
-                    distance_corr_intensity=DEFAULT_INT_CORR):
-        pass
+    # def clusterize_(self, error_rt=10.0,
+    #                 distance_corr_shape=DEFAULT_SHAPE_CORR,
+    #                 distance_corr_intensity=DEFAULT_INT_CORR):
+    #     pass

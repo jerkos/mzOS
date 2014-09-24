@@ -390,7 +390,7 @@ class PeakelsAnnotator(object):
         """
         self.peakel_clusterer = PeakelClusterer(self.peakels)
         rt_clusters = self.peakel_clusterer.clusterize_by_rt(error_rt=error_rt)
-        less_isotopes = []
+        less_isotopes = []  #will be list of list
         for rt_cluster in rt_clusters:
             less_isotopes.append(self._find_isotopes(rt_cluster, error_rt,
                                                      self.exp_settings.mz_tol_ppm,

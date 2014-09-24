@@ -19,10 +19,10 @@ import os.path as op
 import os
 import logging
 import cPickle
-
 from collections import defaultdict as ddict
 
 from bioservices import KEGGParser  #KeggParser
+
 from reac import RPrecord
 
 

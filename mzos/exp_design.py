@@ -1,9 +1,12 @@
 from collections import defaultdict as ddict
+import os.path as op
 
 
-#enumeration
-#backward compatible
 def enum(**enums):
+    """#enumeration
+    #backward compatible
+    :param enums:
+    """
     return type('Enum', (), enums)
 
 
@@ -20,18 +23,19 @@ class ExperimentalSettings(object):
     :param ionisation_mode:
     :param is_dims_experiment:
     """
-    ADDUCTS_POS = "ressources/POS_ADDUCTS_IMS.csv"
-    ADDUCTS_NEG = "ressources/NEG_ADDUCTS_IMS.csv"
-    FRAGMENTS = "ressources/FRAGMENTS_IMS.csv"
+    ADDUCTS_POS = op.normcase("ressources/POS_ADDUCTS_IMS.csv")
+    ADDUCTS_NEG = op.normcase("ressources/NEG_ADDUCTS_IMS.csv")
+    FRAGMENTS = op.normcase("ressources/FRAGMENTS_IMS.csv")
 
     ISOS = "ressources/"
 
-    def __init__(self, mz_tol_ppm, ionisation_mode=None, is_dims_experiment=False):
+    def __init__(self, mz_tol_ppm, ionisation_mode=None, is_dims_experiment=False, databases={'hmdb'}):
         self.samples = set()
 
         self.polarity = ionisation_mode  # warning is an ENUM
         self.mz_tol_ppm = mz_tol_ppm
         self.is_dims_exp = is_dims_experiment
+        self.databases = databases
 
         self.group_by_id = ddict(set)
         self.group_by_sample = {}
