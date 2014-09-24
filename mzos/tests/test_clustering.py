@@ -1,7 +1,6 @@
 __author__ = 'marc.dubois@omics-services.com'
 
 import unittest
-import logging
 
 import scipy as sp
 import numpy as np
@@ -42,5 +41,4 @@ class TestClustering(unittest.TestCase):
 
 
 if __name__ == '__main__':
-    logging.basicConfig(level=logging.DEBUG)
     unittest.main()
