@@ -76,57 +76,58 @@ class ResultsExporter(object):
             main_attribution_pattern_composition += feature.get_bottom_up_attribution_tree(self.peakels_by_id)
         return main_attribution_pattern_composition
 
-    # def save_experiment(self, metabolites_by_feature):
-    #     """
-    #     Try to save results into MongoDB
-    #     @return: None
-    #     """
-    #     logging.info("Start storing in mongo...")
-    #     from pymongo.connection import Connection
-    #     import humongolus as orm
-    #     import datetime
-    #
-    #     conn = Connection()
-    #     orm.settings(logging.getLogger("humongolus"), conn)
-    #
-    #     exp = MetabolomicsExperiment()
-    #     #exp.parameters = "All the xcms file goes here"
-    #     exp.organization = "IMS"
-    #     exp.title = "Alzeihmer"
-    #     exp.date = datetime.datetime.now()  #.strftime("%d/%m/%y %H:%M")
-    #     exp.software = "XCMS"
-    #     exp.version = "3.18"
-    #
-    #     exp_id = exp.save()
-    #
-    #     for p in self.peakels:
-    #         ft = Feature()
-    #         if p.main_attribution is not None:
-    #             ft.main_attribution = p.main_attribution.attribution
-    #         else:
-    #             ft.main_attribution = self._get_main_putative_attribution(p)
-    #
-    #         for k, v in p.area_by_sample_name.items():
-    #             ab = Abundance()
-    #             ab.sample = k
-    #             ab.abundance = v
-    #             ft.abundances.append(ab)
-    #
-    #         #ft.attributions = p.attributions
-    #
-    #         for m in metabolites_by_feature[p]:
-    #             annot = Annotation()
-    #             annot.annotation = m[0].name
-    #             annot.score1 = m[1]
-    #             annot.score2 = m[1]
-    #             ft.annotations.append(annot)
-    #
-    #         ft.mass = p.moz
-    #         ft.rt = p.rt
-    #         ft.experiment_id = exp.experiment_id
-    #         ft.save()
-    #
-    #     logging.info("Done.")
+    def save_experiment(self, metabolites_by_feature):
+        """
+        Try to save results into MongoDB
+        :param metabolites_by_feature:
+        @return: None
+        """
+        logging.info("Start storing in mongo...")
+        from pymongo.connection import Connection
+        import humongolus as orm
+        import datetime
+
+        conn = Connection()
+        orm.settings(logging.getLogger("humongolus"), conn)
+
+        exp = MetabolomicsExperiment()
+        #exp.parameters = "All the xcms file goes here"
+        exp.organization = "IMS"
+        exp.title = "Alzeihmer"
+        exp.date = datetime.datetime.now()  #.strftime("%d/%m/%y %H:%M")
+        exp.software = "XCMS"
+        exp.version = "3.18"
+
+        exp_id = exp.save()
+
+        for p in self.peakels:
+            ft = Feature()
+            if p.main_attribution is not None:
+                ft.main_attribution = p.main_attribution.attribution
+            else:
+                ft.main_attribution = self._get_main_putative_attribution(p)
+
+            for k, v in p.area_by_sample_name.items():
+                ab = Abundance()
+                ab.sample = k
+                ab.abundance = v
+                ft.abundances.append(ab)
+
+            #ft.attributions = p.attributions
+
+            for m in metabolites_by_feature[p]:
+                annot = Annotation()
+                annot.annotation = m[0].name
+                annot.score1 = m[1]
+                annot.score2 = m[1]
+                ft.annotations.append(annot)
+
+            ft.mass = p.moz
+            ft.rt = p.rt
+            ft.experiment_id = exp.experiment_id
+            ft.save()
+
+        logging.info("Done.")
 
     def write(self):
         """

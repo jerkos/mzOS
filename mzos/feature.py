@@ -23,9 +23,7 @@ import numpy as np
 
 
 class Peak(object):
-    """
-    mz peak object
-    """
+    """mz peak object"""
     def __init__(self, mz, intensity):
         self.moz = mz
         self.intensity = intensity
@@ -45,15 +43,19 @@ class Attribution(object):
         self.parent_id = parent_id
         self.charge = charge
 
+    def __str__(self):
+        return "{} of {} for charge={}".format(self.attribution, self.parent_id, self.charge)
+
 
 class Annotation(object):
     """
     Annotation is the result of a matching metabolite
     to one detected feature.
     """
-    ADDUCTS = {'+NA': '[M+Na]',
+    ADDUCTS = {'+Na': '[M+Na]',
                '+H': '[M+H]',
-               '-H': '[M-H]'
+               '-H': '[M-H]',
+               '-Cl': '[M-Cl]'
                }
 
     def __init__(self,
@@ -134,41 +136,8 @@ class Peakel(object):
         """return metabolites from annotations"""
         return [a.metabolite for a in self.annotations]
 
-    # @staticmethod
-    # def _build_branch_str(parent, charge, son, isos_adds):
-    #     """
-    #
-    #     @param parent:
-    #     @param son:
-    #     @param isos_adds:
-    #     @return:
-    #     """
-    #     attrib = ""
-    #     try:
-    #         attrib += son.get_attributions_by(lambda x: x.parent_id)[parent.id][0].attribution
-    #     except KeyError:
-    #         attrib += son.main_attribution.attribution
-    #
-    #     s = str(son.id) + "=" + attrib
-    #
-    #     isos = set([si for si in son.isotopes if si.get_attributions_by(lambda x: x.parent_id)[son.id][0].charge == charge])
-    #     n_ = isos.union(son.adducts)
-    #     nb_isos, nb_adducts = len(isos), len(son.adducts)
-    #
-    #     if n_:
-    #         s += ":"
-    #         for new_son in n_:
-    #             s += "("
-    #             m, q, r = Peakel._build_branch_str(son, charge, new_son, isos_adds.union(n_))
-    #             s += m
-    #             nb_isos += q
-    #             nb_adducts += r
-    #             s += ");"
-    #     return s, nb_isos, nb_adducts
-
     def _build_branch_str_v2(self, parent, charge, son, isos_adds):
         """
-
         @param parent:
         @param son:
         @param isos_adds:
@@ -203,29 +172,8 @@ class Peakel(object):
 
     def get_top_down_attribution_tree(self):
         """
-        @return: tuple(tree a string, isotopes number, adducts number)
+        :return:
         """
-        # output = ""
-        # charge = self.charge
-        #
-        # isos = self.isotopes
-        # n_isos, n_adducts = len(isos), len(self.adducts)
-        # u = isos.union(self.adducts)
-        # n = len(u)
-        # i = 0
-        #
-        # for f in u:
-        #     m, q, s = Peakel._build_branch_str(self, charge, f, u)
-        #     output += m
-        #     n_isos += q
-        #     n_adducts += s
-        #     if i == n - 1:
-        #         pass
-        #     else:
-        #         output += ";"
-        #     i += 1
-
-
         output, n_isos, n_adducts = self._build_branch_str_v2(None, self.charge, self, self.isotopes.union(self.adducts))
         output = output if not output.endswith(";") else output[:-1]
         output = output.replace(";)", ")")
@@ -237,12 +185,12 @@ class Peakel(object):
         @param feature_by_id: dictionnary key:peakel, value: id
         @return:
         """
-        s = "{} of {} ".format(self.main_attribution.attribution, self.main_attribution.parent_id)
+        #"{} of {} ".format(self.main_attribution.attribution, self.main_attribution.parent_id)
+        s = str(self.main_attribution)
         p = feature_by_id[self.main_attribution.parent_id]
-        #b = False
         while p.main_attribution is not None:
-            #b = True
-            s += "{} of {} ".format(p.main_attribution.attribution, p.main_attribution.parent_id)
+            #s += "{} of {} ".format(p.main_attribution.attribution, p.main_attribution.parent_id)
+            s += str(p.main_attribution)
             p = feature_by_id[p.main_attribution.parent_id]
         return s
 
@@ -253,12 +201,12 @@ class Peakel(object):
         @param feature_by_id: dictionnary key:peakel, value: id
         @return:
         """
-        s = "{} of {} ".format(attribution.attribution, attribution.parent_id)
+        #s = "{} of {} ".format(attribution.attribution, attribution.parent_id)
+        s = str(attribution)
         p = feature_by_id[attribution.parent_id]
-        #b = False
         while p.main_attribution is not None:
-            #b = True
-            s += "{} of {} ".format(p.main_attribution.attribution, p.main_attribution.parent_id)
+            #s += "{} of {} ".format(p.main_attribution.attribution, p.main_attribution.parent_id)
+            s += str(p.main_attribution)
             p = feature_by_id[p.main_attribution.parent_id]
         return s
 
@@ -377,14 +325,12 @@ class Peakel(object):
         return m + charge_mass if self.polarity < 0 else m - charge_mass
 
 
-
 class Feature(object):
     """
     :param mono_mz:
     :param rt:
     :param peakels:
     """
-
     def __init__(self, mono_mz, rt, peakels=[]):
         self.moz = mono_mz
         self.rt = rt
@@ -392,13 +338,13 @@ class Feature(object):
         self.adducts = set()
 
 
-#==============================================================================
-# 
-#==============================================================================
-
-
 class PeakelIndex(object):
-    mozgetter = lambda x: x.moz
+    """
+    :param peakels:
+    :param scan_ids:
+    :param bin_size:
+    """
+    mozgetter = staticmethod(lambda x: x.moz)
 
     def __init__(self, peakels, scan_ids=None, bin_size=1):
         """

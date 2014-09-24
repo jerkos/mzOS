@@ -108,6 +108,40 @@ def build_library(sqlite_filepath, cards_directory, nb_procs=multiprocessing.cpu
     logging.info("Finished, elpased time {} seconds".format(time.clock() - t1))
 
 
+def add_elements(f, element, n):
+    """
+    :param f: dict key element, value number of element
+    :param n: add or remove n element
+    :return:
+    """
+    assert(isinstance(element, str))
+    if element in f:
+        nb_h = int(f[element]) if f[element] != '' else 1
+        f[element] = str(nb_h + n)
+    else:
+        f[element] = str(n)
+    return "".join(["".join((k, v)) for k, v in sorted(f.iteritems(), key=lambda _: _[0])])
+
+
+def remove_element(f, element, n):
+    """
+    :param f:
+    :param element:
+    :param n:
+    :return:
+    """
+    assert(isinstance(element, str))
+    if element in f:
+        nb_h = int(f[element]) if f[element] else 1
+        if nb_h - n <= 0:
+            del f[element]
+        elif nb_h - n == 1:
+            f[element] = ''
+        else:
+            f[element] = str(nb_h - n)
+    return "".join(["".join((k, v)) for k, v in sorted(f.iteritems(), key=lambda _: _[0])])
+
+
 def get_theo_ip(formula, min_rel_int=5.0, polarity=1):
     """
     # todo ask wich adducts to pass in parameter
