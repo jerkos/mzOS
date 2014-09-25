@@ -43,7 +43,7 @@ class TestClustering(unittest.TestCase):
         self.f1.isotopes.add(self.f2)
         self.f2.set_main_attribution(Attribution('isotope c13', self.f1.id, 1))
         self.f1.adducts.add(self.f3)
-        self.f3.set_main_attribution(Attribution('[M+Na+]', self.f1, 1))
+        self.f3.set_main_attribution(Attribution('[M+Na+]', self.f1.id, 1))
         t = ("acession", "name", "formula", "inchi", "mono_mass", "average_mass", "description", "status", "origin",
              "kegg_id", "isotopic_pattern_pos", "isotopic_pattern_neg")
         self.f1.annotations.append(Annotation(metabolite=Metabolite._make(t)))
@@ -117,6 +117,23 @@ class TestClustering(unittest.TestCase):
 
         ip2 = self.f1.get_isotopic_pattern_as_peakel()
         self.assertIn(self.f1, ip2)
+
+        f_by_id = {f.id: f for f in self.features}
+        s = self.f2.get_bottom_up_attribution_tree(f_by_id)
+        self.assertEqual(s, 'isotope c13 of {} for charge={}'.format(self.f1.id, self.f2.main_attribution.charge))
+
+        a = Attribution('isotope s34', self.f3.id, charge=2)
+        self.f2.add_attribution(a)
+        s = Peakel.get_others_bottom_up_attribution_tree(a, f_by_id)
+        self.assertEqual(s, 'isotope s34 of {} for charge={} of [M+Na+] of 50 for charge=1'.format(self.f3.id, 2))
+
+        self.f2.get_attributions_by(lambda _: _.attribution)
+
+        self.f2.get_attributions_by_charge()
+
+        self.f2.get_attributions_by_parent_id()
+
+        self.f2.remove_attribution_with_parent(self.f3.id)
 
         real_mass = self.f1.get_real_mass()
         self.assertAlmostEqual(real_mass, self.f1.moz + 1.007276)

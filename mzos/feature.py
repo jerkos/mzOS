@@ -190,7 +190,7 @@ class Peakel(object):
         p = feature_by_id[self.main_attribution.parent_id]
         while p.main_attribution is not None:
             #s += "{} of {} ".format(p.main_attribution.attribution, p.main_attribution.parent_id)
-            s += str(p.main_attribution)
+            s += " of " + str(p.main_attribution)
             p = feature_by_id[p.main_attribution.parent_id]
         return s
 
@@ -206,7 +206,7 @@ class Peakel(object):
         p = feature_by_id[attribution.parent_id]
         while p.main_attribution is not None:
             #s += "{} of {} ".format(p.main_attribution.attribution, p.main_attribution.parent_id)
-            s += str(p.main_attribution)
+            s += " of " + str(p.main_attribution)
             p = feature_by_id[p.main_attribution.parent_id]
         return s
 
