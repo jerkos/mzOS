@@ -1,0 +1,11 @@
+name,nmol,charge,mass
+Fragment [M+H2O],1,0,-18.01057
+Fragment [M-H2O],1,0,18.01057
+Fragment [M-CO],1,0,27.99492
+Fragment [M-CO2],1,0,43.98983
+Fragment [M-NH3],1,0,17.02655
+Fragment [M-SO],1,0,47.96699
+Fragment [M-SO2],1,0,63.9619
+Fragment [M-SO3],1,0,79.95682
+Fragment [M-H2SO4],1,0,97.96738
+Fragment [M-H3PO4],1,0,97.9769
