@@ -7,7 +7,7 @@ from mzos.exp_design import ExperimentalSettings
 
 
 class TestPeakListReader(unittest.TestCase):
-    FILE = op.normcase("../ressources/peaks_matrix_NEG.tsv")
+    FILE = op.normcase("mzos/ressources/peaks_matrix_NEG.tsv")
 
     def test_read_tsv(self):
         pkl_reader = PeakListReader(self.FILE, ExperimentalSettings(mz_tol_ppm=10.0))
