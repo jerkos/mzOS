@@ -267,10 +267,17 @@ class Peakel(object):
         @param attrib:
         @return:
         """
+        #TODO add or not main attribution to attributions set
+        # in that case remove unecessary code
         m = None
+        #save previous attribution
         if self.main_attribution is not None:
             m = self.main_attribution
+
         self.main_attribution = attrib
+        #FIX
+        #add the new main attribution to all attributions set
+        self.attributions.add(attrib)
         if m is not None and m not in self.attributions:
             self.attributions.add(m)
 

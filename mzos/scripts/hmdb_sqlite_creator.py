@@ -78,9 +78,10 @@ def parse_metabolite_card(filepath):
                 #float(elem.find('description').text)
                 metab.append("")
                 #float(elem.find('description').text)
+                # isotopic pattern elem.find('kegg_id').text
                 metab.append(elem.find('kegg_id').text)
-                metab.append(get_theo_ip(f, min_rel_int=1.0, polarity=1))  # isotopic pattern elem.find('kegg_id').text
-                metab.append(get_theo_ip(f, min_rel_int=1.0, polarity=-1))
+                metab.append(get_theo_ip(f, element='H', min_rel_int=1.0, polarity=1))
+                metab.append(get_theo_ip(f, element='H', min_rel_int=1.0, polarity=-1))
     except Exception as e:
         logging.warn("Error parsing metabolite card : {} with following exception : \n {}".format(filepath, e.message))
         return None
@@ -142,7 +143,7 @@ def remove_element(f, element, n):
     return "".join(["".join((k, v)) for k, v in sorted(f.iteritems(), key=lambda _: _[0])])
 
 
-def get_theo_ip(formula, min_rel_int=5.0, polarity=1):
+def get_theo_ip(formula, element, min_rel_int=5.0, polarity=1):
     """
     # todo ask wich adducts to pass in parameter
     formula is a string meaning compound
@@ -150,18 +151,19 @@ def get_theo_ip(formula, min_rel_int=5.0, polarity=1):
     :param min_rel_int:
     :param polarity:
     """
-    if not isinstance(formula, str):
-        raise Exception("[generate theoritical isotopic pattern]"
-                        " formula parameter must be a string:%s" % repr(formula))
+    assert(isinstance(formula, str), "[generate theoritical isotopic pattern] "
+                                     "formula parameter must be a string:{}".format(repr(formula)))
+    assert(isinstance(element, str))
+
     if not formula:
         logging.warning("Formula seems to be empty.")
         return
 
     f = {x[0]: x[1] for x in ELEMENT_PATTERN.findall(formula)}
     if polarity == 1:
-        formula = add_element(f, 'H', 1)
+        formula = add_element(f, element, 1)
     else:
-        formula = remove_element(f, 'H', 1)
+        formula = remove_element(f, element, 1)
 
     p = subprocess.Popen("emass/emass.exe", stdin=subprocess.PIPE, stdout=subprocess.PIPE)
     out, err = p.communicate(input=formula)

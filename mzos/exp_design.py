@@ -112,7 +112,7 @@ class ExperimentalSettings(object):
         return group.name_id
 
 
-class Group (list):
+class Group(list):
     """
     :param name_id:
     :param samples:
@@ -120,7 +120,6 @@ class Group (list):
     """
 
     def __init__(self, name_id, samples=[], description=""):
-        list.__init__(samples)
-
+        self.samples = samples
         self.description = description
         self.name_id = name_id
