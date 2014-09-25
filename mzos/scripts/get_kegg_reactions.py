@@ -23,7 +23,7 @@ from collections import defaultdict as ddict
 
 from bioservices import KEGGParser  #KeggParser
 
-from reac import RPrecord
+from mzos.reac import RPrecord
 
 
 kegg_parser = KEGGParser(verbose=False)
@@ -71,14 +71,6 @@ def get_kegg_reactions():
                 rp_record_by_id[id__].as_r.add(id_)
                 rp_record_by_id[id_].as_p.add(id__)
     return rp_record_by_id
-
-
-def load_reactions():
-    """
-    can raise IOError
-    :return:
-    """
-    return cPickle.load(open("ressources/reaction.reac"))
 
 
 if __name__ == "__main__":

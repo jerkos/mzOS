@@ -15,6 +15,3 @@ class TestPeakListReader(unittest.TestCase):
         self.assertEqual(len(peakels), 3238)
         self.assertTrue(all([isinstance(p.moz, float) for p in peakels]))
         self.assertTrue(all([p.moz != 0.0] for p in peakels))
-
-if __name__ == '__main__':
-    unittest.main()

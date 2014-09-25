@@ -28,6 +28,3 @@ class TestPeakelIndex(unittest.TestCase):
         val = 1261.52 - ppm
         p = findex.get_nearest_peakel(val, 10)
         self.assertIsNone(p)
-
-if __name__ == '__main__':
-    unittest.main()

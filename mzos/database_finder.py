@@ -17,15 +17,58 @@ __email__ = 'marc.dubois@omics-services.com'
 
 import logging
 import sqlite3
+import os.path as op
 from collections import defaultdict as ddict
 from itertools import izip
 import multiprocessing
 from collections import namedtuple
 from feature import Annotation
 
-Metabolite = namedtuple("Metabolite", "acession, name, formula, inchi, mono_mass, average_mass, "
-                                      "description, status, origin, kegg_id, isotopic_pattern_pos, "
-                                      "isotopic_pattern_neg")
+
+class MolecularEntity(object):
+    """
+    Molecular entity
+    """
+    def __init__(self):
+        self.name = None
+
+        self.kegg_id = None
+        self.hmdb_id = None
+
+        self.description = None
+        self.formula = None
+        self.inchi = None
+
+        self.mono_mass = None
+
+        self.isotopic_pattern_neg = None
+        self.isotopic_pattern_pos = None
+
+
+class Metabolite(MolecularEntity):
+    """
+    Metabolite entity
+    """
+    COLUMNS = "acession,name,formula,inchi,mono_mass,average_mass," \
+              "description,status,origin,kegg_id,isotopic_pattern_pos,isotopic_pattern_neg".split(",")
+
+    MAPPING = {'acession': 'hmdb_id'}
+
+    def __init__(self, *args):
+        super(MolecularEntity, self).__init__()
+        for name, value in dict(izip(Metabolite.COLUMNS, args)).iteritems():
+            if name in Metabolite.MAPPING:
+                setattr(self, Metabolite.MAPPING[name], value)
+            else:
+                setattr(self, name, value)
+
+class Lipid(MolecularEntity):
+    pass
+
+# Metabolite = namedtuple("Metabolite", "acession, name, formula, inchi, mono_mass, average_mass, "
+#                                       "description, status, origin, kegg_id, isotopic_pattern_pos, "
+#                                       "isotopic_pattern_neg")
+# Lipid = namedtuple("Lipid", 'systematic_name, kegg_id, inchi_key')
 
 
 class IDatabaseSearcher(object):
@@ -45,34 +88,62 @@ class IDatabaseSearcher(object):
         """
         raise NotImplementedError
 
+    @staticmethod
+    def get_moz_bounds(feature, mz_tol_ppm):
+        """
+        :param feature:
+        :param mz_tol_ppm:
+        """
+        mass = feature.get_real_mass()
+        tol_da = mass * mz_tol_ppm * 0.000001
+        return mass, mass - tol_da, mass + tol_da
+
 
 def search_metabolites_for(args):
     """
     pickling problem if use inside class
     """
     database, feature, with_tol_ppm = args[0], args[1], args[2]
-    mass = feature.get_real_mass()
-    tol_da = mass * with_tol_ppm / 1e6
-    min_mass, max_mass = mass - tol_da, mass + tol_da
+    #mass = feature.get_real_mass()
+    # tol_da = mass * with_tol_ppm / 1e6
+    # min_mass, max_mass = mass - tol_da, mass + tol_da
+    mass, min_mass, max_mass = IDatabaseSearcher.get_moz_bounds(feature, with_tol_ppm)
 
-    c = sqlite3.connect(database).cursor()
+    conn = sqlite3.connect(database)
+    c = conn.cursor()
     metabolites = []
     for row in c.execute('select * from metabolite where mono_mass >=  ? and mono_mass <= ?', (min_mass, max_mass)):
-        m = Metabolite._make(row)
+        m = Metabolite(*row)#Metabolite._make(row)
         if m.kegg_id is not None:
             metabolites.append(m)  # got warning du to the underscore
+    conn.close()
     metabolites.sort(key=lambda _: abs(_.mono_mass - mass))
     return metabolites
 
 
-class DatabaseSearch(IDatabaseSearcher):
+# def search_lipids_for(args):
+#     database, feature, with_tol_ppm = args[0], args[1], args[2]
+#     mass, min_mass, max_mass = IDatabaseSearcher.get_moz_bounds(feature, with_tol_ppm)
+#
+#     conn = sqlite3.connect(database)
+#     c = conn.cursor()
+#     lipids = []
+#     for row in c.execute('select SYSTEMATIC_NAME, KEGG_ID, INCHI_KEY from lipids where EXACT_MASS >= ? and EXACT_MASS <= ?', (min_mass, max_mass)):
+#         l = Lipid._r
 
-    HMDB_FILE = "ressources/hmdb.sqlite"
+
+class DatabaseSearch(IDatabaseSearcher):
+    """
+    :param bank:
+    :param exp_design:
+    """
+    HMDB_FILE = op.normcase("ressources/hmdb.sqlite")
+    LMSD_FILE = op.normcase("ressources/lmsd.sqlite")
 
     def __init__(self, bank, exp_design):
         self.exp_design = exp_design
         self.metabolites_by_feature = {}
-        self.bank = 'hmdb' if bank not in ['hmdb, kegg'] else bank
+        self.bank = 'hmdb' if bank not in ['hmdb, kegg'] else bank  #self.exp_design.databases
         logging.info("Performing database search in {} {}".format(self.bank, 'v3.5'))
 
     def assign_formula(self, features, with_tol_ppm=10.0):

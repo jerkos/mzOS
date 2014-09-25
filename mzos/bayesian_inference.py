@@ -21,12 +21,17 @@ import logging
 import sys
 from collections import defaultdict as ddict
 from collections import Counter
-from scripts.get_kegg_reactions import load_reactions
+import random as rdm
+import os.path as op
+import math
+import cPickle
+
 #from mzos.scripts.get_kegg_reactions import load_reactions
 from scipy.stats import norm
 import numpy as np
-import random as rdm
-import math
+
+import reac
+sys.modules['reac'] = reac
 
 
 def _sample_metabolite(args):  #feature, mz_tol_ppm, probs_by_metab_id, counter):
@@ -92,9 +97,19 @@ class BayesianInferer(object):
         self.experiment = experiment
 
         logging.info("Loading reaction...")
-        self.reactions = load_reactions()
+        self.reactions = self.load_reactions()
         logging.info("#{} reactions loaded".format(len(self.reactions)))
         self.assigned_compounds = set()
+
+    @staticmethod
+    def load_reactions():
+        """
+        can raise IOError
+        :return:
+        """
+        with open(op.normcase("mzos/ressources/reaction.reac"), 'rb') as f:
+            reactions = cPickle.load(f)
+        return reactions
 
     def _assign_without_ambiguity(self):
         """

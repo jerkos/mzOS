@@ -12,6 +12,7 @@ from mzos.clustering import clusterize_hierarchical, clusterize_basic, clusteriz
 from mzos.peakel_clusterer import PeakelClusterer
 from mzos.exp_design import ExperimentalSettings
 
+
 class TestClustering(unittest.TestCase):
 
     def setUp(self):
@@ -46,7 +47,7 @@ class TestClustering(unittest.TestCase):
         self.f3.set_main_attribution(Attribution('[M+Na+]', self.f1.id, 1))
         t = ("acession", "name", "formula", "inchi", "mono_mass", "average_mass", "description", "status", "origin",
              "kegg_id", "isotopic_pattern_pos", "isotopic_pattern_neg")
-        self.f1.annotations.append(Annotation(metabolite=Metabolite._make(t)))
+        self.f1.annotations.append(Annotation(metabolite=Metabolite(*t)))
 
     def test_clusterize_basic(self):
         clusters = clusterize_basic(self.features, PeakelClusterer.BASIC_RT_CALLABLE, 6.0)
@@ -98,6 +99,8 @@ class TestClustering(unittest.TestCase):
         self.assertIsNone(peakel_clusterer.corr_shape_method)
 
     def test_feature(self):
+        metabolites = self.f1.get_metabolites()
+        print metabolites[0].__dict__
         ms_name = [m.name for m in self.f1.get_metabolites()]
         self.assertIn('name', ms_name)
 
@@ -125,7 +128,7 @@ class TestClustering(unittest.TestCase):
         a = Attribution('isotope s34', self.f3.id, charge=2)
         self.f2.add_attribution(a)
         s = Peakel.get_others_bottom_up_attribution_tree(a, f_by_id)
-        self.assertEqual(s, 'isotope s34 of {} for charge={} of [M+Na+] of 50 for charge=1'.format(self.f3.id, 2))
+        self.assertEqual(s, 'isotope s34 of {} for charge={} of [M+Na+] of {} for charge=1'.format(self.f3.id, 2, self.f1.id))
 
         self.f2.get_attributions_by(lambda _: _.attribution)
 
@@ -149,7 +152,3 @@ class TestClustering(unittest.TestCase):
 
         self.assertEqual('Treated', exp.get_group_id_of('sample4'))
         self.assertIsNone(exp.get_group_id_of('sample5'))
-
-
-if __name__ == '__main__':
-    unittest.main()
