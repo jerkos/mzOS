@@ -95,7 +95,7 @@ class IDatabaseSearcher(object):
         :param mz_tol_ppm:
         """
         mass = feature.get_real_mass()
-        tol_da = mass * mz_tol_ppm * 0.000001
+        tol_da = mass * mz_tol_ppm / 1e6
         return mass, mass - tol_da, mass + tol_da
 
 
@@ -137,7 +137,7 @@ class DatabaseSearch(IDatabaseSearcher):
     :param bank:
     :param exp_design:
     """
-    HMDB_FILE = op.normcase("ressources/hmdb.sqlite")
+    HMDB_FILE = op.normcase("mzos/ressources/hmdb.sqlite")
     LMSD_FILE = op.normcase("ressources/lmsd.sqlite")
 
     def __init__(self, bank, exp_design):
@@ -166,28 +166,3 @@ class DatabaseSearch(IDatabaseSearcher):
                 m_count += len(metabs)
             f.annotations = [Annotation(m) for m in metabs]
         return m_count, not_found
-
-
-if __name__ == '__main__':
-    from peaklist_reader import PeakListReader
-    from annotator import PeakelsAnnotator
-    from stats import StatsModel
-    from exp_design import ExperimentalSettings
-    import os.path
-    import time
-
-    logging.basicConfig(level=logging.INFO)
-
-    t1 = time.clock()
-
-    polarity = -1
-    path = os.path.normcase("""../../tests/data/peaks_matrix_NEG.tsv""")
-
-    exp = ExperimentalSettings(10.0, -1)
-
-    peakels = PeakListReader(path, exp).get_peakels()
-    logging.info("Data loaded.")
-
-    dbSearch = DatabaseSearch('hmdb', None)
-    metabolites_by_feature = dbSearch.assign_formula(peakels)
-    logging.info("search done for #{} peakels".format(len(metabolites_by_feature)))

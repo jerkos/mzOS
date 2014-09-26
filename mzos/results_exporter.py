@@ -168,7 +168,7 @@ class ResultsExporter(object):
                                        for a in feature.annotations]
 
                 for idx, (metabolite, score1, score2) in enumerate(feature_metabolites):
-                    data = ";".join([ResultsExporter.HMDB + metabolite.acession,
+                    data = ";".join([ResultsExporter.HMDB + metabolite.hmdb_id,  #acession,
                                      ResultsExporter.KEGG + metabolite.kegg_id]).encode("utf-8")
                     data = data.replace("\t", "")
 
