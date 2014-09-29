@@ -15,6 +15,9 @@
 
 __email__ = 'marc.dubois@omics-services.com'
 
+#include in path all pacakges
+import sys
+import os.path as op
 from xml.etree import cElementTree
 import sqlite3
 import glob
@@ -24,11 +27,15 @@ import multiprocessing
 import time
 import re
 
-ELEMENT_PATTERN = re.compile(r'''
-            ([A-Z][a-z]{0,2})
-            ([\-]?[\d]*)
-''', re.X)
-
+try:
+    from mzos.formula import Formula
+    from mzos.utils import get_theo_ip
+except ImportError:
+    logging.warn('print called hmdb creator from main')
+    abspath = op.abspath(op.normcase('../../'))
+    sys.path.append(abspath)
+    from mzos.formula import Formula
+    from mzos.utils import get_theo_ip
 
 def build_sqlite3_file(sqlite_filepath):
     """
@@ -41,17 +48,19 @@ def build_sqlite3_file(sqlite_filepath):
         c.execute('drop table metabolite;')
     except sqlite3.OperationalError:
         pass
-    c.execute('create table metabolite (acession text primary key, name text, formula text, inchi text, '
+    c.execute('create table metabolite (acession text primary key, name text, formula text, inchi text, inchikey text,'
               'mono_mass double, average_mass double, description text, status text, origin text, kegg_id text, '
               'isotopic_pattern_pos text, isotopic_pattern_neg text)')
     return conn, c
 
 
-def parse_metabolite_card(filepath):
+def parse_metabolite_card(args):
     """
     @param filepath:  str
     @return:
     """
+    filepath = args[0]
+    emass_path = args[1]
     context = cElementTree.iterparse(filepath, events=('end',))
     metab = list()
     try:
@@ -62,6 +71,7 @@ def parse_metabolite_card(filepath):
                 metab.append(elem.find('name').text)
                 metab.append(f)
                 metab.append(elem.find('inchi').text)
+                metab.append(elem.find('inchikey').text[9:])
                 try:
                     metab.append(float(elem.find('monisotopic_moleculate_weight').text))
                 except (ValueError, TypeError):
@@ -80,15 +90,21 @@ def parse_metabolite_card(filepath):
                 #float(elem.find('description').text)
                 # isotopic pattern elem.find('kegg_id').text
                 metab.append(elem.find('kegg_id').text)
-                metab.append(get_theo_ip(f, element='H', min_rel_int=1.0, polarity=1))
-                metab.append(get_theo_ip(f, element='H', min_rel_int=1.0, polarity=-1))
-    except Exception as e:
-        logging.warn("Error parsing metabolite card : {} with following exception : \n {}".format(filepath, e.message))
+
+                formula = Formula.from_str(f)
+                # # add one H to have positive
+                f1 = formula.add('H', new_obj=True)
+                metab.append(get_theo_ip(emass_path, str(f1), min_rel_int=1.0))
+                #
+                f2 = formula.remove('H', new_obj=True)
+                metab.append(get_theo_ip(emass_path, str(f2), min_rel_int=1.0))
+    except (WindowsError, IOError, ValueError, TypeError) as e:
+        logging.warn("Error parsing metabolite card : {} with following exception : \n {}".format(filepath, e))
         return None
     return tuple(metab)
 
 
-def build_library(sqlite_filepath, cards_directory, nb_procs=multiprocessing.cpu_count()):
+def build_library(sqlite_filepath, cards_directory, emass_path, nb_procs=multiprocessing.cpu_count()):
     """
     :param sqlite_filepath:
     :param cards_directory:
@@ -97,95 +113,24 @@ def build_library(sqlite_filepath, cards_directory, nb_procs=multiprocessing.cpu
     files = glob.glob(cards_directory + "\\*.xml")
     if not files:
         print("No metabolites card found")
+    files = [(f, emass_path) for f in files]
     t1 = time.clock()
     conn, c = build_sqlite3_file(sqlite_filepath)
     p = multiprocessing.Pool(processes=nb_procs)
     metabs = p.map(parse_metabolite_card, files, chunksize=20)
-    c.executemany('insert into metabolite values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
+    p.close()
+    c.executemany('insert into metabolite values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
                   [m for m in metabs if m is not None])
     conn.commit()
     c.execute('create index mass_index on metabolite(mono_mass)')
+    c.execute('create index inchi_key_idx on metabolite(inchikey)')
     conn.close()
     logging.info("Finished, elpased time {} seconds".format(time.clock() - t1))
 
 
-def add_element(f, element, n):
-    """
-    :param f: dict key element, value number of element
-    :param n: add or remove n element
-    :return:
-    """
-    assert(isinstance(element, str))
-    if element in f:
-        nb_h = int(f[element]) if f[element] != '' else 1
-        f[element] = str(nb_h + n)
-    else:
-        f[element] = str(n)
-    return "".join(["".join((k, v)) for k, v in sorted(f.iteritems(), key=lambda _: _[0])])
-
-
-def remove_element(f, element, n):
-    """
-    :param f:
-    :param element:
-    :param n:
-    :return:
-    """
-    assert(isinstance(element, str))
-    if element in f:
-        nb_h = int(f[element]) if f[element] else 1
-        if nb_h - n <= 0:
-            del f[element]
-        elif nb_h - n == 1:
-            f[element] = ''
-        else:
-            f[element] = str(nb_h - n)
-    return "".join(["".join((k, v)) for k, v in sorted(f.iteritems(), key=lambda _: _[0])])
-
-
-def get_theo_ip(formula, element, min_rel_int=5.0, polarity=1):
-    """
-    # todo ask wich adducts to pass in parameter
-    formula is a string meaning compound
-    :param formula:
-    :param min_rel_int:
-    :param polarity:
-    """
-    assert(isinstance(formula, str), "[generate theoritical isotopic pattern] "
-                                     "formula parameter must be a string:{}".format(repr(formula)))
-    assert(isinstance(element, str))
-
-    if not formula:
-        logging.warning("Formula seems to be empty.")
-        return
-
-    f = {x[0]: x[1] for x in ELEMENT_PATTERN.findall(formula)}
-    if polarity == 1:
-        formula = add_element(f, element, 1)
-    else:
-        formula = remove_element(f, element, 1)
-
-    p = subprocess.Popen("emass/emass.exe", stdin=subprocess.PIPE, stdout=subprocess.PIPE)
-    out, err = p.communicate(input=formula)
-    if not out:
-        logging.warn("Error computing isotopic pattern with formula: {0}.Skip it".format(formula))
-        return
-
-    iso = ""
-    try:
-        iso = repr(filter(lambda x: x[1] > min_rel_int,
-                          [(lambda x: (float(x[0]), float(x[1])))(l.rstrip().split(" "))
-                           for l in out.split('\n')[1:-1]]))
-    except Exception:
-        logging.warn("Error parsing isotopic pattern.Skip it")
-        return
-
-    return iso
-
 if __name__ == '__main__':
-    import sys
-    if not len(sys.argv) > 1:
-        logging.error("""Usage: hmdb_sqlite_creator path/to/hmdb/directory""")
-    hmdb_cards_dir = sys.argv[1]
     logging.basicConfig(level=logging.INFO)
-    build_library('hmdb.sqlite', 'hmdb_metabolites')
+    #from mzos.formula import Formula
+    build_library('hmdb_test.sqlite',
+                  op.normcase('../ressources/hmdb_metabolites'),
+                  op.normcase("../../third_party/emass/emass.exe -i ../../third_party/emass/ISOTOPE.DAT"))

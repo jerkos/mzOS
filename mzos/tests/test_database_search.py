@@ -5,12 +5,9 @@ import zipfile
 import os.path as op
 import os
 import shutil
-import logging
 
-from mzos.scripts.hmdb_sqlite_creator import ELEMENT_PATTERN, add_element, remove_element
 from mzos.database_finder import DatabaseSearch
 from mzos.feature import Peakel
-from mzos.exp_design import ExperimentalSettings
 
 
 class TestDatabaseSearch(unittest.TestCase):
@@ -29,24 +26,6 @@ class TestDatabaseSearch(unittest.TestCase):
             print("Done")
         except OSError:
             pass
-
-    def test_add_formula(self):
-        f = {x[0]: x[1] for x in ELEMENT_PATTERN.findall('C6H6O12')}
-        s = add_element(f, 'C', 12)
-        self.assertEqual('C18H6O12', s)
-
-    def test_remove_formula(self):
-        f = {x[0]: x[1] for x in ELEMENT_PATTERN.findall('C6H6O12')}
-        s = remove_element(f, 'C', 12)
-        self.assertEqual('H6O12', s)
-
-        f = {x[0]: x[1] for x in ELEMENT_PATTERN.findall('C6H6O12')}
-        s = remove_element(f, 'C', 5)
-        self.assertEqual('CH6O12', s)
-
-        f = {x[0]: x[1] for x in ELEMENT_PATTERN.findall('C6H6O12')}
-        s = remove_element(f, 'C', 2)
-        self.assertEqual('C4H6O12', s)
 
     def test_database_search(self):
         mass_fruc_6p = 260.029718526

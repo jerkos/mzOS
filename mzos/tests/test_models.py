@@ -3,6 +3,8 @@ from mzos.database_finder import Metabolite
 __author__ = 'marc.dubois@omics-services.com'
 
 import unittest
+import os.path as op
+import logging
 
 import scipy as sp
 import numpy as np
@@ -11,6 +13,7 @@ from mzos.feature import Peakel, Annotation, Attribution, PeakelIndex
 from mzos.clustering import clusterize_hierarchical, clusterize_basic, clusterize_dbscan
 from mzos.peakel_clusterer import PeakelClusterer
 from mzos.exp_design import ExperimentalSettings
+from mzos.formula import Formula
 
 
 class TestClustering(unittest.TestCase):
@@ -165,3 +168,55 @@ class TestClustering(unittest.TestCase):
 
         self.assertEqual('Treated', exp.get_group_id_of('sample4'))
         self.assertIsNone(exp.get_group_id_of('sample5'))
+
+    def test_fromula_obj(self):
+        fstr = 'C6H12O6'
+        f = Formula.from_str(fstr)
+        self.assertIsNotNone(f)
+
+        self.assertEqual(f['C'], 6)
+        self.assertEqual(f['H'], 12)
+        self.assertEqual(f['O'], 6)
+
+        self.assertEqual(str(f), fstr)
+
+        f.remove('C5H3O12')
+        print "f", f
+        print "str(f)", str(f)
+        self.assertEqual(str(f), 'CH9')
+
+        d = {'C': 148, 'H': 122}
+        f.add(d)
+        self.assertEqual(str(f), 'C149H131')
+
+        f2 = Formula(d)
+        f.remove(f2)
+        self.assertEqual(str(f), 'CH9')
+
+        self.assertRaises(TypeError, f.add, ['C', 12, 'H', 32])
+
+        f3 = Formula.from_str('C4H12')
+        f4 = Formula(f3)
+        self.assertIsNot(f3, f4)
+
+        self.assertEqual(str(f4), 'C4H12')
+
+        f5 = f3.remove('CH', new_obj=True)
+
+        self.assertEqual(str(f3), 'C4H12')
+        self.assertIsNot(f5, f3)
+        self.assertEqual(str(f5), 'C3H11')
+
+        #print f5.get_theo_ip()
+
+    def test_script_hmdb(self):
+        from mzos.scripts.hmdb_sqlite_creator import build_library
+        build_library(op.normcase('hmdb_test.sqlite'),
+                      op.normcase('mzos/ressources/hmdb_metabolites'),
+                      op.normcase(Formula.EMASS_PATH))
+        self.assertTrue(op.exists('hmdb_test.sqlite'))
+
+    @classmethod
+    def tearDownClass(cls):
+        import os
+        os.remove('hmdb_test.sqlite')

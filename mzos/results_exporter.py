@@ -16,7 +16,7 @@
 __email__ = 'marc.dubois@omics-services.com'
 
 import logging
-from utils import merge
+#from utils import merge
 from feature import Peakel
 #from mongo_db import MetabolomicsExperiment, Feature, Annotation, Abundance
 

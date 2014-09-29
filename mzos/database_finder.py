@@ -37,7 +37,7 @@ class MolecularEntity(object):
 
         self.description = None
         self.formula = None
-        self.inchi = None
+        self.inchi_key = None
 
         self.mono_mass = None
 
@@ -72,9 +72,7 @@ class Lipid(MolecularEntity):
 
 
 class IDatabaseSearcher(object):
-    """
-    Interface of databse search
-    """
+    """Interface of databse search"""
     def search_moz(self, moz, moz_tol_ppm):
         """
         :param moz:
@@ -102,6 +100,7 @@ class IDatabaseSearcher(object):
 def search_metabolites_for(args):
     """
     pickling problem if use inside class
+    :param args: database, feature, with_tol_ppm
     """
     database, feature, with_tol_ppm = args[0], args[1], args[2]
     #mass = feature.get_real_mass()
@@ -113,12 +112,36 @@ def search_metabolites_for(args):
     c = conn.cursor()
     metabolites = []
     for row in c.execute('select * from metabolite where mono_mass >=  ? and mono_mass <= ?', (min_mass, max_mass)):
-        m = Metabolite(*row)#Metabolite._make(row)
+        m = Metabolite(*row)  #Metabolite._make(row)  got warning du to the underscore
         if m.kegg_id is not None:
-            metabolites.append(m)  # got warning du to the underscore
+            metabolites.append(m)
     conn.close()
     metabolites.sort(key=lambda _: abs(_.mono_mass - mass))
     return metabolites
+
+
+
+def search_entities_for(args):
+    """
+    intend to be more generic than search_metabolite_for
+    pickling problem if use inside class
+    :param args: database, feature, with_tol_ppm
+    """
+    lipids = 'select * lipid where exact_mass >='
+    database, feature, with_tol_ppm, db = args[0], args[1], args[2], args[3]
+    mass, min_mass, max_mass = IDatabaseSearcher.get_moz_bounds(feature, with_tol_ppm)
+
+    conn = sqlite3.connect(database)
+    c = conn.cursor()
+    metabolites = []
+    for row in c.execute('select * from metabolite where mono_mass >=  ? and mono_mass <= ?', (min_mass, max_mass)):
+        m = Metabolite(*row)  #Metabolite._make(row)  got warning du to the underscore
+        if m.kegg_id is not None:
+            metabolites.append(m)
+    conn.close()
+    metabolites.sort(key=lambda _: abs(_.mono_mass - mass))
+    return metabolites
+
 
 
 # def search_lipids_for(args):
@@ -138,7 +161,7 @@ class DatabaseSearch(IDatabaseSearcher):
     :param exp_design:
     """
     HMDB_FILE = op.normcase("mzos/ressources/hmdb.sqlite")
-    LMSD_FILE = op.normcase("ressources/lmsd.sqlite")
+    LMSD_FILE = op.normcase("mzos/ressources/lmsd.sqlite")
 
     def __init__(self, bank, exp_design):
         self.exp_design = exp_design

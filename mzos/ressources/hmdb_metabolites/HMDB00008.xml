@@ -1,0 +1,502 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<metabolite>
+  <version>3.5</version>
+  <creation_date>2005-11-16 08:48:42 -0700</creation_date>
+  <update_date>2013-08-29 09:04:55 -0600</update_date>
+  <accession>HMDB00008</accession>
+  <secondary_accessions>
+  </secondary_accessions>
+  <name>2-Hydroxybutyric acid</name>
+  <description>2-Hydroxybutyric acid (alpha-hydroxybutyrate) is an organic acid derived from alpha-ketobutyrate. Alpha-ketobutyrate is produced by amino acid catabolism (threonine and methionine) and glutathione anabolism (cysteine formation pathway) and is metabolized to propionyl-CoA and carbon dioxide (PMID: 20526369). 2-Hydroxybutyric acid is formed as a by-product during the formation of Alpha-ketobutyrate via a reaction catalyzed by lactate dehydrogenase (LDH) or alpha–hydroxybutyrate dehydrogenase (alpha–HBDH). Alpha-hydroxybutyric acid is primarily produced in mammalian hepatic tissues that catabolize L-threonine or synthesize glutathione. Oxidative stress or detoxification of xenobiotics in the liver can dramatically increase the rate of hepatic glutathione synthesis. Under such metabolic stress conditions, supplies of L-cysteine for glutathione synthesis become limiting, so homocysteine is diverted from the transmethylation pathway (which forms methionine) into the transsulfuration pathway (which forms cystathionine). 2-Hydroxybutyrate is released as a byproduct when cystathionine is cleaved to cysteine that is incorporated into glutathione. Chronic shifts in the rate of glutathione synthesis may be reflected by urinary excretion of 2-hydroxybutyrate. 2-hydroxybutyrate is an early marker for both insulin resistance and impaired glucose regulation that appears to arise due to increased lipid oxidation and oxidative stress (PMID: 20526369). 2-Hydroxybutyric acid is often found in the urine of patients suffering from lactic acidosis and ketoacidosis. 2-Hydroxybutyric acid generally appears at high concentrations in situations related to deficient energy metabolism (e.g., birth asphyxia) and also in inherited metabolic diseases affecting the central nervous system during neonatal development, such as "cerebral" lactic acidosis, glutaric aciduria type II, dihydrolipoyl dehydrogenase (E3) deficiency, and propionic acidemia. More recently it has been noted that elevated levels of alpha-hydroxybutyrate in the plasma is a good marker for early stage type II diabetes (PMID:19166731). It was concluded from studies done in the mid 1970's that an increased NADH2/NAD ratio was the most important factor for the production of 2-hydorxybutyric acid (PMID:168632).</description>
+  <synonyms>
+    <synonym>(RS)-2-Hydroxybutyrate</synonym>
+    <synonym>(RS)-2-Hydroxybutyric acid</synonym>
+    <synonym>2-Hydroxy-Butanoate</synonym>
+    <synonym>2-Hydroxy-Butanoic acid</synonym>
+    <synonym>2-Hydroxy-DL-Butyrate</synonym>
+    <synonym>2-Hydroxy-DL-Butyric acid</synonym>
+    <synonym>2-Hydroxy-N-butyrate</synonym>
+    <synonym>2-Hydroxy-N-butyric acid</synonym>
+    <synonym>2-Hydroxybutanoate</synonym>
+    <synonym>2-Hydroxybutanoic acid</synonym>
+    <synonym>2-Hydroxybutyrate</synonym>
+    <synonym>a-Hydroxy-N-butyrate</synonym>
+    <synonym>a-Hydroxy-N-butyric acid</synonym>
+    <synonym>a-Hydroxybutanoate</synonym>
+    <synonym>a-Hydroxybutanoic acid</synonym>
+    <synonym>a-Hydroxybutyrate</synonym>
+    <synonym>a-Hydroxybutyric acid</synonym>
+    <synonym>alpha-Hydroxy-N-butyrate</synonym>
+    <synonym>alpha-Hydroxy-N-butyric acid</synonym>
+    <synonym>alpha-Hydroxybutanoate</synonym>
+    <synonym>alpha-Hydroxybutanoic acid</synonym>
+    <synonym>alpha-Hydroxybutyrate</synonym>
+    <synonym>alpha-Hydroxybutyric acid</synonym>
+    <synonym>DL-2-Hydroxybutanoate</synonym>
+    <synonym>DL-2-Hydroxybutanoic acid</synonym>
+    <synonym>DL-a-Hydroxybutyrate</synonym>
+    <synonym>DL-a-Hydroxybutyric acid</synonym>
+    <synonym>DL-alpha-Hydroxybutyrate</synonym>
+    <synonym>DL-alpha-Hydroxybutyric acid</synonym>
+  </synonyms>
+  <chemical_formula>C4H8O3</chemical_formula>
+  <average_molecular_weight>104.1045</average_molecular_weight>
+  <monisotopic_moleculate_weight>104.047344122</monisotopic_moleculate_weight>
+  <iupac_name>2-hydroxybutanoic acid</iupac_name>
+  <traditional_iupac>2-hydroxybutyrate</traditional_iupac>
+  <cas_registry_number>600-15-7</cas_registry_number>
+  <smiles>CCC(O)C(O)=O</smiles>
+  <inchi>InChI=1S/C4H8O3/c1-2-3(5)4(6)7/h3,5H,2H2,1H3,(H,6,7)</inchi>
+  <inchikey>InChIKey=AFENDNXGAFYKQO-UHFFFAOYSA-N</inchikey>
+  <taxonomy>
+    <kingdom>Organic Compounds</kingdom>
+    <super_class>Organic Acids and Derivatives</super_class>
+    <class>Hydroxy Acids and Derivatives</class>
+    <other_descriptors>
+      <descriptor>2-hydroxy monocarboxylic acid(ChEBI)</descriptor>
+      <descriptor>Aliphatic Acyclic Compounds</descriptor>
+      <descriptor>Alpha Hydroxy Acids and Derivatives</descriptor>
+      <descriptor>Hydroxy fatty acids(Lipidmaps)</descriptor>
+      <descriptor>Organic Compounds</descriptor>
+      <descriptor>Straight Chain Fatty Acids</descriptor>
+      <descriptor>hydroxybutyric acid(ChEBI)</descriptor>
+    </other_descriptors>
+    <substituents>
+      <substituent>carboxylic acid</substituent>
+      <substituent>secondary alcohol</substituent>
+    </substituents>
+    <direct_parent>Short-chain Hydroxy Acids and Derivatives</direct_parent>
+  </taxonomy>
+  <ontology>
+    <status>Detected and Quantified</status>
+    <origins>
+      <origin>Endogenous</origin>
+    </origins>
+    <biofunctions>
+    </biofunctions>
+    <applications>
+    </applications>
+    <cellular_locations>
+      <cellular_location>Cytoplasm</cellular_location>
+      <cellular_location>Extracellular</cellular_location>
+    </cellular_locations>
+  </ontology>
+  <state>Solid</state>
+  <experimental_properties>
+    <property>
+      <kind>melting_point</kind>
+      <value>44.2 °C</value>
+      <source></source>
+    </property>
+  </experimental_properties>
+  <predicted_properties>
+    <property>
+      <kind>logp</kind>
+      <value>-0.16</value>
+      <source>ALOGPS</source>
+    </property>
+    <property>
+      <kind>logs</kind>
+      <value>0.67</value>
+      <source>ALOGPS</source>
+    </property>
+    <property>
+      <kind>solubility</kind>
+      <value>484 g/L</value>
+      <source>ALOGPS</source>
+    </property>
+    <property>
+      <kind>logp</kind>
+      <value>0.051</value>
+      <source>ChemAxon</source>
+    </property>
+    <property>
+      <kind>pka_strongest_acidic</kind>
+      <value>3.99</value>
+      <source>ChemAxon</source>
+    </property>
+    <property>
+      <kind>pka_strongest_basic</kind>
+      <value>-3.8</value>
+      <source>ChemAxon</source>
+    </property>
+    <property>
+      <kind>iupac</kind>
+      <value>2-hydroxybutanoic acid</value>
+      <source>ChemAxon</source>
+    </property>
+    <property>
+      <kind>average_mass</kind>
+      <value>104.1045</value>
+      <source>ChemAxon</source>
+    </property>
+    <property>
+      <kind>mono_mass</kind>
+      <value>104.047344122</value>
+      <source>ChemAxon</source>
+    </property>
+    <property>
+      <kind>smiles</kind>
+      <value>CCC(O)C(O)=O</value>
+      <source>ChemAxon</source>
+    </property>
+    <property>
+      <kind>formula</kind>
+      <value>C4H8O3</value>
+      <source>ChemAxon</source>
+    </property>
+    <property>
+      <kind>inchi</kind>
+      <value>InChI=1S/C4H8O3/c1-2-3(5)4(6)7/h3,5H,2H2,1H3,(H,6,7)</value>
+      <source>ChemAxon</source>
+    </property>
+    <property>
+      <kind>inchikey</kind>
+      <value>InChIKey=AFENDNXGAFYKQO-UHFFFAOYSA-N</value>
+      <source>ChemAxon</source>
+    </property>
+    <property>
+      <kind>polar_surface_area</kind>
+      <value>57.53</value>
+      <source>ChemAxon</source>
+    </property>
+    <property>
+      <kind>refractivity</kind>
+      <value>23.36</value>
+      <source>ChemAxon</source>
+    </property>
+    <property>
+      <kind>polarizability</kind>
+      <value>9.98</value>
+      <source>ChemAxon</source>
+    </property>
+    <property>
+      <kind>rotatable_bond_count</kind>
+      <value>2</value>
+      <source>ChemAxon</source>
+    </property>
+    <property>
+      <kind>acceptor_count</kind>
+      <value>3</value>
+      <source>ChemAxon</source>
+    </property>
+    <property>
+      <kind>donor_count</kind>
+      <value>2</value>
+      <source>ChemAxon</source>
+    </property>
+    <property>
+      <kind>physiological_charge</kind>
+      <value>-1</value>
+      <source>ChemAxon</source>
+    </property>
+    <property>
+      <kind>formal_charge</kind>
+      <value>0</value>
+      <source>ChemAxon</source>
+    </property>
+  </predicted_properties>
+  <spectra>
+    <spectrum>
+      <type>Specdb::CMs</type>
+      <spectrum_id>74</spectrum_id>
+    </spectrum>
+    <spectrum>
+      <type>Specdb::NmrOneD</type>
+      <spectrum_id>1025</spectrum_id>
+    </spectrum>
+    <spectrum>
+      <type>Specdb::MsMs</type>
+      <spectrum_id>10</spectrum_id>
+    </spectrum>
+    <spectrum>
+      <type>Specdb::MsMs</type>
+      <spectrum_id>11</spectrum_id>
+    </spectrum>
+    <spectrum>
+      <type>Specdb::MsMs</type>
+      <spectrum_id>12</spectrum_id>
+    </spectrum>
+    <spectrum>
+      <type>Specdb::MsMs</type>
+      <spectrum_id>2523</spectrum_id>
+    </spectrum>
+    <spectrum>
+      <type>Specdb::MsMs</type>
+      <spectrum_id>2524</spectrum_id>
+    </spectrum>
+    <spectrum>
+      <type>Specdb::MsMs</type>
+      <spectrum_id>2525</spectrum_id>
+    </spectrum>
+    <spectrum>
+      <type>Specdb::MsMs</type>
+      <spectrum_id>6533</spectrum_id>
+    </spectrum>
+    <spectrum>
+      <type>Specdb::NmrTwoD</type>
+      <spectrum_id>918</spectrum_id>
+    </spectrum>
+  </spectra>
+  <biofluid_locations>
+    <biofluid>Blood</biofluid>
+    <biofluid>Cerebrospinal Fluid (CSF)</biofluid>
+    <biofluid>Urine</biofluid>
+  </biofluid_locations>
+  <tissue_locations>
+    <tissue>Prostate</tissue>
+  </tissue_locations>
+  <pathways>
+  </pathways>
+  <normal_concentrations>
+    <concentration>
+      <biofluid>Blood</biofluid>
+      <concentration_value>54.0 (8.0-80.0)</concentration_value>
+      <concentration_units>uM</concentration_units>
+      <subject_age>Adult (&gt;18 years old)</subject_age>
+      <subject_sex>Both</subject_sex>
+      <subject_condition>Normal</subject_condition>
+      <references>
+        <reference>
+          <reference_text>Hoffmann GF, Meier-Augenstein W, Stockler S, Surtees R, Rating D, Nyhan WL: Physiology and pathophysiology of organic acids in cerebrospinal fluid.  J Inherit Metab Dis. 1993;16(4):648-69.</reference_text>
+          <pubmed_id>8412012</pubmed_id>
+        </reference>
+      </references>
+    </concentration>
+    <concentration>
+      <biofluid>Cerebrospinal Fluid (CSF)</biofluid>
+      <concentration_value>40.0 +/- 24.0</concentration_value>
+      <concentration_units>uM</concentration_units>
+      <subject_age>Not Specified</subject_age>
+      <subject_sex>Both</subject_sex>
+      <subject_condition>Normal</subject_condition>
+      <references>
+        <reference>
+          <reference_text>Wishart DS, Lewis MJ, Morrissey JA, Flegel MD, Jeroncic K, Xiong Y, Cheng D, Eisner R, Gautam B, Tzur D, Sawhney S, Bamforth F, Greiner R, Li L: The human cerebrospinal fluid metabolome.  J Chromatogr B Analyt Technol Biomed Life Sci. 2008 Aug 15;871(2):164-173.       Epub 2008 May 8.</reference_text>
+          <pubmed_id>18502700</pubmed_id>
+        </reference>
+      </references>
+    </concentration>
+    <concentration>
+      <biofluid>Cerebrospinal Fluid (CSF)</biofluid>
+      <concentration_value>85.0</concentration_value>
+      <concentration_units>uM</concentration_units>
+      <subject_age>Adult (&gt;18 years old)</subject_age>
+      <subject_sex>Both</subject_sex>
+      <subject_condition>Normal</subject_condition>
+      <references>
+        <reference>
+          <reference_text>Wishart DS, Lewis MJ, Morrissey JA, Flegel MD, Jeroncic K, Xiong Y, Cheng D, Eisner R, Gautam B, Tzur D, Sawhney S, Bamforth F, Greiner R, Li L: The human cerebrospinal fluid metabolome.  J Chromatogr B Analyt Technol Biomed Life Sci. 2008 Aug 15;871(2):164-173.       Epub 2008 May 8.</reference_text>
+          <pubmed_id>18502700</pubmed_id>
+        </reference>
+      </references>
+    </concentration>
+    <concentration>
+      <biofluid>Cerebrospinal Fluid (CSF)</biofluid>
+      <concentration_value>37 +/- 21 (10 - 76)</concentration_value>
+      <concentration_units>uM</concentration_units>
+      <subject_age>Children (1-13 year old)</subject_age>
+      <subject_sex>Both</subject_sex>
+      <subject_condition>Normal</subject_condition>
+      <references>
+        <reference>
+          <reference_text>Hoffmann GF, Seppel CK, Holmes B, Mitchell L, Christen HJ, Hanefeld F, Rating D, Nyhan WL: Quantitative organic acid analysis in cerebrospinal fluid and plasma: reference values in a pediatric population. J Chromatogr. 1993 Jul 23;617(1):1-10.</reference_text>
+          <pubmed_id>8376520</pubmed_id>
+        </reference>
+      </references>
+    </concentration>
+    <concentration>
+      <biofluid>Cerebrospinal Fluid (CSF)</biofluid>
+      <concentration_value>35.0 +/- 24.0 </concentration_value>
+      <concentration_units>uM</concentration_units>
+      <subject_age>Adult (&gt;18 years old)</subject_age>
+      <subject_sex>Both</subject_sex>
+      <subject_condition>Normal</subject_condition>
+      <references>
+        <reference>
+          <reference_text>Hoffmann GF, Meier-Augenstein W, Stockler S, Surtees R, Rating D, Nyhan WL: Physiology and pathophysiology of organic acids in cerebrospinal fluid.  J Inherit Metab Dis. 1993;16(4):648-69.</reference_text>
+          <pubmed_id>8412012</pubmed_id>
+        </reference>
+      </references>
+    </concentration>
+    <concentration>
+      <biofluid>Urine</biofluid>
+      <concentration_value>2.445 (0-4.89)</concentration_value>
+      <concentration_units>umol/mmol creatinine</concentration_units>
+      <subject_age>Not Specified</subject_age>
+      <subject_sex>Both</subject_sex>
+      <subject_condition>Normal</subject_condition>
+      <references>
+        <reference>
+          <reference_text>Landaas S, Pettersen JE: Clinical conditions associated with urinary excretion of 2-hydroxybutyric acid. Scand J Clin Lab Invest. 1975 May;35(3):259-66.</reference_text>
+          <pubmed_id>168632</pubmed_id>
+        </reference>
+      </references>
+    </concentration>
+    <concentration>
+      <biofluid>Urine</biofluid>
+      <concentration_value>2.8 (1.2-6.9)</concentration_value>
+      <concentration_units>umol/mmol creatinine</concentration_units>
+      <subject_age>Adult (&gt;18 years old)</subject_age>
+      <subject_sex>Both</subject_sex>
+      <subject_condition>Normal</subject_condition>
+      <comment>urine by NMR</comment>
+      <references>
+        <reference>
+          <reference_text>Bouatra S, Aziat F, Mandal R, Guo AC, Wilson MR, Knox C, Bjorndahl TC, Krishnamurthy R, Saleem F, Liu P, Dame ZT, Poelzer J, Huynh J, Yallou FS, Psychogios N, Dong E, Bogumil R, Roehring C, Wishart DS: The human urine metabolome. PLoS One. 2013 Sep 4;8(9):e73076. doi: 10.1371/journal.pone.0073076.</reference_text>
+          <pubmed_id>24023812</pubmed_id>
+        </reference>
+      </references>
+    </concentration>
+    <concentration>
+      <biofluid>Urine</biofluid>
+      <concentration_value>5.0 (0.0-10.0)</concentration_value>
+      <concentration_units>umol/mmol creatinine</concentration_units>
+      <subject_age>Infant (0-1 year old)</subject_age>
+      <subject_sex>Both</subject_sex>
+      <subject_condition>Normal</subject_condition>
+      <references>
+        <reference>
+          <reference_text>Geigy Scientific Tables, 8th Rev edition, pp. 130. Edited by C. Lentner, West Cadwell, N.J.: Medical education Div., Ciba-Geigy Corp. Basel, Switzerland c1981-1992.</reference_text>
+          <pubmed_id/>
+        </reference>
+      </references>
+    </concentration>
+  </normal_concentrations>
+  <abnormal_concentrations>
+    <concentration>
+      <biofluid>Urine</biofluid>
+      <concentration_value>&gt;25.0</concentration_value>
+      <concentration_units>umol/mmol creatinine</concentration_units>
+      <patient_age>Adult (&gt;18 years old)</patient_age>
+      <patient_sex>Both</patient_sex>
+      <patient_information>Pyruvate dehydrogenase deficiency</patient_information>
+      <references>
+        <reference>
+          <reference_text>OMIM 238331</reference_text>
+          <pubmed_id/>
+        </reference>
+      </references>
+    </concentration>
+  </abnormal_concentrations>
+  <diseases>
+    <disease>
+      <name>Pyruvate dehydrogenase deficiency</name>
+      <omim_id>312170</omim_id>
+      <references>
+        <reference>
+          <reference_text>OMIM 238331</reference_text>
+          <pubmed_id/>
+        </reference>
+      </references>
+    </disease>
+  </diseases>
+  <drugbank_id></drugbank_id>
+  <drugbank_metabolite_id/>
+  <phenol_explorer_compound_id/>
+  <phenol_explorer_metabolite_id/>
+  <foodb_id>FDB021867</foodb_id>
+  <knapsack_id></knapsack_id>
+  <chemspider_id>10792</chemspider_id>
+  <kegg_id>C05984</kegg_id>
+  <biocyc_id>CPD-3564</biocyc_id>
+  <bigg_id>47130</bigg_id>
+  <wikipidia>2-Hydroxybutyric acid</wikipidia>
+  <nugowiki>4</nugowiki>
+  <metagene></metagene>
+  <metlin_id>3783</metlin_id>
+  <pubchem_compound_id>11266</pubchem_compound_id>
+  <het_id></het_id>
+  <chebi_id>1148</chebi_id>
+  <synthesis_reference>Carlier, J. P.; Henry, C.; Lorin, V.; Rouffignat, K. Conversion of DL-threonine, D-threonine and 2-oxobutyrate into propionate and 2-hydroxybutyrate by Fusobacterium species. Letters in Applied Microbiology  (1997),  25(5),  371-374.  </synthesis_reference>
+  <general_references>
+    <reference>
+      <reference_text>Sweatman BC, Farrant RD, Holmes E, Ghauri FY, Nicholson JK, Lindon JC: 600 MHz 1H-NMR spectroscopy of human cerebrospinal fluid: effects of sample manipulation and assignment of resonances. J Pharm Biomed Anal. 1993 Aug;11(8):651-64.</reference_text>
+      <pubmed_id>8257730</pubmed_id>
+    </reference>
+    <reference>
+      <reference_text>Landaas S, Pettersen JE: Clinical conditions associated with urinary excretion of 2-hydroxybutyric acid. Scand J Clin Lab Invest. 1975 May;35(3):259-66.</reference_text>
+      <pubmed_id>168632</pubmed_id>
+    </reference>
+    <reference>
+      <reference_text>Sreekumar A, Poisson LM, Rajendiran TM, Khan AP, Cao Q, Yu J, Laxman B, Mehra R, Lonigro RJ, Li Y, Nyati MK, Ahsan A, Kalyana-Sundaram S, Han B, Cao X, Byun J, Omenn GS, Ghosh D, Pennathur S, Alexander DC, Berger A, Shuster JR, Wei JT, Varambally S, Beecher C, Chinnaiyan AM: Metabolomic profiles delineate potential role for sarcosine in prostate cancer progression. Nature. 2009 Feb 12;457(7231):910-4.</reference_text>
+      <pubmed_id>19212411</pubmed_id>
+    </reference>
+    <reference>
+      <reference_text>Li X, Xu Z, Lu X, Yang X, Yin P, Kong H, Yu Y, Xu G: Comprehensive two-dimensional gas chromatography/time-of-flight mass spectrometry for metabonomics: Biomarker discovery for diabetes mellitus. Anal Chim Acta. 2009 Feb 9;633(2):257-62. doi: 10.1016/j.aca.2008.11.058. Epub 2008 Dec 3.</reference_text>
+      <pubmed_id>19166731</pubmed_id>
+    </reference>
+    <reference>
+      <reference_text>Gall WE, Beebe K, Lawton KA, Adam KP, Mitchell MW, Nakhle PJ, Ryals JA, Milburn MV, Nannipieri M, Camastra S, Natali A, Ferrannini E: alpha-hydroxybutyrate is an early biomarker of insulin resistance and glucose intolerance in a nondiabetic population. PLoS One. 2010 May 28;5(5):e10883. doi: 10.1371/journal.pone.0010883.</reference_text>
+      <pubmed_id>20526369</pubmed_id>
+    </reference>
+    <reference>
+      <reference_text>Aldrich Library of FT-IR Spectra, 1st edn., 1985, 1, 548D</reference_text>
+    </reference>
+    <reference>
+      <reference_text>Mori, K. et al., Tetrahedron, 1979, 35, 1601</reference_text>
+    </reference>
+    <reference>
+      <reference_text>Levene, P.A. et al., J. Biol. Chem., 1941, 141, 391</reference_text>
+    </reference>
+    <reference>
+      <reference_text>Duvillier, E., Ann. Chim. Phys., 1879, 17, 532</reference_text>
+    </reference>
+    <reference>
+      <reference_text>Chenault, H.K. et al., J.O.C., 1987, 52, 2608</reference_text>
+    </reference>
+    <reference>
+      <reference_text>Aldrich Library of 13C and 1H FT NMR Spectra, 1992, 1, 854B</reference_text>
+    </reference>
+    <reference>
+      <reference_text>Horn, D.H.S. et al., J.C.S., 1954, 1460</reference_text>
+    </reference>
+    <reference>
+      <reference_text>Wong, C.H. et al., J.O.C., 1985, 50, 1992</reference_text>
+    </reference>
+  </general_references>
+  <protein_associations>
+    <protein>
+      <protein_accession>HMDBP00893</protein_accession>
+      <name>L-lactate dehydrogenase A-like 6A</name>
+      <uniprot_id>Q6ZMR3</uniprot_id>
+      <gene_name>LDHAL6A</gene_name>
+      <protein_type>Unknown</protein_type>
+    </protein>
+    <protein>
+      <protein_accession>HMDBP00054</protein_accession>
+      <name>Dihydrolipoyl dehydrogenase, mitochondrial</name>
+      <uniprot_id>P09622</uniprot_id>
+      <gene_name>DLD</gene_name>
+      <protein_type>Unknown</protein_type>
+    </protein>
+    <protein>
+      <protein_accession>HMDBP03581</protein_accession>
+      <name>L-lactate dehydrogenase A-like 6B</name>
+      <uniprot_id>Q9BYZ2</uniprot_id>
+      <gene_name>LDHAL6B</gene_name>
+      <protein_type>Unknown</protein_type>
+    </protein>
+    <protein>
+      <protein_accession>HMDBP03579</protein_accession>
+      <name>L-lactate dehydrogenase A chain</name>
+      <uniprot_id>P00338</uniprot_id>
+      <gene_name>LDHA</gene_name>
+      <protein_type>Unknown</protein_type>
+    </protein>
+    <protein>
+      <protein_accession>HMDBP03577</protein_accession>
+      <name>L-lactate dehydrogenase B chain</name>
+      <uniprot_id>P07195</uniprot_id>
+      <gene_name>LDHB</gene_name>
+      <protein_type>Unknown</protein_type>
+    </protein>
+    <protein>
+      <protein_accession>HMDBP03578</protein_accession>
+      <name>L-lactate dehydrogenase C chain</name>
+      <uniprot_id>P07864</uniprot_id>
+      <gene_name>LDHC</gene_name>
+      <protein_type>Unknown</protein_type>
+    </protein>
+  </protein_associations>
+</metabolite>
