@@ -25,6 +25,7 @@ def get_theo_ip(emass_path, f, min_rel_int=5.0):
     """
     # todo ask wich adducts to pass in parameter
     formula is a string meaning compound
+    :param emass_path:
     :param min_rel_int:
     """
     p = subprocess.Popen(emass_path, stdin=subprocess.PIPE, stdout=subprocess.PIPE)

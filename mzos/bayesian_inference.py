@@ -107,7 +107,7 @@ class BayesianInferer(object):
         can raise IOError
         :return:
         """
-        with open(op.normcase("mzos/ressources/reaction.reac"), 'rb') as f:
+        with open(op.normcase("ressources/reaction.reac"), 'rb') as f:
             reactions = cPickle.load(f)
         return reactions
 
@@ -201,6 +201,9 @@ class BayesianInferer(object):
 
             sample = np.random.multinomial(1, norm_probs, size=1)[0]
 
+            if not all([x == 0 or x == 1 for x in sample]):
+                continue
+
             sampled_metab_id = metabs[np.where(sample == 1)[0][0]].kegg_id
 
             # add to the assigned features
@@ -241,6 +244,9 @@ class BayesianInferer(object):
 
         #sample metabolites using numpy multinomial function
         sample = np.random.multinomial(1, norm_probs, size=1)[0]
+
+        if not all([x == 0 or x == 1 for x in sample]):
+            return  #continue
 
         # find index
         sampled_metab_id = metabs[np.where(sample == 1)[0][0]].kegg_id
@@ -285,7 +291,7 @@ class BayesianInferer(object):
                 counts = counter[m.kegg_id]
                 prob_by_metab_by_feature[f][m.kegg_id] = counts / n_samples  #(counts - n_burning_samples ) / float(n_s)
 
-    def infer_assignment_probabilities(self, n_samples=200, n_burning_sample=10):
+    def infer_assignment_probabilities(self, n_samples=1000, n_burning_sample=10):
         """
         Main function
         :param n_samples:

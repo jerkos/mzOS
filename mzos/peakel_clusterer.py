@@ -2,6 +2,7 @@ import logging
 
 import scipy as sp
 import numpy as np
+from sklearn.metrics.pairwise import pairwise_distances
 
 from clustering import clusterize_basic, clusterize_hierarchical, clusterize_dbscan
 
@@ -76,6 +77,7 @@ class PeakelClusterer(object):
         
         """
         if self.rt_method == 1:
+            logging.info("Basic clustering with rt_error:{}".format(error_rt))
             if not isinstance(error_rt, float):
                 raise TypeError("[clusterize]: args[0] is not a float")
             return clusterize_basic(self.peakels, self.BASIC_RT_CALLABLE, error_rt)
@@ -86,8 +88,15 @@ class PeakelClusterer(object):
             return clusterize_hierarchical(self.peakels, matrix_dist, "", error_rt).values()
 
         elif self.rt_method == 3:
+            logging.info('DB SCAN clustering with error_rt:{}'.format(error_rt))
             rts = [[x.rt] for x in self.peakels]
-            return clusterize_dbscan(rts, self.peakels, eps=error_rt, min_samples=1)
+            clusters = clusterize_dbscan(rts, self.peakels, eps=0.35)
+            # with open('clusters.txt', 'w') as f:
+            #     for c in clusters:
+            #         for fe in c:
+            #             f.write(str(fe.rt) + '\n')
+            #         f.write('\n')
+            return clusters  # eps=error_rt / 2.0, min_samples=1)
 
         else:
             raise ValueError("wrong clustering technique !")
@@ -122,13 +131,15 @@ class PeakelClusterer(object):
         if len(rt_cluster) == 1:
             return []  #rt_cluster, []
         
-        clust_list = None
+        #clust_list = None
         if self.corr_int_method == 1:
             clust_list = clusterize_basic(rt_cluster, self.BASIC_CORR_INT_CALLABLE, distance_corr)
         
         elif self.corr_int_method == 2:
             ints = [x.area_by_sample_name.values() for x in rt_cluster]  #
-            matrix_dist = sp.spatial.distance.pdist(np.array(ints), metric='correlation')
+            #matrix_dist = sp.spatial.distance.pdist(np.array(ints), metric='correlation')
+            #ude by default all cores on the machine
+            matrix_dist = pairwise_distances(np.array(ints), metric='correlation', n_jobs=-1)
             clust_list = clusterize_hierarchical(rt_cluster, matrix_dist, distance_corr, clip=True)
         else:
             raise ValueError("dbscan not supported for intensities correlation clustering")

@@ -164,16 +164,17 @@ class ResultsExporter(object):
                                                            all_possible_attribution)
 
                 f.write(feature_header)
-                feature_metabolites = [(a.metabolite, a.score_isos, a.score_network)
+                feature_metabolites = [(a.for_adduct, a.metabolite, a.score_isos, a.score_network)
                                        for a in feature.annotations]
 
-                for idx, (metabolite, score1, score2) in enumerate(feature_metabolites):
+                for idx, (for_adduct, metabolite, score1, score2) in enumerate(feature_metabolites):
                     data = ";".join([ResultsExporter.HMDB + metabolite.hmdb_id,  #acession,
                                      ResultsExporter.KEGG + metabolite.kegg_id]).encode("utf-8")
                     data = data.replace("\t", "")
 
                     s = feature_header if idx > 0 else ""
-                    s += "\t".join([metabolite.name.encode("utf-8"),
+                    s += "\t".join([
+                                    ": ".join([for_adduct, metabolite.name.encode("utf-8")]),
                                     metabolite.formula.encode("utf-8"),
                                     metabolite.inchi.encode("utf-8"),
 

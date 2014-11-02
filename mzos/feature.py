@@ -60,13 +60,14 @@ class Annotation(object):
 
     def __init__(self,
                  metabolite,
+                 for_adduct,
                  score_isos=0.0,
                  score_network=0.0):
 
         self.metabolite = metabolite
         self.score_isos = score_isos
         self.score_network = score_network
-        self.annot_for_adduct = None
+        self.for_adduct = for_adduct
 
     def has_br_atom(self):
         """could be introduced in the model """

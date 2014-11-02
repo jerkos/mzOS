@@ -50,7 +50,7 @@ class TestClustering(unittest.TestCase):
         self.f3.set_main_attribution(Attribution('[M+Na+]', self.f1.id, 1))
         t = ("acession", "name", "formula", "inchi", "mono_mass", "average_mass", "description", "status", "origin",
              "kegg_id", "isotopic_pattern_pos", "isotopic_pattern_neg")
-        self.f1.annotations.append(Annotation(metabolite=Metabolite(*t)))
+        self.f1.annotations.append(Annotation(metabolite=Metabolite(*t), for_adduct='H2'))
 
     def test_clusterize_basic(self):
         clusters = clusterize_basic(self.features, PeakelClusterer.BASIC_RT_CALLABLE, 6.0)
@@ -66,6 +66,11 @@ class TestClustering(unittest.TestCase):
 
     def test_clusterize_dbscan_rt(self):
         clusters = clusterize_dbscan([[x.rt] for x in self.features], self.features, eps=3.0, min_samples=1)
+        for c in clusters:
+            for f in c:
+                print f.rt
+            print '\n'
+
         print("len clusters dbscan: {}".format(len(clusters)))
         self.assertGreaterEqual(4, len(clusters))
 
@@ -181,8 +186,6 @@ class TestClustering(unittest.TestCase):
         self.assertEqual(str(f), fstr)
 
         f.remove('C5H3O12')
-        print "f", f
-        print "str(f)", str(f)
         self.assertEqual(str(f), 'CH9')
 
         d = {'C': 148, 'H': 122}
@@ -207,7 +210,17 @@ class TestClustering(unittest.TestCase):
         self.assertIsNot(f5, f3)
         self.assertEqual(str(f5), 'C3H11')
 
-        #print f5.get_theo_ip()
+        #test + -
+        i = Formula.from_str('C4H4O4')
+        i += 'C4H4O4'
+        self.assertEqual(str(i), 'C8H8O8')
+
+        j = i + 'C2H2O2'
+        self.assertIsNot(j, i)
+        self.assertEqual(str(j), 'C10H10O10')
+        self.assertEqual(str(i), 'C8H8O8')
+
+        #not exits anymore print f5.get_theo_ip()
 
     def test_script_hmdb(self):
         from mzos.scripts.hmdb_sqlite_creator import build_library
@@ -216,7 +229,33 @@ class TestClustering(unittest.TestCase):
                       op.normcase(Formula.EMASS_PATH))
         self.assertTrue(op.exists('hmdb_test.sqlite'))
 
+    def test_dbscan_clustering_for_alignment(self):
+        f1 = Peakel(1256.52, 0.0, 0.0, 100.0)
+        f2 = Peakel(1258.52, 0.0, 0.0, 500.52)
+        f3 = Peakel(1257.52, 0.0, 0.0, 101.52)
+        f4 = Peakel(1600.52, 0.0, 0.0, 99.52)
+        f7 = Peakel(1600.86, 0.0, 0.0, 107.12)
+        f5 = Peakel(1600.52, 0.0, 0.0, 3205.52)
+        f6 = Peakel(1456.52, 0.0, 0.0, 600.52)
+
+        peakels = [f1, f2, f3, f4, f5, f6, f7]
+        peakels_by_sample = {'a': {f1, f2, f4}, 'b': {f3, f5, f6}}
+
+        sample_by_peakel = {f1: 'a', f2: 'a', f4: 'a', f3: 'b', f5: 'b', f6: 'b', f7: 'b'}
+        values = [[x.moz, x.rt] for x in peakels]
+
+        clusters = clusterize_dbscan(values, peakels, eps=5, min_samples=1)
+
+        for c in clusters:
+            for p in c:
+                print p.moz, p.rt, sample_by_peakel[p]
+            print '\n'
+
+
     @classmethod
     def tearDownClass(cls):
         import os
-        os.remove('hmdb_test.sqlite')
+        try:
+            os.remove('hmdb_test.sqlite')
+        except (WindowsError, IOError):
+            pass

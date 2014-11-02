@@ -23,6 +23,7 @@ from itertools import izip
 import multiprocessing
 from collections import namedtuple
 from feature import Annotation
+from formula import Formula
 
 
 class MolecularEntity(object):
@@ -87,12 +88,19 @@ class IDatabaseSearcher(object):
         raise NotImplementedError
 
     @staticmethod
-    def get_moz_bounds(feature, mz_tol_ppm):
+    def get_moz_bounds(feature, for_adduct, mz_tol_ppm):
         """
+        :param for_adduct: Formula
         :param feature:
         :param mz_tol_ppm:
         """
-        mass = feature.get_real_mass()
+        mass = feature.moz * feature.charge
+        ad_mass = for_adduct.mono_mass()
+        if feature.polarity < 0:
+            mass += ad_mass
+        else:
+            mass -= ad_mass
+
         tol_da = mass * mz_tol_ppm / 1e6
         return mass, mass - tol_da, mass + tol_da
 
@@ -102,11 +110,8 @@ def search_metabolites_for(args):
     pickling problem if use inside class
     :param args: database, feature, with_tol_ppm
     """
-    database, feature, with_tol_ppm = args[0], args[1], args[2]
-    #mass = feature.get_real_mass()
-    # tol_da = mass * with_tol_ppm / 1e6
-    # min_mass, max_mass = mass - tol_da, mass + tol_da
-    mass, min_mass, max_mass = IDatabaseSearcher.get_moz_bounds(feature, with_tol_ppm)
+    database, feature, formula, with_tol_ppm = args[0], args[1], args[2], args[3]
+    mass, min_mass, max_mass = IDatabaseSearcher.get_moz_bounds(feature, formula, with_tol_ppm)
 
     conn = sqlite3.connect(database)
     c = conn.cursor()
@@ -120,28 +125,26 @@ def search_metabolites_for(args):
     return metabolites
 
 
-
-def search_entities_for(args):
-    """
-    intend to be more generic than search_metabolite_for
-    pickling problem if use inside class
-    :param args: database, feature, with_tol_ppm
-    """
-    lipids = 'select * lipid where exact_mass >='
-    database, feature, with_tol_ppm, db = args[0], args[1], args[2], args[3]
-    mass, min_mass, max_mass = IDatabaseSearcher.get_moz_bounds(feature, with_tol_ppm)
-
-    conn = sqlite3.connect(database)
-    c = conn.cursor()
-    metabolites = []
-    for row in c.execute('select * from metabolite where mono_mass >=  ? and mono_mass <= ?', (min_mass, max_mass)):
-        m = Metabolite(*row)  #Metabolite._make(row)  got warning du to the underscore
-        if m.kegg_id is not None:
-            metabolites.append(m)
-    conn.close()
-    metabolites.sort(key=lambda _: abs(_.mono_mass - mass))
-    return metabolites
-
+# def search_entities_for(args):
+#     """
+#     intend to be more generic than search_metabolite_for
+#     pickling problem if use inside class
+#     :param args: database, feature, with_tol_ppm
+#     """
+#     lipids = 'select * lipid where exact_mass >='
+#     database, feature, with_tol_ppm, db = args[0], args[1], args[2], args[3]
+#     mass, min_mass, max_mass = IDatabaseSearcher.get_moz_bounds(feature, with_tol_ppm)
+#
+#     conn = sqlite3.connect(database)
+#     c = conn.cursor()
+#     metabolites = []
+#     for row in c.execute('select * from metabolite where mono_mass >=  ? and mono_mass <= ?', (min_mass, max_mass)):
+#         m = Metabolite(*row)  #Metabolite._make(row)  got warning du to the underscore
+#         if m.kegg_id is not None:
+#             metabolites.append(m)
+#     conn.close()
+#     metabolites.sort(key=lambda _: abs(_.mono_mass - mass))
+#     return metabolites
 
 
 # def search_lipids_for(args):
@@ -160,8 +163,8 @@ class DatabaseSearch(IDatabaseSearcher):
     :param bank:
     :param exp_design:
     """
-    HMDB_FILE = op.normcase("mzos/ressources/hmdb.sqlite")
-    LMSD_FILE = op.normcase("mzos/ressources/lmsd.sqlite")
+    HMDB_FILE = op.normcase("ressources/hmdb.sqlite")
+    LMSD_FILE = op.normcase("ressources/lmsd.sqlite")
 
     def __init__(self, bank, exp_design):
         self.exp_design = exp_design
@@ -169,23 +172,36 @@ class DatabaseSearch(IDatabaseSearcher):
         self.bank = 'hmdb' if bank not in ['hmdb, kegg'] else bank  #self.exp_design.databases
         logging.info("Performing database search in {} {}".format(self.bank, 'v3.5'))
 
-    def assign_formula(self, features, with_tol_ppm=10.0):
+    def assign_formula(self, features, for_adducts, with_tol_ppm=10.0):
         """
         assign molecular formula to features using multiprocessing module
+        :param for_adducts: string adducts list
         :param features: list or set ? of features
         :param with_tol_ppm: mz tolerance in order to perform the look up
         :return: dictionary with key: feature, value: list of metabolites
         """
-        pool = multiprocessing.Pool(processes=multiprocessing.cpu_count())
-        args = [(self.HMDB_FILE, f_, with_tol_ppm) for f_ in features]
-        metabs = pool.map(search_metabolites_for, args, chunksize=20)
-        pool.close()
-        # create Annotation objects
         m_count, not_found = 0, 0
-        for f, metabs in izip(features, metabs):
-            if not metabs:
-                not_found += 1
-            else:
-                m_count += len(metabs)
-            f.annotations = [Annotation(m) for m in metabs]
+        for for_adduct in for_adducts:
+            formula = Formula.from_str(for_adduct)
+            logging.info("searching for adducts: {}".format(str(formula)))
+
+            pool = multiprocessing.Pool(processes=multiprocessing.cpu_count())
+            args = [(self.HMDB_FILE, f, formula, with_tol_ppm) for f in features]
+            metabs = pool.map(search_metabolites_for, args, chunksize=20)
+            pool.close()
+
+            #DEBUG CODE
+            # metabs = []
+            # for f in features:
+            #     metabs += search_metabolites_for((self.HMDB_FILE, f, formula, with_tol_ppm))
+
+            # create Annotation objects
+
+            for f, metabs in izip(features, metabs):
+                if not metabs:
+                    not_found += 1
+                else:
+                    m_count += len(metabs)
+                for_adducts_str = '[M{}{}]='.format('-' if f.polarity > 0 else '+', formula)
+                f.annotations += [Annotation(m, for_adducts_str) for m in metabs]
         return m_count, not_found
