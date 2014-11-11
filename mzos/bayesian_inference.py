@@ -26,58 +26,11 @@ import os.path as op
 import math
 import cPickle
 
-#from mzos.scripts.get_kegg_reactions import load_reactions
 from scipy.stats import norm
 import numpy as np
 
 import reac
 sys.modules['reac'] = reac
-
-
-def _sample_metabolite(args):  #feature, mz_tol_ppm, probs_by_metab_id, counter):
-        """
-        Sample metabolites from previous assigned metabolites (assigned_features)
-        assigned
-        """
-        assigned_features = set()
-
-        feature, mz_tol_ppm, probs_by_metab, counter = args[0], args[1], args[2], args[3]
-
-        feature_mass = feature.get_real_mass()
-
-        # retrieve metabolites from that feature
-        metabs = feature.get_metabolites()
-
-        #no metabolites
-        if not metabs:
-            return
-
-        #one metabolite
-        if len(metabs) == 1:
-            counter[metabs[0].kegg_id] += 1
-            assigned_features.add(metabs[0].kegg_id)
-            return
-
-        #calc prior probabilities: N(m, mz_tol) * n_assigned / n
-        probs = [BayesianInferer._calc_prob(m.mono_mass, feature_mass,
-                 mz_tol_ppm) * probs_by_metab[m.kegg_id] for m in metabs]
-
-        #normalize probabilities, which sum is almost one
-        norm_probs = BayesianInferer._norm_prob(probs)
-
-        #sample metabolites using numpy multinomial function
-        sample = np.random.multinomial(1, norm_probs, size=1)[0]
-
-        # find index
-        sampled_metab_id = metabs[np.where(sample == 1)[0][0]].kegg_id
-
-        # add to the assigned features
-        assigned_features.add(sampled_metab_id)
-
-        #update counters
-        counter[sampled_metab_id] += 1
-
-        return assigned_features, counter
 
 
 class BayesianInferer(object):
@@ -88,6 +41,9 @@ class BayesianInferer(object):
     are normal and are ponderated by a coefficient resulting
     og the analysis of the network
     """
+
+    REACTIONS_FILE = "ressources/reaction.reac"
+
     def __init__(self, features, experiment):
         """
         features: list of peakels instances
@@ -107,7 +63,8 @@ class BayesianInferer(object):
         can raise IOError
         :return:
         """
-        with open(op.normcase("ressources/reaction.reac"), 'rb') as f:
+        #with open(op.normcase("ressources/reaction.reac"), 'rb') as f:
+        with open(op.abspath(BayesianInferer.REACTIONS_FILE)) as f:
             reactions = cPickle.load(f)
         return reactions
 
@@ -138,8 +95,6 @@ class BayesianInferer(object):
         """
         s = sum(probs)
         return [p / s for p in probs]
-        #s = np.sum(probs)
-        #probs /= s
 
     @staticmethod
     def _calc_prob(m_obs, m_theo, mz_tol_ppm):
@@ -201,6 +156,7 @@ class BayesianInferer(object):
 
             sample = np.random.multinomial(1, norm_probs, size=1)[0]
 
+            # ?
             if not all([x == 0 or x == 1 for x in sample]):
                 continue
 
@@ -245,6 +201,7 @@ class BayesianInferer(object):
         #sample metabolites using numpy multinomial function
         sample = np.random.multinomial(1, norm_probs, size=1)[0]
 
+        #?
         if not all([x == 0 or x == 1 for x in sample]):
             return  #continue
 
@@ -262,7 +219,8 @@ class BayesianInferer(object):
         """
         #using multiprocessing it is much slower
         # pool = multiprocessing.Pool(processes=multiprocessing.cpu_count())
-        # args = [(f, self.experiment.mz_tol_ppm, probs_by_metab_id_by_f[f], counter_by_feature[f]) for f in self.features]
+        # args = [(f, self.experiment.mz_tol_ppm, probs_by_metab_id_by_f[f],
+        # counter_by_feature[f]) for f in self.features]
         # assigned_mets_and_counters = pool.map(_sample_metabolite, args, chunksize=500)
         # pool.close()
         #
@@ -283,13 +241,15 @@ class BayesianInferer(object):
     def _calc_posterior_probs(counter_by_feature, prob_by_metab_by_feature, n_samples, n_burning_samples):
         """
         Reduce step, compute frequencies
+        TODO: counting problem with burning samples ?
         """
         #n_s = float(n_samples - n_burning_samples)
         for f, counter in counter_by_feature.iteritems():
             metabs = f.get_metabolites()
             for m in metabs:
                 counts = counter[m.kegg_id]
-                prob_by_metab_by_feature[f][m.kegg_id] = counts / n_samples  #(counts - n_burning_samples ) / float(n_s)
+                #(counts - n_burning_samples ) / float(n_s)
+                prob_by_metab_by_feature[f][m.kegg_id] = counts / n_samples
 
     def infer_assignment_probabilities(self, n_samples=1000, n_burning_sample=10):
         """
@@ -341,10 +301,10 @@ class BayesianInferer(object):
                                    prob_by_metab_by_feature,
                                    n_samples, n_burning_sample)
 
-
         for f, prob_by_metab in prob_by_metab_by_feature.iteritems():
             for metab_id, prob in prob_by_metab.iteritems():
                 if math.isnan(prob):
+                    #never should happen
                     raise ValueError("nan probability")
                 annotation_by_metab_id_by_feature[f][metab_id].score_network = prob
 
