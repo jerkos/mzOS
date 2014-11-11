@@ -175,7 +175,10 @@ class Peakel(object):
         """
         :return:
         """
-        output, n_isos, n_adducts = self._build_branch_str_v2(None, self.charge, self, self.isotopes.union(self.adducts))
+        output, n_isos, n_adducts = self._build_branch_str_v2(None,
+                                                              self.charge,
+                                                              self,
+                                                              self.isotopes.union(self.adducts))
         output = output if not output.endswith(";") else output[:-1]
         output = output.replace(";)", ")")
         output = output.replace(";;", ";")
