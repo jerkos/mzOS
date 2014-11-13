@@ -13,7 +13,7 @@ from mzos.feature import Peakel
 class TestDatabaseSearch(unittest.TestCase):
 
     def setUp(self):
-        z = zipfile.ZipFile(op.normcase('mzos/ressources/hmdb.zip'))
+        z = zipfile.ZipFile(op.abspath('mzos/ressources/hmdb.zip'))
         self.hmdb_path = z.extract('hmdb.sqlite')
         print("Moving extracted archive...")
         shutil.move(self.hmdb_path, 'mzos/ressources/hmdb.sqlite')
