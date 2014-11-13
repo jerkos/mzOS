@@ -23,9 +23,9 @@ class ExperimentalSettings(object):
     :param ionisation_mode:
     :param is_dims_experiment:
     """
-    ADDUCTS_POS = op.normcase("ressources/POS_ADDUCTS_IMS.csv")
-    ADDUCTS_NEG = op.normcase("ressources/NEG_ADDUCTS_IMS.csv")
-    FRAGMENTS = op.normcase("ressources/FRAGMENTS_IMS.csv")
+    ADDUCTS_POS = op.abspath("ressources/POS_ADDUCTS_IMS.csv")
+    ADDUCTS_NEG = op.abspath("ressources/NEG_ADDUCTS_IMS.csv")
+    FRAGMENTS = op.abspath("ressources/FRAGMENTS_IMS.csv")
 
     ISOS = "ressources/"
 
