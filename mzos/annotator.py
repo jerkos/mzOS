@@ -17,6 +17,7 @@ __email__ = 'marc.dubois@omics-services.com'
 
 import logging
 from collections import defaultdict as ddict
+from itertools import chain
 
 from feature import PeakelIndex
 from peakel_clusterer import PeakelClusterer
@@ -380,7 +381,7 @@ class PeakelsAnnotator(object):
                 adducts_by_mo[possible_mo].append((add, attrib))
 
         #mos = adducts_by_mo.keys()
-        if adducts_by_mo:  #len(mos) > 0:
+        if adducts_by_mo:
             # in case there is only one mo per cluster
             best_mos_as_tuple = sorted(list(adducts_by_mo.items()), key=lambda x: len(x[1]))
             best_mos_as_tuple.reverse()
@@ -420,10 +421,14 @@ class PeakelsAnnotator(object):
         wrapper for each clusters
         :param clusters:
         """
-        l = list()
-        for x in clusters:
-            l += self._find_adducts_and_fragments_in_cluster(x)
-        return l
+
+        return chain.from_iterable([self._find_adducts_and_fragments_in_cluster(x)
+                                    for x in clusters])
+
+        # l = list()
+        # for x in clusters:
+        #     l += self._find_adducts_and_fragments_in_cluster(x)
+        # return l
         #return [self._find_adducts_and_fragments_in_cluster(x) for x in clusters]
 
     def annotate_(self, error_rt=6.0,
