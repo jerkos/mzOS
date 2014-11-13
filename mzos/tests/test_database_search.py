@@ -35,7 +35,7 @@ class TestDatabaseSearch(unittest.TestCase):
         peakel.polarity = -1
         peakels = [peakel]
         db_search = DatabaseSearch('hmdb', None)
-        db_search.assign_formula(peakels)
+        db_search.assign_formula(peakels, ['H1'])
         m_names = set()
         for f in peakels:
             for annot in f.annotations:
