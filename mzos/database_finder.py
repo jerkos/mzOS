@@ -22,6 +22,7 @@ from collections import defaultdict as ddict
 from itertools import izip
 import multiprocessing
 from collections import namedtuple
+
 from feature import Annotation
 from formula import Formula
 
@@ -163,8 +164,8 @@ class DatabaseSearch(IDatabaseSearcher):
     :param bank:
     :param exp_design:
     """
-    HMDB_FILE = op.normcase("ressources/hmdb.sqlite")
-    LMSD_FILE = op.normcase("ressources/lmsd.sqlite")
+    HMDB_FILE = op.abspath("ressources/hmdb.sqlite")
+    LMSD_FILE = op.abspath("ressources/lmsd.sqlite")
 
     def __init__(self, bank, exp_design):
         self.exp_design = exp_design
