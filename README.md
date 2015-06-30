@@ -6,13 +6,13 @@ mzOS
 
 **Collections of scripts for features annotations in  metabolomics experiments**:
 
-* isotopes detection
-* adducts annotation
-* database search (HMDB, LMSD)
-* annotation scoring
-* functionnal annotation, metabolite pathway enrichment analysis (MPEA)
+* [x] isotopes detection
+* [x] adducts annotation using simple heuristics and clustering
+* [x] database search (HMDB, LMSD) from local sqlite file (fast)
+* [x] annotation scoring based on predicted isotopic distribution and bayesian algorithm. 
+* [ ] functionnal annotation, metabolite pathway enrichment analysis (MPEA)
 
-More detail [here](http://jerkos.github.io/mzOS)
+More details [here](http://jerkos.github.io/mzOS)
 
 ### TODO:
 
