@@ -8,8 +8,7 @@ before_install:
 
 install:
   - pip install coveralls
-  - pip install scikit-learn
-  - pip install .
+  - pip install . #- pip install scikit-learn
 
 script: nosetests
 
