@@ -38,23 +38,24 @@ class TestResultExporter(unittest.TestCase):
 
         peakels = PeakListReader(op.normcase("mzos/ressources/peaks_matrix_NEG.tsv"), exp_settings).get_peakels()
 
-        ##annotation##
+        # annotation
         peakels_annotator = PeakelsAnnotator(peakels, exp_settings)
         best_monos = peakels_annotator.annotate_()
 
-         ##database finding##
+        # database finding
         db_search = DatabaseSearch('hmdb', exp_settings)
-        nb_metabs, not_found = db_search.assign_formula(peakels, exp_settings.mz_tol_ppm)
+        adducts_l = ['H1']
+        nb_metabs, not_found = db_search.assign_formula(peakels, adducts_l, exp_settings.mz_tol_ppm)
 
-        ##scoring
-        #first simplistic
+        # scoring
+        # first simplistic
         model = StatsModel(peakels, exp_settings.mz_tol_ppm * 1.5)
-        #populate annotations objects
+        # populate annotations objects
         model.calculate_score()
 
-        ##scoring 2##
+        # scoring 2
         bi = BayesianInferer(peakels, exp_settings)
-        #populate annotations object
+        # populate annotations object
         bi.infer_assignment_probabilities()
 
         exporter = ResultsExporter(op.normcase("annotations.tsv"), peakels)
