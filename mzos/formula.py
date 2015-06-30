@@ -458,7 +458,7 @@ class Formula(dict):
         """
         fd = self._check_input(f)
         # set the working formula obj
-        #shallow copy if needed
+        # shallow copy if needed
         wd = Formula(self) if new_obj else self
 
         for elem, nb in fd.iteritems():

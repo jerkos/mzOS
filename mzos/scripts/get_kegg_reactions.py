@@ -21,7 +21,7 @@ import logging
 import cPickle
 from collections import defaultdict as ddict
 
-from bioservices import KEGGParser  #KeggParser
+from bioservices import KEGGParser
 
 from mzos.reac import RPrecord
 
@@ -82,5 +82,5 @@ if __name__ == "__main__":
         os.mkdir("ressources")
 
     with open('ressources/reaction.r', 'wb') as output:
-        #output = open("reaction.r", 'wb')
+        # output = open("reaction.r", 'wb')
         cPickle.dump(d, output)

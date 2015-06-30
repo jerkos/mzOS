@@ -13,9 +13,6 @@ def enum(**enums):
 IONISATION_MODE = enum(NEG=-1, POS=1)
 
 
-#==============================================================================
-# Experiment
-#==============================================================================
 class ExperimentalSettings(object):
 
     """
@@ -40,10 +37,10 @@ class ExperimentalSettings(object):
         self.group_by_id = ddict(set)
         self.group_by_sample = {}
 
-        #setting isos file, same for both polarity
+        # setting isos file, same for both polarity
         self.isos_file = ExperimentalSettings.ISOS
 
-        #setting good frags_file
+        # setting good frags_file
         self.frags_file, self.adducts_file = ExperimentalSettings.FRAGMENTS, None
         self.adducts_file = ExperimentalSettings.ADDUCTS_NEG \
             if ionisation_mode == IONISATION_MODE.NEG else ExperimentalSettings.ADDUCTS_POS

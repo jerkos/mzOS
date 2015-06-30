@@ -229,7 +229,7 @@ def create_file((filepath, mintime, maxtime)):
     if not isinstance(mintime, float) or not isinstance(maxtime, float):
         raise TypeError("min time and maxtime must be floating numbers")
     header, scans = load_spectra(filepath)
-    good_time_scans = [scan for scan in scans]  #[scan for scan in scans if mintime < scan['retentionTime'] < maxtime]
+    good_time_scans = [scan for scan in scans]  # [scan for scan in scans if mintime < scan['retentionTime'] < maxtime]
     new_scan = None
     if not good_time_scans:
         print("No scan defined in range: {}, {} in file {}".format(mintime, maxtime, filepath))
@@ -245,10 +245,10 @@ def create_file((filepath, mintime, maxtime)):
     return new_scan
 
 if __name__ == '__main__':
-    #import multiprocessing
+    # import multiprocessing
     files = glob.glob("tests/200-1000/*.mzXML")
     filesplusargs = [(f, 0.4, 1.6) for f in files]
-    #print filesplusargs
+    # print filesplusargs
     for t in filesplusargs:
         print "Working on {}".format(t[0])
         create_file(t)

@@ -16,9 +16,8 @@
 __email__ = 'marc.dubois@omics-services.com'
 
 import logging
-#from utils import merge
 from feature import Peakel
-#from mongo_db import MetabolomicsExperiment, Feature, Annotation, Abundance
+# from mongo_db import MetabolomicsExperiment, Feature, Annotation, Abundance
 
 
 class ResultsExporter(object):
@@ -131,8 +130,6 @@ class ResultsExporter(object):
 
     def write(self):
         """
-        @param metabolites_scored_by_feature:
-        @param metabolites_scored_by_feature_bayes:
         @return:
         """
         with open(self.output_filepath, 'w') as f:
@@ -144,7 +141,7 @@ class ResultsExporter(object):
 
                 main_attribution_pattern_composition = self._get_main_attribution_pattern_composition(feature)
 
-                #isotopes to compute score
+                # isotopes to compute score
                 isostopes_score = [(i, i.get_attributions_by(lambda x: x.parent_id)[feature.id][0].attribution)
                                    for i in feature.ip_score_isotopes if i is not feature]
                 # ip_score_isotopes = ";".join([str(i.id) + "=" + str(i.main_attribution.tag)
@@ -168,7 +165,7 @@ class ResultsExporter(object):
                                        for a in feature.annotations]
 
                 for idx, (for_adduct, metabolite, score1, score2) in enumerate(feature_metabolites):
-                    data = ";".join([ResultsExporter.HMDB + metabolite.hmdb_id,  #acession,
+                    data = ";".join([ResultsExporter.HMDB + metabolite.hmdb_id,  # acession,
                                      ResultsExporter.KEGG + metabolite.kegg_id]).encode("utf-8")
                     data = data.replace("\t", "")
 
@@ -190,8 +187,8 @@ class ResultsExporter(object):
                     f.write(s)
                 f.write("\n")
 
-            #save experiment in mongodb
-            #self.save_experiment(metabolites_scored_by_feature)
+            # save experiment in mongodb
+            # self.save_experiment(metabolites_scored_by_feature)
 
 
 

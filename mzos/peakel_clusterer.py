@@ -4,7 +4,7 @@ import scipy as sp
 import numpy as np
 from sklearn.metrics.pairwise import pairwise_distances
 
-from clustering import clusterize_basic, clusterize_hierarchical, clusterize_dbscan
+from mzos.clustering import clusterize_basic, clusterize_hierarchical, clusterize_dbscan
 
 
 class PeakelClusterer(object):
@@ -26,10 +26,10 @@ class PeakelClusterer(object):
     DEFAULT_SHAPE_CORR = 0.4
     DEFAULT_INT_CORR = 0.4
 
-    #aggregation condition
+    # aggregation condition
     BASIC_RT_CALLABLE = staticmethod(lambda x, y, z: True if abs(x.rt - z.rt) <= z else False)
        
-    #callable for correlation distance calculation
+    # callable for correlation distance calculation
     BASIC_CORR_SHAPE_CALLABLE = staticmethod(lambda x, y, z: True if x.corr_shape_against(y) >= z else False)
     BASIC_CORR_INT_CALLABLE = staticmethod(lambda x, y, z: True if x.corr_intensity_against(y) >= z else False)
     
@@ -47,7 +47,7 @@ class PeakelClusterer(object):
         # no correlation method provided, default intensity method hierarchical clustering
         if not self.corr_shape_method and not self.corr_int_method:
             self.corr_int_method = self.CLUST_METHOD['hierarchical']
-            #raise ValueError("no correlation method found")
+            # raise ValueError("no correlation method found")
 
         # the 2 correlations method are provided, just need one
         if self.corr_int_method and self.corr_shape_method:
@@ -58,7 +58,7 @@ class PeakelClusterer(object):
             corr_method_used += " ".join(["correlation shape", self.REV_CLUST_METHOD[self.corr_shape_method]])
         else:
             corr_method_used += " ".join(["correlation intensity", self.REV_CLUST_METHOD[self.corr_int_method]])
-        #logger
+        # logger
         logging.info("rt clustering_method used: {}".format(self.REV_CLUST_METHOD[self.rt_method]))
         logging.info("correlation clustering method used: {}".format(corr_method_used))
 
@@ -84,7 +84,7 @@ class PeakelClusterer(object):
 
         elif self.rt_method == 2:
             rts = [[x.rt] for x in self.peakels]
-            matrix_dist = sp.spatial.distance.pdist(np.array(rts))  #metric = eclidean by default
+            matrix_dist = sp.spatial.distance.pdist(np.array(rts))  # metric = eclidean by default
             return clusterize_hierarchical(self.peakels, matrix_dist, "", error_rt).values()
 
         elif self.rt_method == 3:
@@ -129,22 +129,22 @@ class PeakelClusterer(object):
         Private function
         """
         if len(rt_cluster) == 1:
-            return []  #rt_cluster, []
+            return []  # rt_cluster, []
         
-        #clust_list = None
+        # clust_list = None
         if self.corr_int_method == 1:
             clust_list = clusterize_basic(rt_cluster, self.BASIC_CORR_INT_CALLABLE, distance_corr)
         
         elif self.corr_int_method == 2:
             ints = [x.area_by_sample_name.values() for x in rt_cluster]  #
-            #matrix_dist = sp.spatial.distance.pdist(np.array(ints), metric='correlation')
-            #ude by default all cores on the machine
+            # matrix_dist = sp.spatial.distance.pdist(np.array(ints), metric='correlation')
+            # ude by default all cores on the machine
             matrix_dist = pairwise_distances(np.array(ints), metric='correlation', n_jobs=-1)
             clust_list = clusterize_hierarchical(rt_cluster, matrix_dist, distance_corr, clip=True)
         else:
             raise ValueError("dbscan not supported for intensities correlation clustering")
         
-        return clust_list  #self._split_rt_cluster(clust_list)
+        return clust_list  # self._split_rt_cluster(clust_list)
 
     def check_update_corrs(self, rt_clusters, corr_shape_dist, corr_int_dist):
         """

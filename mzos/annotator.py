@@ -19,31 +19,29 @@ import logging
 from collections import defaultdict as ddict
 from itertools import chain
 
-from feature import PeakelIndex
-from peakel_clusterer import PeakelClusterer
-from feature import Attribution
+from mzos.feature import PeakelIndex, Attribution
+from mzos.peakel_clusterer import PeakelClusterer
+
 
 
 class PeakelsAnnotator(object):
     """
 
     Main function to annotates elution peak
-    ---------------------------------------
+    =======================================
 
     Try to distinguish isotopic pattern from extracted mass trace.
     Basically, we use for now XCMS as a backend. It uses a SVM model
-    taken from FeatureFidnerMetabo.
+    taken from FeatureFidnerMetabo developped in OpenMS
 
     We also provide a method for finding adducts and fragments
 
     """
 
-    #isotopes to look for
+    # isotopes to look for
     ISOTOPES = {1.003355: "Isotope C13",
                 0.997035: "Isotope N15",
-                1.995796: "Isotope S34"}
-                #
-                #1.997953: "Br79-81"}
+                1.995796: "Isotope S34"}  # 1.997953: "Br79-81"}
 
     def __init__(self, peakels, exp_settings):
         self.peakels = peakels
@@ -68,7 +66,6 @@ class PeakelsAnnotator(object):
         """
         return self.index.get_nearest_peakel(moz, mz_tol_ppm)
 
-    #----------------------------------------------------
     @staticmethod
     def _get_theoritical_isotope_mass(idx, mz, charge):
         """
@@ -85,7 +82,6 @@ class PeakelsAnnotator(object):
         d = {x[1]: abs(theo_mass - (mz + x[0])) for x in PeakelsAnnotator.ISOTOPES.items()}
         return theo_mass, min(d)
 
-    #----------------------------------------------------
     def _look_for_isotopes(self,
                            peakel,
                            mos_by_iso,
@@ -105,7 +101,7 @@ class PeakelsAnnotator(object):
 
         half_error_rt = error_rt * 0.5
 
-        #will hold set of isotopes
+        # will hold set of isotopes
         result_by_charge = {}
 
         # iterate over possible charges
@@ -114,10 +110,10 @@ class PeakelsAnnotator(object):
             isotopes = set()
             gap = 0
 
-            #allow uniquely intensity desc
+            # allow uniquely intensity desc
             desc_iso_intensity = False
 
-            #assign last iso to considered peakel
+            # assign last iso to considered peakel
             last_iso = peakel
 
             # assume that supposed monoisotopic elution peak has the highest intensity,
@@ -127,13 +123,13 @@ class PeakelsAnnotator(object):
 
             # iterate over  number of isotopes
             for j in xrange(1, max_isotopes_nb + 1):
-                #generate all possible masses for this isotopes index
+                # generate all possible masses for this isotopes index
                 mass_to_check, isotope_tag = PeakelsAnnotator._get_theoritical_isotope_mass(j, ref_moz, charge)
 
                 # iterate over those generated masses
                 peak = self.get_nearest_peakel(mass_to_check, moz_tol_ppm)
 
-                #error rt check even we are inside a rt cluster ? pass it into a flag
+                # error rt check even we are inside a rt cluster ? pass it into a flag
                 if peak is not None and abs(peak.rt - peakel.rt) < half_error_rt:
 
                     if desc_iso_intensity and peak.area > last_iso.area:
@@ -141,7 +137,7 @@ class PeakelsAnnotator(object):
 
                     isotopes.add(peak)
 
-                    #add it as a possible parent
+                    # add it as a possible parent
                     mos_by_iso[peak].add(peakel)
 
                     # add a new tag
@@ -152,13 +148,13 @@ class PeakelsAnnotator(object):
                         ref_moz = peak.moz
 
                     last_iso = peak
-                #if no peaks has been found this isotope index increase the gap
+                # if no peaks has been found this isotope index increase the gap
                 else:
                     gap += 1
                     if gap >= max_gap:
                         break
 
-            #if isotopes not empty save it in the dictionnary
+            # if isotopes not empty save it in the dictionnary
             if isotopes:
                 result_by_charge[charge] = isotopes
         return result_by_charge
@@ -177,7 +173,7 @@ class PeakelsAnnotator(object):
         for wrong_parent in wrong_parents:
             ordered_isos = sorted(list(wrong_parent.isotopes), key=lambda _: _.moz)
             if peakel in ordered_isos:
-                #remove its tag
+                # remove its tag
                 peakel.remove_attribution_with_parent(wrong_parent.id)
 
                 peakel_index = ordered_isos.index(peakel)
@@ -190,8 +186,8 @@ class PeakelsAnnotator(object):
                             isotopes_clustered.remove(p)
                         except KeyError:
                             pass
-                #remove isos
-                ordered_isos = ordered_isos[:peakel_index]  #exclusive
+                # remove isos
+                ordered_isos = ordered_isos[:peakel_index]  # exclusive
                 wrong_parent.isotopes = set(ordered_isos)
 
     @staticmethod
@@ -204,8 +200,8 @@ class PeakelsAnnotator(object):
         :return:
         """
 
-        #selected isos are all different
-        #remove isotopes from isotopes, keep all the possibilities
+        # selected isos are all different
+        # remove isotopes from isotopes, keep all the possibilities
         if peakel.main_attribution is not None:
             peakel.attributions.add(peakel.main_attribution)
             peakel.main_attribution = None
@@ -243,12 +239,12 @@ class PeakelsAnnotator(object):
 
         isotopes_clustered = set()
 
-        #link to a direct parent
+        # link to a direct parent
         mos_by_iso = ddict(set)
 
         for peakel in rt_cluster:
 
-            #if this considered peakel is a previously detected isotope
+            # if this considered peakel is a previously detected isotope
             detected_as_iso = True if peakel in mos_by_iso.keys() else False
 
             result_by_charge = self._look_for_isotopes(peakel,
@@ -258,7 +254,7 @@ class PeakelsAnnotator(object):
                                                        max_isotopes_nb,
                                                        error_rt)
 
-            #nothing found
+            # nothing found
             if not result_by_charge:
                 continue
 
@@ -266,16 +262,16 @@ class PeakelsAnnotator(object):
             # what to do when there is draw match ?
             best_charge_result = max(result_by_charge.keys(), key=lambda y: len(result_by_charge[y]))
 
-            #select best isotopes
+            # select best isotopes
             selected_isos = result_by_charge[best_charge_result]
 
-            #add annoations to selected isos
+            # add annoations to selected isos
             for iso in selected_isos:
                 iso.main_attribution = iso.get_attributions_by_charge()[best_charge_result][0]
 
             if detected_as_iso:
-                #if this considered peakel is a previously detected isotope
-                #if detected isotopes peak are subset of parent detected isotopes
+                # if this considered peakel is a previously detected isotope
+                # if detected isotopes peak are subset of parent detected isotopes
                 selected_isos_including_himself = set(selected_isos)
                 selected_isos_including_himself.add(peakel)
 
@@ -291,12 +287,12 @@ class PeakelsAnnotator(object):
                 isos_by_parent = {}
 
                 for mo_parent in parents:
-                    #ensure that parents is not in isotopes set
+                    # ensure that parents is not in isotopes set
 
                     if mo_parent.charge == best_charge_result:
 
                         if selected_isos_including_himself.issubset(mo_parent.isotopes):
-                            #no problem, do nothing
+                            # no problem, do nothing
                             isos_by_parent[mo_parent] = (selected_isos, None, tuple())
 
                         else:
@@ -305,11 +301,11 @@ class PeakelsAnnotator(object):
                             isos = mo_parent.isotopes.union(diff)
                             isos_by_parent[mo_parent] = (isos, PeakelsAnnotator._set_isotopes, (mo_parent, isos))
                     else:
-                        #if the charge is different, we promote
+                        # if the charge is different, we promote
                         isos_by_parent[mo_parent] = (selected_isos,
                                                      PeakelsAnnotator._promote_to_mo,
                                                      (peakel, isotopes_clustered))
-                #end for
+                # end for
 
                 # get the one with the max length
                 max_key_len = max(isos_by_parent.keys(), key=lambda l: len(isos_by_parent[l][0]))
@@ -319,7 +315,7 @@ class PeakelsAnnotator(object):
                 if not best_parents:
                     pass
                 else:
-                    #set main tag and remove from wrong parents
+                    # set main tag and remove from wrong parents
                     best_parent = best_parents[0]
                     best_isos, callback, args = isos_by_parent[best_parent]
 
@@ -327,10 +323,10 @@ class PeakelsAnnotator(object):
                     if callback is not None:
                         i = callback(*args)
 
-                    #we can remove ata least all others wrong parents
-                    #if len(best_parents) == 1:
+                    # we can remove ata least all others wrong parents
+                    # if len(best_parents) == 1:
                     PeakelsAnnotator._remove_peakel_from_wrong_parents(peakel,
-                                                                       #{best_parent}),
+                                                                       # {best_parent}),
                                                                        parents.difference(best_parents),
                                                                        mos_by_iso,
                                                                        isotopes_clustered)
@@ -354,10 +350,10 @@ class PeakelsAnnotator(object):
         could return in case mo not found ?
         """
 
-        #avoid to modify the model using a reference to the parent
+        # avoid to modify the model using a reference to the parent
         parents_by_son = ddict(list)
 
-        #indexing of the cluster
+        # indexing of the cluster
         index = PeakelIndex(cluster)
 
         for peakel in cluster:
@@ -374,25 +370,25 @@ class PeakelsAnnotator(object):
                         attribution = Attribution(attr, master_peak.id, 1)
                         parents_by_son[peakel].append((master_peak, attribution))
 
-        #reverse the dictionary
+        # reverse the dictionary
         adducts_by_mo = ddict(list)
         for add, possible_mos in parents_by_son.iteritems():
             for possible_mo, attrib in possible_mos:
                 adducts_by_mo[possible_mo].append((add, attrib))
 
-        #mos = adducts_by_mo.keys()
+        # mos = adducts_by_mo.keys()
         if adducts_by_mo:
             # in case there is only one mo per cluster
             best_mos_as_tuple = sorted(list(adducts_by_mo.items()), key=lambda x: len(x[1]))
             best_mos_as_tuple.reverse()
-            #best_mo, best_mo_frags = best_mos_as_tuple[0][0], best_mos_as_tuple[0][1]
+            # best_mo, best_mo_frags = best_mos_as_tuple[0][0], best_mos_as_tuple[0][1]
 
             best_mos, fragsset = set(), set()
 
-            for mo, frags in best_mos_as_tuple:  #adducts_by_mo.iteritems():
+            for mo, frags in best_mos_as_tuple:  # adducts_by_mo.iteritems():
                 for frag, attrib in frags:
                     if frag not in fragsset:
-                        #frag.main_attribution = attrib
+                        # frag.main_attribution = attrib
                         frag.set_main_attribution(attrib)
                         mo.adducts.add(frag)
                         best_mos.add(mo)
@@ -400,17 +396,17 @@ class PeakelsAnnotator(object):
                         fragsset.add(frag)
                         fragsset.add(mo)
 
-            #todo need more work here
-            #best_mo = max(mos, key=lambda y: len(adducts_by_mo[y]))
+            # todo need more work here
+            # best_mo = max(mos, key=lambda y: len(adducts_by_mo[y]))
 
-            #for frag, attrib in best_mo_frags:  #best_mo.adducts:
+            # for frag, attrib in best_mo_frags:  #best_mo.adducts:
             #    frag.main_attribution = attrib  #Attribution(annot, best_mo.id, best_mo.charge)
 
-            #best_mo.adducts.union(set(best_mo_frags))
+            # best_mo.adducts.union(set(best_mo_frags))
 
-            #best_mos = {best_mo}
-            #fragsset = best_mo.adducts.union(best_mo)
-            return list(best_mos)  #[best_mo]
+            # best_mos = {best_mo}
+            # fragsset = best_mo.adducts.union(best_mo)
+            return list(best_mos)  # [best_mo]
         else:
             # for the moment will return the entire list
             return list(cluster)
@@ -429,7 +425,7 @@ class PeakelsAnnotator(object):
         # for x in clusters:
         #     l += self._find_adducts_and_fragments_in_cluster(x)
         # return l
-        #return [self._find_adducts_and_fragments_in_cluster(x) for x in clusters]
+        # return [self._find_adducts_and_fragments_in_cluster(x) for x in clusters]
 
     def annotate_(self, error_rt=6.0,
                   max_charge=2,
@@ -451,7 +447,7 @@ class PeakelsAnnotator(object):
         rt_clusters = self.peakel_clusterer.clusterize_by_rt(error_rt=error_rt)
         logging.info('{} rt clusters found'.format(len(rt_clusters)))
 
-        less_isotopes = []  #will be list of list
+        less_isotopes = []  # will be list of list
         for rt_cluster in rt_clusters:
             less_isotopes.append(self._find_isotopes(rt_cluster, error_rt,
                                                      self.exp_settings.mz_tol_ppm,

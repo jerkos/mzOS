@@ -5,9 +5,9 @@ setup(
     version='0.1',
     packages=['mzos', 'mzos.tests', 'mzos.ressources'],
     packages_data=['mzos.tests.data'],
-    url='',
+    url='http://github.com/jerkos/mzOS',
     license='',
     author='Marco',
-    author_email='',
+    author_email='marc.dubois@omics-services.com',
     description='', requires=['bioservices', 'scipy', 'numpy', 'pandas']
 )

@@ -126,7 +126,7 @@ class Peakel(object):
 
         self.ip_score_isotopes = set()
 
-        ### in concordance with the main tag
+        # in concordance with the main tag
         self.is_isotope = False
         self.is_adduct_or_fragment = False
 
@@ -149,7 +149,7 @@ class Peakel(object):
             attrib = ""
             try:
                 attrib += son.get_attributions_by_parent_id()[parent.id][0].attribution
-            except KeyError:  #see index error
+            except KeyError:  # see index error
                 attrib += son.main_attribution.attribution
 
             s += str(son.id) + "=" + attrib
@@ -163,7 +163,7 @@ class Peakel(object):
                 s += ":"
             for new_son in n_:
                 s += "("
-                #Peakel._build_branch_str(son, charge, new_son, isos_adds.union(n_))
+                # Peakel._build_branch_str(son, charge, new_son, isos_adds.union(n_))
                 m, q, r = son._build_branch_str_v2(son, charge, new_son, isos_adds.union(n_))
                 s += m
                 nb_isos += q
@@ -189,11 +189,11 @@ class Peakel(object):
         @param feature_by_id: dictionnary key:peakel, value: id
         @return:
         """
-        #"{} of {} ".format(self.main_attribution.attribution, self.main_attribution.parent_id)
+        # "{} of {} ".format(self.main_attribution.attribution, self.main_attribution.parent_id)
         s = str(self.main_attribution)
         p = feature_by_id[self.main_attribution.parent_id]
         while p.main_attribution is not None:
-            #s += "{} of {} ".format(p.main_attribution.attribution, p.main_attribution.parent_id)
+            # s += "{} of {} ".format(p.main_attribution.attribution, p.main_attribution.parent_id)
             s += " of " + str(p.main_attribution)
             p = feature_by_id[p.main_attribution.parent_id]
         return s
@@ -205,11 +205,11 @@ class Peakel(object):
         @param feature_by_id: dictionnary key:peakel, value: id
         @return:
         """
-        #s = "{} of {} ".format(attribution.attribution, attribution.parent_id)
+        # s = "{} of {} ".format(attribution.attribution, attribution.parent_id)
         s = str(attribution)
         p = feature_by_id[attribution.parent_id]
         while p.main_attribution is not None:
-            #s += "{} of {} ".format(p.main_attribution.attribution, p.main_attribution.parent_id)
+            # s += "{} of {} ".format(p.main_attribution.attribution, p.main_attribution.parent_id)
             s += " of " + str(p.main_attribution)
             p = feature_by_id[p.main_attribution.parent_id]
         return s
@@ -220,7 +220,7 @@ class Peakel(object):
     #     """
     #     pass
 
-    #----------------attributions stuffs
+    # ----------------attributions stuffs
     def get_attributions_by(self, callable_):
         """
         @param callable_:
@@ -271,21 +271,20 @@ class Peakel(object):
         @param attrib:
         @return:
         """
-        #TODO add or not main attribution to attributions set
+        # TODO add or not main attribution to attributions set
         # in that case remove unecessary code
         m = None
-        #save previous attribution
+        # save previous attribution
         if self.main_attribution is not None:
             m = self.main_attribution
 
         self.main_attribution = attrib
-        #FIX
-        #add the new main attribution to all attributions set
+        # FIX
+        # add the new main attribution to all attributions set
         self.attributions.add(attrib)
         if m is not None and m not in self.attributions:
             self.attributions.add(m)
 
-    #--------------------------------------------
     def get_areas(self):
         """
         :return:
@@ -398,4 +397,4 @@ class PeakelIndex(object):
             return None
         peaks.sort(key=lambda x: abs(x.moz - moz))
 
-        return peaks[0] if ( abs(peaks[0].moz - moz) < tol_da ) else None
+        return peaks[0] if ( abs(peaks[0].moz - moz) < tol_da) else None

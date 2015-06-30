@@ -22,23 +22,19 @@ import os
 import logging
 import time
 
-from peaklist_reader import PeakListReader
-from annotator import PeakelsAnnotator
-from database_finder import DatabaseSearch
-from stats import StatsModel
-from exp_design import ExperimentalSettings
-from exp_design import IONISATION_MODE
-from bayesian_inference import BayesianInferer
-#from utils import merge
-from results_exporter import ResultsExporter
+from mzos.peaklist_reader import PeakListReader
+from mzos.annotator import PeakelsAnnotator
+from mzos.database_finder import DatabaseSearch
+from mzos.stats import StatsModel
+from mzos.exp_design import ExperimentalSettings
+from mzos.exp_design import IONISATION_MODE
+from mzos.bayesian_inference import BayesianInferer
+from mzos.results_exporter import ResultsExporter
 from gooey import Gooey
 
 
 def get_arg_parser():
-    """
 
-    @return:
-    """
     parser = argparse.ArgumentParser(prog="mzOS", description="Annotation analysis of xcms peaklist")
     parser.add_argument("-x", "--xcms_pkl", type=str, help="path to the xcms peaklist", required=True)
     parser.add_argument("-p", "--polarity", default='negative', choices=['negative', 'positive'],
@@ -49,7 +45,7 @@ def get_arg_parser():
     return parser
 
 
-#@Gooey(advanced=True, config=True, program_name='mzOS')
+# @Gooey(advanced=True, config=True, program_name='mzOS')
 def main():
     arg_parser = get_arg_parser()
     arguments = arg_parser.parse_args(sys.argv[1:])
@@ -63,7 +59,7 @@ def main():
     polarity = IONISATION_MODE.NEG if arguments.polarity == 'negative' else IONISATION_MODE.POS
     exp_settings = ExperimentalSettings(arguments.mz_tol_ppm, polarity, arguments.dims)
 
-    #clear logging
+    # clear logging
     logging.getLogger('').handlers = []
 
     logging.basicConfig(level=logging.INFO)
@@ -72,14 +68,14 @@ def main():
     peakels = PeakListReader(arguments.xcms_pkl, exp_settings).get_peakels()
     logging.info("Peaklist loaded.")
 
-    ##annotation##
+    # annotation
     peakels_annotator = PeakelsAnnotator(peakels, exp_settings)
     logging.info("Annotating...")
 
     best_monos = peakels_annotator.annotate_()
     logging.info("Monoisotopic found: #{}".format(len(best_monos)))
 
-    ##database finding##
+    # database finding
     db_search = DatabaseSearch('hmdb', exp_settings)
     logging.info("Searching in database...")
     adducts_l = ['H1']
@@ -87,18 +83,17 @@ def main():
     logging.info("Found #{} metabolites, #{} "
                  "elution peak with no metabolite assignments".format(nb_metabs, not_found))
 
-    ##scoring
-    #first simplistic
+    # scoring first simplistic
     model = StatsModel(peakels, exp_settings.mz_tol_ppm * 1.5)
     logging.info("Compute score 1....")
-    #populate annotations objects
+    # populate annotations objects
     model.calculate_score()
     logging.info("Done")
 
-    ##scoring 2##
+    # scoring bayesian inferer
     bi = BayesianInferer(peakels, exp_settings)
     logging.info("Compute score 2...")
-    #populate annotations object
+    # populate annotations object
     bi.infer_assignment_probabilities()
     logging.info("Finished")
 

@@ -18,13 +18,13 @@ __email__ = 'marc.dubois@omics-services.com'
 import logging
 import sqlite3
 import os.path as op
-from collections import defaultdict as ddict
+from collections import defaultdict as ddict, namedtuple
 from itertools import izip
 import multiprocessing
-from collections import namedtuple
 
-from feature import Annotation
-from formula import Formula
+
+from mzos.feature import Annotation
+from mzos.formula import Formula
 
 
 class MolecularEntity(object):
@@ -118,7 +118,7 @@ def search_metabolites_for(args):
     c = conn.cursor()
     metabolites = []
     for row in c.execute('select * from metabolite where mono_mass >=  ? and mono_mass <= ?', (min_mass, max_mass)):
-        m = Metabolite(*row)  #Metabolite._make(row)  got warning du to the underscore
+        m = Metabolite(*row)  # Metabolite._make(row)  got warning du to the underscore
         if m.kegg_id is not None:
             metabolites.append(m)
     conn.close()
@@ -170,12 +170,13 @@ class DatabaseSearch(IDatabaseSearcher):
     def __init__(self, bank, exp_design):
         self.exp_design = exp_design
         self.metabolites_by_feature = {}
-        self.bank = 'hmdb' if bank not in ['hmdb, kegg'] else bank  #self.exp_design.databases
+        self.bank = 'hmdb' if bank not in ['hmdb, kegg'] else bank  # self.exp_design.databases
         logging.info("Performing database search in {} {}".format(self.bank, 'v3.5'))
 
     def assign_formula(self, features, for_adducts, with_tol_ppm=10.0):
         """
         assign molecular formula to features using multiprocessing module
+
         :param for_adducts: string adducts list
         :param features: list or set ? of features
         :param with_tol_ppm: mz tolerance in order to perform the look up
@@ -191,7 +192,7 @@ class DatabaseSearch(IDatabaseSearcher):
             metabs = pool.map(search_metabolites_for, args, chunksize=20)
             pool.close()
 
-            #DEBUG CODE
+            # DEBUG CODE
             # metabs = []
             # for f in features:
             #     metabs += search_metabolites_for((self.HMDB_FILE, f, formula, with_tol_ppm))

@@ -15,7 +15,7 @@
 
 __email__ = 'marc.dubois@omics-services.com'
 
-#include in path all pacakges
+# include in path all pacakges
 import sys
 import os.path as op
 from xml.etree import cElementTree
@@ -56,7 +56,6 @@ def build_sqlite3_file(sqlite_filepath):
 
 def parse_metabolite_card(args):
     """
-    @param filepath:  str
     @return:
     """
     filepath = args[0]
@@ -83,16 +82,16 @@ def parse_metabolite_card(args):
                     logging.info("Failed to parse average_molecular_weight in {}".format(filepath))
                     metab.append(0.0)
                 metab.append(elem.find('description').text)
-                #float(elem.find('description').text)
+                # float(elem.find('description').text)
                 metab.append("")
-                #float(elem.find('description').text)
+                # float(elem.find('description').text)
                 metab.append("")
-                #float(elem.find('description').text)
+                # float(elem.find('description').text)
                 # isotopic pattern elem.find('kegg_id').text
                 metab.append(elem.find('kegg_id').text)
 
                 formula = Formula.from_str(f)
-                # # add one H to have positive
+                # add one H to have positive
                 f1 = formula.add('H', new_obj=True)
                 metab.append(get_theo_ip(emass_path, str(f1), min_rel_int=1.0))
                 #
@@ -130,7 +129,7 @@ def build_library(sqlite_filepath, cards_directory, emass_path, nb_procs=multipr
 
 if __name__ == '__main__':
     logging.basicConfig(level=logging.INFO)
-    #from mzos.formula import Formula
+    # from mzos.formula import Formula
     build_library('hmdb_test.sqlite',
                   op.normcase('../ressources/hmdb_metabolites'),
                   op.normcase("../../third_party/emass/emass.exe -i ../../third_party/emass/ISOTOPE.DAT"))

@@ -17,8 +17,10 @@ __email__ = 'marc.dubois@omics-services.com'
 
 import csv
 import logging
-from feature import Peakel
+
 import numpy as np
+
+from mzos.feature import Peakel
 
 
 class PeakListReader(object):
@@ -68,7 +70,6 @@ class PeakListReader(object):
                    float(d[PeakListReader.KEYS[3]]),
                    float(d[PeakListReader.KEYS[4]]),
                    float(d[PeakListReader.KEYS[5]]))
-
 
         #  set the right polarity
         polarity = None

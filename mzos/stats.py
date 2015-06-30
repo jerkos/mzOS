@@ -48,21 +48,21 @@ class StatsModel(object):
         """
         return -10 * log10(x)
 
-    #name metrics, weight allowed
+    # name metrics, weight allowed
     def __init__(self, features, moz_tol_ppm):
         self.features = features
         self.moz_tol_ppm = moz_tol_ppm
         self.metrics = [("isotopic_pattern_rmsd", 2.0), ("mass_difference", 1.0)]
 
-        #sorted_features_by_area = sorted(features, key=lambda _: _.area)
+        # sorted_features_by_area = sorted(features, key=lambda _: _.area)
 
         feature_by_index = ddict(list)
-        #assuming they are sorted by mass
+        # assuming they are sorted by mass
         for f in self.features:
             feature_by_index[1].append(f)
             for (i, isotope) in enumerate(f.isotopes):
                 feature_by_index[i + 2].append(isotope)
-        #retrive min max intensity value by intensity index
+        # retrive min max intensity value by intensity index
         self.min_max_values_by_isotopes_index = dict()
 
         for (index, values) in feature_by_index.iteritems():
@@ -81,8 +81,8 @@ class StatsModel(object):
             p = peakel_index.get_nearest_peakel(iso[0], self.moz_tol_ppm)
             if p is not None:
                 try:
-                    #TODO why get a key error here ?
-                    mn, mx = self.min_max_values_by_isotopes_index[idx + 1]  #we start counting at one
+                    # TODO why get a key error here ?
+                    mn, mx = self.min_max_values_by_isotopes_index[idx + 1]  # we start counting at one
                     rmsd += (mx - mn) ** 2
                 except KeyError:
                     pass
@@ -103,15 +103,15 @@ class StatsModel(object):
             worst_rmsd, worst_mass_diff, peakel_index = self._calculate_worst_cases(feature, isotopic_pattern)
 
             # interpol_worst_rmsd, interpol_worst_mass_diff = 1.0, 1.0
-            #as we interpolate al line y = x we use directly the result and pass
-            #it to the model
+            # as we interpolate al line y = x we use directly the result and pass
+            # it to the model
             mass_diff = calculate_mass_diff_da(feature, m.mono_mass)
             interpol_mass_diff = mass_diff / worst_mass_diff
             ponderated_mass_diff = self.transform_score(self.model(interpol_mass_diff)) * self.metrics[1][1]
 
             rmsd = self._calculate_rmsd_2(feature, peakel_index, isotopic_pattern)
             if isnan(rmsd) or rmsd == 0.0 or worst_rmsd == 0.0:
-                #metab_with_score.append((m, ponderated_mass_diff))
+                # metab_with_score.append((m, ponderated_mass_diff))
                 annot.score_isos = ponderated_mass_diff
                 continue
 
@@ -158,13 +158,13 @@ class StatsModel(object):
                 if p is not None:
                     feature.ip_score_isotopes.add(p)
                     area = p.area_by_sample_name[sample]
-                    ## fixme: could be penalized ?
+                    # fixme: could be penalized ?
                     if not area:
                         continue
-                    #rmsd += ((area * max_rel_int / max_real_int) - rel_int) ** 2
+                    # rmsd += ((area * max_rel_int / max_real_int) - rel_int) ** 2
                     rmsd += ((area / max_real_int * 100) * max_rel_int - rel_int) ** 2
                 else:
-                    #could do something like the first quartile of the distribution of all intensities
+                    # could do something like the first quartile of the distribution of all intensities
                     pass
 
             sample_rmsd.append(sqrt(rmsd))
@@ -190,7 +190,7 @@ class StatsModel(object):
                 rmsd += (p.area * max_rel_int / max_real_int) ** 2
                 feature.ip_score_isotopes.add(p)
             else:
-                #could do something like the first quartile of the distribution of all intensities
+                # could do something like the first quartile of the distribution of all intensities
                 pass
         return sqrt(rmsd)
 
