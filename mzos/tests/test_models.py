@@ -254,6 +254,7 @@ class TestClustering(unittest.TestCase):
     @classmethod
     def tearDownClass(cls):
         import os
+        import re
         try:
             os.remove('hmdb_test.sqlite')
         except (WindowsError, IOError):
