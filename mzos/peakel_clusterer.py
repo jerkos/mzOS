@@ -139,7 +139,7 @@ class PeakelClusterer(object):
             ints = [x.area_by_sample_name.values() for x in rt_cluster]  #
             # matrix_dist = sp.spatial.distance.pdist(np.array(ints), metric='correlation')
             # ude by default all cores on the machine
-            matrix_dist = pairwise_distances(np.array(ints), metric='correlation', n_jobs=-1)
+            matrix_dist = pairwise_distances(np.array(ints), metric='correlation')  # , n_jobs=-1)
             clust_list = clusterize_hierarchical(rt_cluster, matrix_dist, distance_corr, clip=True)
         else:
             raise ValueError("dbscan not supported for intensities correlation clustering")
