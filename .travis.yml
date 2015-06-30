@@ -2,11 +2,12 @@ language: python
 python:
   - "2.7"
 # command to install dependencies
+
+before_install:
+  - sudo apt-get install -qq python-numpy python-scipy python-scikit-learn
+
 install:
-  - sudo apt-get install -qq libatlas-dev libatlas-base-dev liblapack-dev gfortran
   - pip install coveralls
-  - pip install numpy
-  - pip install scipy
   - pip install scikit-learn
   - pip install .
 
