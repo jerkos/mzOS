@@ -3,10 +3,8 @@ python:
   - "2.7"
 # command to install dependencies
 
-before_install:
-  - sudo apt-get install -qq python-numpy python-scipy python-sklearn
-
 install:
+  - sudo apt-get install -qq python-numpy python-scipy python-sklearn
   - pip install coveralls
   - pip install . #- pip install scikit-learn
 
