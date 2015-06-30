@@ -20,11 +20,11 @@ class ExperimentalSettings(object):
     :param ionisation_mode:
     :param is_dims_experiment:
     """
-    ADDUCTS_POS = op.abspath("ressources/POS_ADDUCTS_IMS.csv")
-    ADDUCTS_NEG = op.abspath("ressources/NEG_ADDUCTS_IMS.csv")
-    FRAGMENTS = op.abspath("ressources/FRAGMENTS_IMS.csv")
+    ADDUCTS_POS = op.abspath("mzos/ressources/POS_ADDUCTS_IMS.csv")
+    ADDUCTS_NEG = op.abspath("mzos/ressources/NEG_ADDUCTS_IMS.csv")
+    FRAGMENTS = op.abspath("mzos/ressources/FRAGMENTS_IMS.csv")
 
-    ISOS = "ressources/"
+    ISOS = "mzos/ressources/"
 
     def __init__(self, mz_tol_ppm, ionisation_mode=None, is_dims_experiment=False, databases={'hmdb'}):
         self.samples = set()

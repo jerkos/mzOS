@@ -36,6 +36,7 @@ class MolecularEntity(object):
 
         self.kegg_id = None
         self.hmdb_id = None
+        self.lm_id = None
 
         self.description = None
         self.formula = None
@@ -54,10 +55,10 @@ class Metabolite(MolecularEntity):
     COLUMNS = "acession,name,formula,inchi,mono_mass,average_mass," \
               "description,status,origin,kegg_id,isotopic_pattern_pos,isotopic_pattern_neg".split(",")
 
-    MAPPING = {'acession': 'hmdb_id'}
+    MAPPING = {'acession': 'hmdb_id', 'inchi': 'inchi_key'}
 
     def __init__(self, *args):
-        super(MolecularEntity, self).__init__()
+        MolecularEntity.__init__(self)
         for name, value in dict(izip(Metabolite.COLUMNS, args)).iteritems():
             if name in Metabolite.MAPPING:
                 setattr(self, Metabolite.MAPPING[name], value)
@@ -65,7 +66,10 @@ class Metabolite(MolecularEntity):
                 setattr(self, name, value)
 
 class Lipid(MolecularEntity):
-    pass
+    def __init__(self, lm_id):
+        MolecularEntity.__init__(self)
+
+        self.lm_id = lm_id
 
 # Metabolite = namedtuple("Metabolite", "acession, name, formula, inchi, mono_mass, average_mass, "
 #                                       "description, status, origin, kegg_id, isotopic_pattern_pos, "
@@ -148,15 +152,28 @@ def search_metabolites_for(args):
 #     return metabolites
 
 
-# def search_lipids_for(args):
-#     database, feature, with_tol_ppm = args[0], args[1], args[2]
-#     mass, min_mass, max_mass = IDatabaseSearcher.get_moz_bounds(feature, with_tol_ppm)
-#
-#     conn = sqlite3.connect(database)
-#     c = conn.cursor()
-#     lipids = []
-#     for row in c.execute('select SYSTEMATIC_NAME, KEGG_ID, INCHI_KEY from lipids where EXACT_MASS >= ? and EXACT_MASS <= ?', (min_mass, max_mass)):
-#         l = Lipid._r
+def search_lipids_for(args):
+    database, feature, formula, with_tol_ppm = args  # args[0], args[1], args[2], args[3]
+    mass, min_mass, max_mass = IDatabaseSearcher.get_moz_bounds(feature, formula, with_tol_ppm)
+
+    conn = sqlite3.connect(database)
+    c = conn.cursor()
+    lipids = []
+    for row in c.execute('select SYSTEMATIC_NAME, FORMULA, EXACT_MASS, LM_ID, KEGG_ID, HMDBID, INCHI_KEY '
+                         'from lipids where EXACT_MASS >= ? and EXACT_MASS <= ?', (min_mass, max_mass)):
+        name, chem_formula, exact_mass, lm_id, kegg_id, hmdb_id, inchi = row
+        l = Lipid(lm_id)
+        # warning lmsd names can be empty
+        l.name = name or ''
+        l.mono_mass = exact_mass or ''
+        l.formula = chem_formula or ''
+        l.kegg_id = kegg_id or ''
+        l.hmdb_id = hmdb_id or ''
+        l.inchi_key = inchi or ''
+        lipids.append(l)
+    conn.close()
+    lipids.sort(key=lambda _: abs(_.mono_mass - mass))
+    return lipids
 
 
 class DatabaseSearch(IDatabaseSearcher):
@@ -164,13 +181,13 @@ class DatabaseSearch(IDatabaseSearcher):
     :param bank:
     :param exp_design:
     """
-    HMDB_FILE = op.abspath("ressources/hmdb.sqlite")
-    LMSD_FILE = op.abspath("ressources/lmsd.sqlite")
+    HMDB_FILE = op.abspath("mzos/ressources/hmdb.sqlite")
+    LMSD_FILE = op.abspath("mzos/ressources/lmsd.sqlite")
 
     def __init__(self, bank, exp_design):
         self.exp_design = exp_design
         self.metabolites_by_feature = {}
-        self.bank = 'hmdb' if bank not in ['hmdb, kegg'] else bank  # self.exp_design.databases
+        self.bank = 'hmdb' if bank not in {'hmdb', 'kegg', 'lmsd'} else bank  # self.exp_design.databases
         logging.info("Performing database search in {} {}".format(self.bank, 'v3.5'))
 
     def assign_formula(self, features, for_adducts, with_tol_ppm=10.0):
@@ -188,17 +205,16 @@ class DatabaseSearch(IDatabaseSearcher):
             logging.info("searching for adducts: {}".format(str(formula)))
 
             pool = multiprocessing.Pool(processes=multiprocessing.cpu_count())
-            args = [(self.HMDB_FILE, f, formula, with_tol_ppm) for f in features]
-            metabs = pool.map(search_metabolites_for, args, chunksize=20)
-            pool.close()
 
-            # DEBUG CODE
-            # metabs = []
-            # for f in features:
-            #     metabs += search_metabolites_for((self.HMDB_FILE, f, formula, with_tol_ppm))
+            metabs = []
+            if self.bank == 'hmdb':
+                args = [(self.HMDB_FILE, f, formula, with_tol_ppm) for f in features]
+                metabs = pool.map(search_metabolites_for, args, chunksize=20)
+            elif self.bank == 'lmsd':
+                args = [(self.LMSD_FILE, f, formula, with_tol_ppm) for f in features]
+                metabs = pool.map(search_lipids_for, args, chunksize=20)
 
             # create Annotation objects
-
             for f, metabs in izip(features, metabs):
                 if not metabs:
                     not_found += 1
@@ -206,4 +222,10 @@ class DatabaseSearch(IDatabaseSearcher):
                     m_count += len(metabs)
                 for_adducts_str = '[M{}{}]='.format('-' if f.polarity > 0 else '+', formula)
                 f.annotations += [Annotation(m, for_adducts_str) for m in metabs]
+
+            pool.close()
+            try:
+                pool.terminate()
+            except WindowsError:
+                pass
         return m_count, not_found

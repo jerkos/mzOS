@@ -41,6 +41,7 @@ def get_arg_parser():
                         help='experiment polarity', required=True)
     parser.add_argument("--mz_tol_ppm", type=float, default=10.0, help='mass over charge tolerance', required=False)
     parser.add_argument("--dims", default=False, action='store_true', help='direct infusion MS experiment', required=False)
+    parser.add_argument('--db', default='hmdb', choices=['hmdb', 'lmsd'], required=False)
     parser.add_argument("--output", type=str, default="annotations.tsv", required=False)
     return parser
 
@@ -76,7 +77,15 @@ def main():
     logging.info("Monoisotopic found: #{}".format(len(best_monos)))
 
     # database finding
-    db_search = DatabaseSearch('hmdb', exp_settings)
+
+    db = 'hmdb'
+    if arguments.db == 'hmdb':
+        pass
+    elif arguments.db == 'lmsd':
+        db = 'lmsd'
+    else:
+        logging.warn('Error specifying db, default to hmdb...')
+    db_search = DatabaseSearch(db, exp_settings)
     logging.info("Searching in database...")
     adducts_l = ['H1']
     nb_metabs, not_found = db_search.assign_formula(peakels, adducts_l, exp_settings.mz_tol_ppm)
@@ -88,18 +97,19 @@ def main():
     logging.info("Compute score 1....")
     # populate annotations objects
     model.calculate_score()
-    logging.info("Done")
+    logging.info("Done.")
 
     # scoring bayesian inferer
     bi = BayesianInferer(peakels, exp_settings)
     logging.info("Compute score 2...")
     # populate annotations object
     bi.infer_assignment_probabilities()
-    logging.info("Finished")
+    # logging.info("Finished")
 
     logging.info('Exporting results...')
-    exporter = ResultsExporter(arguments.output, peakels)
+    exporter = ResultsExporter(arguments.output, sorted(peakels, key=lambda _: _.id))
     exporter.write()
+    logging.info("Done.")
 
 if __name__ == '__main__':
     main()

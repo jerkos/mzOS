@@ -98,6 +98,11 @@ class StatsModel(object):
 
             m = annot.metabolite
             # worst case
+
+            if m.isotopic_pattern_neg is None:
+                annot.score_isos = 'NA'
+                continue
+
             ip = m.isotopic_pattern_pos if feature.polarity == 1 else m.isotopic_pattern_neg
             isotopic_pattern = [(float(a), float(b)) for a, b in eval(ip)]
             worst_rmsd, worst_mass_diff, peakel_index = self._calculate_worst_cases(feature, isotopic_pattern)

@@ -24,7 +24,7 @@ class ResultsExporter(object):
     """
     Exports the result in a tsv file
     """
-    HMDB, KEGG = "HMDB_ID=", "KEGG_ID="
+    HMDB, KEGG, LMSD = "HMDB_ID=", "KEGG_ID=", 'LMDS='
 
     HEADER = "id\tmz\ttime\tMain putative tag\t" \
              "Main tag pattern composition\tPutative secondary attributions\t" \
@@ -165,15 +165,19 @@ class ResultsExporter(object):
                                        for a in feature.annotations]
 
                 for idx, (for_adduct, metabolite, score1, score2) in enumerate(feature_metabolites):
-                    data = ";".join([ResultsExporter.HMDB + metabolite.hmdb_id,  # acession,
-                                     ResultsExporter.KEGG + metabolite.kegg_id]).encode("utf-8")
+                    hmdb_id = metabolite.hmdb_id or ''
+                    kegg_id = metabolite.kegg_id or ''
+                    lm_id = metabolite.lm_id or ''
+
+                    data = ";".join([ResultsExporter.HMDB + hmdb_id,  # acession,
+                                     ResultsExporter.KEGG + kegg_id,
+                                     ResultsExporter.LMSD + lm_id]).encode("utf-8")
                     data = data.replace("\t", "")
 
                     s = feature_header if idx > 0 else ""
-                    s += "\t".join([
-                                    ": ".join([for_adduct, metabolite.name.encode("utf-8")]),
+                    s += "\t".join([": ".join([for_adduct, metabolite.name.encode("utf-8")]),
                                     metabolite.formula.encode("utf-8"),
-                                    metabolite.inchi.encode("utf-8"),
+                                    metabolite.inchi_key.encode("utf-8"),
 
                                     data,
 
@@ -182,9 +186,14 @@ class ResultsExporter(object):
 
                                     ip_score_isotopes
                                     ])
-                    if idx < len(feature_metabolites) - 1:
-                        s += "\n"
+                    # if idx < len(feature_metabolites) - 1:
+                    s += "\n"
                     f.write(s)
+                else:
+                    f.write('\n')
+
+                # end for
+
                 f.write("\n")
 
             # save experiment in mongodb

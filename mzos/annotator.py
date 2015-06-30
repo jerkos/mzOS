@@ -418,8 +418,7 @@ class PeakelsAnnotator(object):
         :param clusters:
         """
 
-        return chain.from_iterable([self._find_adducts_and_fragments_in_cluster(x)
-                                    for x in clusters])
+        return list(chain.from_iterable([self._find_adducts_and_fragments_in_cluster(x) for x in clusters]))
 
         # l = list()
         # for x in clusters:

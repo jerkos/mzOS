@@ -42,7 +42,7 @@ class BayesianInferer(object):
     og the analysis of the network
     """
 
-    REACTIONS_FILE = "ressources/reaction.reac"
+    REACTIONS_FILE = "mzos/ressources/reaction.reac"
 
     def __init__(self, features, experiment):
         """
@@ -64,7 +64,7 @@ class BayesianInferer(object):
         :return:
         """
         # with open(op.normcase("ressources/reaction.reac"), 'rb') as f:
-        with open(op.abspath(BayesianInferer.REACTIONS_FILE)) as f:
+        with open(op.abspath(BayesianInferer.REACTIONS_FILE), 'rb') as f:
             reactions = cPickle.load(f)
         return reactions
 
@@ -251,7 +251,7 @@ class BayesianInferer(object):
                 # (counts - n_burning_samples ) / float(n_s)
                 prob_by_metab_by_feature[f][m.kegg_id] = counts / n_samples
 
-    def infer_assignment_probabilities(self, n_samples=1000, n_burning_sample=10):
+    def infer_assignment_probabilities(self, n_samples=500, n_burning_sample=10):
         """
         Main function
         :param n_samples:
