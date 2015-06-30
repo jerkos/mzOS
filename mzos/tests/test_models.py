@@ -251,7 +251,6 @@ class TestClustering(unittest.TestCase):
                 print p.moz, p.rt, sample_by_peakel[p]
             print '\n'
 
-
     @classmethod
     def tearDownClass(cls):
         import os
