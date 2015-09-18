@@ -25,3 +25,6 @@ exclude_lines =
 omit = 
         */mzos/tests/*
         */mzos/scripts/*
+        */mzos/mass_default.py
+        */mzos/mongo_db.py
+        */mzos/pathway_enrichement.py
