@@ -27,4 +27,5 @@ omit =
         */mzos/scripts/*
         */mzos/mass_default.py
         */mzos/mongo_db.py
-        */mzos/pathway_enrichement.py
+        */mzos/pathway_enrichment.py
+        */mzos/merge_spectra.py
