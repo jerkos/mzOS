@@ -40,7 +40,7 @@ class TestResultExporter(unittest.TestCase):
 
         # annotation
         peakels_annotator = PeakelsAnnotator(peakels, exp_settings)
-        best_monos = peakels_annotator.annotate_()
+        best_monos = peakels_annotator.annotate()
 
         # database finding
         db_search = DatabaseSearch('hmdb', exp_settings)
