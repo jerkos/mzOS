@@ -30,7 +30,7 @@ class Scan(dict):
 
     """
 
-    def __init__(self, mz_array, int_array, metadata={}):
+    def __init__(self, mz_array, int_array, **metadata):
         dict.__init__(self, metadata)
         self.mz_array = mz_array
         self.int_array = int_array

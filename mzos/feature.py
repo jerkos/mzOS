@@ -82,6 +82,9 @@ class Peakel(object):
     """
     peakel or elution peak
     """
+
+    ADDUCTS_MASS = {'H': 1.007276}
+
     _ids = count(1)
 
     def __init__(self, moz, mozmin, mozmax, rt, rtmin=0, rtmax=0):
@@ -329,9 +332,9 @@ class Peakel(object):
         isos.insert(0, self)
         return isos
 
-    def get_real_mass(self, adducts={'H': 1.007276}):
+    def get_real_mass(self, adducts=None):
         m = self.moz * self.charge
-        charge_mass = self.charge * adducts['H']
+        charge_mass = self.charge * (adducts or Peakel.ADDUCTS_MASS['H'])
         return m + charge_mass if self.polarity < 0 else m - charge_mass
 
 
@@ -341,10 +344,10 @@ class Feature(object):
     :param rt:
     :param peakels:
     """
-    def __init__(self, mono_mz, rt, peakels=[]):
+    def __init__(self, mono_mz, rt, peakels=None):
         self.moz = mono_mz
         self.rt = rt
-        self.isotopes = peakels
+        self.isotopes = peakels or []
         self.adducts = set()
 
 
@@ -397,4 +400,4 @@ class PeakelIndex(object):
             return None
         peaks.sort(key=lambda x: abs(x.moz - moz))
 
-        return peaks[0] if ( abs(peaks[0].moz - moz) < tol_da) else None
+        return peaks[0] if (abs(peaks[0].moz - moz) < tol_da) else None

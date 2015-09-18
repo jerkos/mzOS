@@ -26,7 +26,7 @@ class ExperimentalSettings(object):
 
     ISOS = "mzos/ressources/"
 
-    def __init__(self, mz_tol_ppm, ionisation_mode=None, is_dims_experiment=False, databases={'hmdb'}):
+    def __init__(self, mz_tol_ppm, ionisation_mode=None, is_dims_experiment=False, databases=frozenset({'hmdb'})):
         self.samples = set()
 
         self.polarity = ionisation_mode  # warning is an ENUM
@@ -116,7 +116,8 @@ class Group(list):
     :param description:
     """
 
-    def __init__(self, name_id, samples=[], description=""):
+    def __init__(self, name_id, samples, description=""):
+        super(Group, self).__init__()
         self.samples = samples
         self.description = description
         self.name_id = name_id

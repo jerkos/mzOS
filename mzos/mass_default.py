@@ -29,7 +29,7 @@ db = op.normcase("ressources/hmdb.sqlite")
 request = "select formula, mono_mass from metabolite"
 
 
-def is_good_formula(formula, allowed_atoms={"C", "H", "N", "O", "P", "S"}):
+def is_good_formula(formula, allowed_atoms=frozenset({"C", "H", "N", "O", "P", "S"})):
     """
     :param formula:
     :param allowed_atoms:
