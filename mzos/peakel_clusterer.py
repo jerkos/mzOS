@@ -9,7 +9,9 @@ from mzos.clustering import clusterize_basic, clusterize_hierarchical, clusteriz
 
 class PeakelClusterer(object):
     """
-    PeakelClusterer class
+    PeakelClusterer
+    ===============
+
     provides several to clusterize a list of elution peaks using Rt and cross-abundances
 
     Methods:
@@ -146,7 +148,7 @@ class PeakelClusterer(object):
         
         return clust_list  # self._split_rt_cluster(clust_list)
 
-    def check_update_corrs(self, rt_clusters, corr_shape_dist, corr_int_dist):
+    def _check_update_corrs(self, rt_clusters, corr_shape_dist, corr_int_dist):
         """
         Private function
         :param rt_clusters:
@@ -178,11 +180,7 @@ class PeakelClusterer(object):
             logging.error("could not make rt clusters...")
             return []
             
-        curated = self.check_update_corrs(rt_clusters, corr_shape_dist, corr_int_dist)
+        curated = self._check_update_corrs(rt_clusters, corr_shape_dist, corr_int_dist)
         logging.info("Intensity clustering done, nb clusters:{}".format(len(curated)))
         return curated
 
-    # def clusterize_(self, error_rt=10.0,
-    #                 distance_corr_shape=DEFAULT_SHAPE_CORR,
-    #                 distance_corr_intensity=DEFAULT_INT_CORR):
-    #     pass

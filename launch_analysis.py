@@ -41,8 +41,9 @@ def get_arg_parser():
                         help='experiment polarity', required=True)
     parser.add_argument("--mz_tol_ppm", type=float, default=10.0, help='mass over charge tolerance', required=False)
     parser.add_argument("--dims", default=False, action='store_true', help='direct infusion MS experiment', required=False)
-    parser.add_argument('--db', default='hmdb', choices=['hmdb', 'lmsd'], required=False)
+    parser.add_argument('--db', default='hmdb', choices=['hmdb', 'lmsd', 'hmdb + lmsd'], required=False)
     parser.add_argument("--output", type=str, default="annotations.tsv", required=False)
+    parser.add_argument("--bayes", default=True, required=False)
     return parser
 
 
@@ -73,7 +74,7 @@ def main():
     peakels_annotator = PeakelsAnnotator(peakels, exp_settings)
     logging.info("Annotating...")
 
-    best_monos = peakels_annotator.annotate_()
+    best_monos = peakels_annotator.annotate()
     logging.info("Monoisotopic found: #{}".format(len(best_monos)))
 
     # database finding

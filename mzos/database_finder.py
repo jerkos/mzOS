@@ -22,7 +22,6 @@ from collections import defaultdict as ddict, namedtuple
 from itertools import izip
 import multiprocessing
 
-
 from mzos.feature import Annotation
 from mzos.formula import Formula
 
@@ -65,16 +64,12 @@ class Metabolite(MolecularEntity):
             else:
                 setattr(self, name, value)
 
+
 class Lipid(MolecularEntity):
     def __init__(self, lm_id):
         MolecularEntity.__init__(self)
 
         self.lm_id = lm_id
-
-# Metabolite = namedtuple("Metabolite", "acession, name, formula, inchi, mono_mass, average_mass, "
-#                                       "description, status, origin, kegg_id, isotopic_pattern_pos, "
-#                                       "isotopic_pattern_neg")
-# Lipid = namedtuple("Lipid", 'systematic_name, kegg_id, inchi_key')
 
 
 class IDatabaseSearcher(object):
@@ -213,6 +208,16 @@ class DatabaseSearch(IDatabaseSearcher):
             elif self.bank == 'lmsd':
                 args = [(self.LMSD_FILE, f, formula, with_tol_ppm) for f in features]
                 metabs = pool.map(search_lipids_for, args, chunksize=20)
+            elif self.bank == 'lmsd + hmdb':
+                logging.info('Searching in LMSD...')
+                args_lmsd = [(self.LMSD_FILE, f, formula, with_tol_ppm) for f in features]
+                metabs_lmsd = pool.map(search_lipids_for, args_lmsd, chunksize=20)
+
+                logging.info('Searching in HMDB...')
+                args_hmdb = [(self.HMDB_FILE, f, formula, with_tol_ppm) for f in features]
+                metabs_hmdb = pool.map(search_metabolites_for, args_hmdb, chunksize=20)
+
+                metabs = metabs_lmsd + metabs_hmdb
 
             # create Annotation objects
             for f, metabs in izip(features, metabs):

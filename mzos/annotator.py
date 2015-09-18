@@ -420,20 +420,14 @@ class PeakelsAnnotator(object):
 
         return list(chain.from_iterable([self._find_adducts_and_fragments_in_cluster(x) for x in clusters]))
 
-        # l = list()
-        # for x in clusters:
-        #     l += self._find_adducts_and_fragments_in_cluster(x)
-        # return l
-        # return [self._find_adducts_and_fragments_in_cluster(x) for x in clusters]
-
-    def annotate_(self, error_rt=6.0,
-                  max_charge=2,
-                  max_isotopes_nb=3,
-                  max_gap=0,
-                  distance_corr_shape=PeakelClusterer.DEFAULT_SHAPE_CORR,
-                  distance_corr_intensity=PeakelClusterer.DEFAULT_INT_CORR):
+    def annotate(self, error_rt=6.0,
+                 max_charge=2,
+                 max_isotopes_nb=3,
+                 max_gap=0,
+                 distance_corr_shape=PeakelClusterer.DEFAULT_SHAPE_CORR,
+                 distance_corr_intensity=PeakelClusterer.DEFAULT_INT_CORR):
         """
-
+        Wrapper function around clustering and fragments/adducts
         @param error_rt:
         @param max_charge:
         @param max_isotopes_nb:
@@ -452,8 +446,8 @@ class PeakelsAnnotator(object):
                                                      self.exp_settings.mz_tol_ppm,
                                                      max_charge, max_isotopes_nb, max_gap)[0])
 
-        curated_clusters = self.peakel_clusterer.check_update_corrs(less_isotopes,
-                                                                    distance_corr_shape,
-                                                                    distance_corr_intensity)
+        curated_clusters = self.peakel_clusterer._check_update_corrs(less_isotopes,
+                                                                     distance_corr_shape,
+                                                                     distance_corr_intensity)
         best_mos = self.find_adducts_and_fragments(curated_clusters)
         return best_mos
