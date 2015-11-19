@@ -8,6 +8,7 @@ setup(
     url='http://github.com/jerkos/mzOS',
     license='',
     author='Marco',
-    author_email='marc.dubois@omics-services.com',
-    description='', requires=['bioservices', 'scipy', 'numpy', 'pandas']
+    author_email='cram@hotmail.fr',
+    description='Small library to perform feature annotations/identifications of LC-MS metabolomics dataset.',
+    requires=['bioservices', 'scipy', 'numpy', 'pandas', 'scikit-learn']
 )
