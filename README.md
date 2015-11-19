@@ -4,7 +4,7 @@ mzOS
 [![Build Status](https://travis-ci.org/jerkos/mzOS.svg?branch=master)](https://travis-ci.org/jerkos/mzOS)
 [![Coverage Status](https://coveralls.io/repos/jerkos/mzOS/badge.svg?branch=master&service=github)](https://coveralls.io/github/jerkos/mzOS?branch=master)
 
-## Collections of scripts for features annotations in  metabolomics experiments:
+## Collections of scripts for features annotations in  LC-MS metabolomics experiments:
 
 * [x] isotopes detection
 * [x] adducts/fragments annotation using simple heuristics (when conflicts)
@@ -13,6 +13,13 @@ mzOS
 * [ ] functionnal annotation, metabolite pathway enrichment analysis (MPEA)
 
 More details [here](http://jerkos.github.io/mzOS)
+
+## Dependancies
+
+* numpy
+* scipy
+* pandas
+* scikit-learn
 
 ## TODOs:
 
