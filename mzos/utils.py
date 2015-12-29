@@ -15,8 +15,6 @@
 
 __email__ = 'marc.dubois@omics-services.com'
 
-from math import sqrt
-from collections import defaultdict as ddict
 import subprocess
 import logging
 

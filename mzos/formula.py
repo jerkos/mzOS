@@ -1,7 +1,4 @@
-__author__ = 'Marc'
-
 import re
-import subprocess
 import logging
 import os.path as op
 from collections import Counter
