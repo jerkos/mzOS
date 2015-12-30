@@ -9,7 +9,7 @@ before_install:
   - sudo apt-get install -qq python-numpy python-scipy python-sklearn
 
 install:
-  - python setup install
+  - python setup.py install
   - pip install coveralls
 
 script:
