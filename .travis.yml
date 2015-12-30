@@ -2,18 +2,18 @@ language: python
 python:
   - "2.7"
 # command to install dependencies
+
 virtualenv:
-  system_site_packages: true
+  - "2.7_with_system_site_packages"
 
 before_install:
   - sudo apt-get install -qq python-numpy python-scipy python-sklearn
 
 install:
-
   - pip install coveralls
   - pip install .
 
 script: nosetests --with-coverage --cover-package=mzos
 
 after_success:
-  coveralls
+  coveralls --config-file .coveragerc

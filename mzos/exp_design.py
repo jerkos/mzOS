@@ -89,14 +89,14 @@ class ExperimentalSettings(object):
         :param id_:
         :return:
         """
-        return self.group_by_id.get(id_, None)
+        return self.group_by_id.get(id_)
 
     def get_group_of(self, sample):
         """
         :param sample:
         :return: return group or None
         """
-        return self.group_by_sample.get(sample, None)
+        return self.group_by_sample.get(sample)
 
     def get_group_id_of(self, sample):
         """

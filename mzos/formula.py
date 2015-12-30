@@ -426,7 +426,7 @@ class Formula(dict):
         """
         if isinstance(f, str):
             fd = Formula.from_str(f)
-        elif isinstance(f, dict) or isinstance(f, Counter):
+        elif isinstance(f, (dict, Counter)):
             fd = Formula(f)
         else:
             if not isinstance(f, Formula):
