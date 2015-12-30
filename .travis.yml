@@ -6,10 +6,10 @@ python:
 
 before_install:
   - sudo apt-get update
-  - sudo apt-get install -qq python-numpy python-scipy python-sklearn
+  - sudo apt-get install python-numpy python-scipy python-sklearn
 
 install:
-  - python setup.py install
+  - pip install .
   - pip install coveralls
 
 script:
