@@ -127,7 +127,7 @@ class DatabaseSearch(object):
         self.exp_design = exp_design
         self.metabolites_by_feature = {}
         self.bank = 'hmdb' if bank not in {'hmdb', 'kegg', 'lmsd'} else bank  # self.exp_design.databases
-        logging.info("Performing database search in {} {}".format(self.bank, 'v3.5'))
+        logging.info("Performing database search in {0} {1}".format(self.bank, 'v3.5'))
 
     def assign_formula(self, features, for_adducts, with_tol_ppm=10.0):
         """
@@ -141,7 +141,7 @@ class DatabaseSearch(object):
         m_count, not_found = 0, 0
         for for_adduct in for_adducts:
             formula = Formula.from_str(for_adduct)
-            logging.info("searching for adducts: {}".format(str(formula)))
+            logging.info("searching for adducts: {0}".format(str(formula)))
 
             pool = multiprocessing.Pool(processes=multiprocessing.cpu_count())
 
@@ -169,7 +169,7 @@ class DatabaseSearch(object):
                     not_found += 1
                 else:
                     m_count += len(metabs)
-                for_adducts_str = '[M{}{}]='.format('-' if f.polarity > 0 else '+', formula)
+                for_adducts_str = '[M{0}{1}]='.format('-' if f.polarity > 0 else '+', formula)
                 f.annotations += [Annotation(m, for_adducts_str) for m in metabs]
 
             pool.close()

@@ -75,7 +75,7 @@ def main():
     logging.info("Annotating...")
 
     best_monos = peakels_annotator.annotate()
-    logging.info("Monoisotopic found: #{}".format(len(best_monos)))
+    logging.info("Monoisotopic found: #{0}".format(len(best_monos)))
 
     # database finding
 

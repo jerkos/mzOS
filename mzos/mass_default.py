@@ -33,6 +33,6 @@ if __name__ == "__main__":
             metabolites.append((mass, mass - math.floor(mass)))
     with open("ressources/default_mass_C_H_N_O_P_S.tsv", 'w') as fh:
         for m in metabolites:
-            fh.write("{}\t{}\n".format(str(m[0]), str(m[1])))
+            fh.write("{0}\t{1}\n".format(str(m[0]), str(m[1])))
 
 
