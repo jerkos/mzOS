@@ -120,7 +120,7 @@ class TestClustering(unittest.TestCase):
 
         ip = self.f1.get_isotopic_pattern()
         self.assertEqual(len(ip), 2)
-        self.assertTrue(all([len(x) == 2 for x in ip]))
+        self.assertTrue(all(len(x) == 2 for x in ip))
 
         ip2 = self.f1.get_isotopic_pattern_as_peakel()
         self.assertIn(self.f1, ip2)

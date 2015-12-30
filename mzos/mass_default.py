@@ -19,7 +19,7 @@ def is_good_formula(formula, allowed_atoms=frozenset({"C", "H", "N", "O", "P", "
     :return:
     """
     atoms = [x[0] for x in ELEMENT_PATTERN.findall(formula)]
-    if not all([a in allowed_atoms for a in atoms]):
+    if not all(a in allowed_atoms for a in atoms):
         return False
     return True
 

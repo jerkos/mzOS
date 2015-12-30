@@ -139,7 +139,7 @@ class BayesianInferer(object):
             sample = np.random.multinomial(1, norm_probs, size=1)[0]
 
             # ?
-            if not all([x == 0 or x == 1 for x in sample]):
+            if not all(x == 0 or x == 1 for x in sample):
                 continue
 
             sampled_metab_id = metabs[np.where(sample == 1)[0][0]].kegg_id
@@ -184,7 +184,7 @@ class BayesianInferer(object):
         sample = np.random.multinomial(1, norm_probs, size=1)[0]
 
         # ?
-        if not all([x == 0 or x == 1 for x in sample]):
+        if not all(x == 0 or x == 1 for x in sample):
             return  # continue
 
         # find index

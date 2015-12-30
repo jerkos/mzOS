@@ -139,7 +139,7 @@ class Peakel(object):
 
             s += str(son.id) + "=" + attrib
 
-        isos = set([si for si in son.isotopes if si.get_attributions_by_parent_id()[son.id][0].charge == charge])
+        isos = {si for si in son.isotopes if si.get_attributions_by_parent_id()[son.id][0].charge == charge}
         n_ = isos.union(son.adducts)
         nb_isos, nb_adducts = len(isos), len(son.adducts)
 
