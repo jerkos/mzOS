@@ -1,7 +1,3 @@
-from mzos.database_finder import Metabolite
-
-__author__ = 'marc.dubois@omics-services.com'
-
 import unittest
 import os.path as op
 import logging
@@ -14,6 +10,7 @@ from mzos.clustering import clusterize_hierarchical, clusterize_basic, clusteriz
 from mzos.peakel_clusterer import PeakelClusterer
 from mzos.exp_design import ExperimentalSettings
 from mzos.formula import Formula
+from mzos.database_finder import Metabolite
 
 
 class TestClustering(unittest.TestCase):
@@ -97,9 +94,8 @@ class TestClustering(unittest.TestCase):
         self.assertGreaterEqual(4, len(clusters))
 
     def test_error_1(self):
-        #peakel_clusterer = PeakelClusterer(self.features, )
         self.assertRaises(ValueError, PeakelClusterer, self.features, rt_clust_method=3,
-                                           corr_int_method=2, corr_shape_method=2)
+                          corr_int_method=2, corr_shape_method=2)
 
     def test_error_2(self):
         peakel_clusterer = PeakelClusterer(self.features, rt_clust_method=3)
@@ -151,7 +147,6 @@ class TestClustering(unittest.TestCase):
 
     def test_nearest_peak(self):
         findex = PeakelIndex(self.features)
-        ppm = 1261.52 * 10 / 1e6
         p = findex.get_nearest_peakel(1261.52, 10)
         self.assertAlmostEqual(p.moz, 1261.52)
 
@@ -210,7 +205,7 @@ class TestClustering(unittest.TestCase):
         self.assertIsNot(f5, f3)
         self.assertEqual(str(f5), 'C3H11')
 
-        #test + -
+        # test + -
         i = Formula.from_str('C4H4O4')
         i += 'C4H4O4'
         self.assertEqual(str(i), 'C8H8O8')
@@ -219,8 +214,6 @@ class TestClustering(unittest.TestCase):
         self.assertIsNot(j, i)
         self.assertEqual(str(j), 'C10H10O10')
         self.assertEqual(str(i), 'C8H8O8')
-
-        #not exits anymore print f5.get_theo_ip()
 
     def test_script_hmdb(self):
         from mzos.scripts.hmdb_sqlite_creator import build_library
@@ -254,8 +247,7 @@ class TestClustering(unittest.TestCase):
     @classmethod
     def tearDownClass(cls):
         import os
-        import re
         try:
             os.remove('hmdb_test.sqlite')
-        except (WindowsError, IOError):
+        except (OSError, IOError):
             pass

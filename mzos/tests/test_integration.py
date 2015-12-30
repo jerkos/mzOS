@@ -1,10 +1,5 @@
-__author__ = 'Marc'
-
 import unittest
 import os.path as op
-import os
-import zipfile
-import shutil
 
 from mzos.exp_design import ExperimentalSettings
 from mzos.peaklist_reader import PeakListReader
@@ -13,24 +8,17 @@ from mzos.stats import StatsModel
 from mzos.bayesian_inference import BayesianInferer
 from mzos.results_exporter import ResultsExporter
 from mzos.database_finder import DatabaseSearch
+from mzos.tests import unzip_hmdb
+from mzos.tests import remove_hmdb
 
 
 class TestResultExporter(unittest.TestCase):
 
     def setUp(self):
-        z = zipfile.ZipFile(op.normcase('mzos/ressources/hmdb.zip'))
-        self.hmdb_path = z.extract('hmdb.sqlite')
-        print("Moving extracted archive...")
-        shutil.move(self.hmdb_path, 'mzos/ressources/hmdb.sqlite')
-        print("Done")
+        unzip_hmdb()
 
     def tearDown(self):
-        print("removing 'hmdb.sqlite'...")
-        try:
-            os.remove(op.normcase('mzos/ressources/hmdb.sqlite'))
-            print("Done")
-        except OSError:
-            pass
+        remove_hmdb()
 
     def test_result_exporter(self):
         polarity = -1
@@ -40,12 +28,12 @@ class TestResultExporter(unittest.TestCase):
 
         # annotation
         peakels_annotator = PeakelsAnnotator(peakels, exp_settings)
-        best_monos = peakels_annotator.annotate()
+        peakels_annotator.annotate()
 
         # database finding
         db_search = DatabaseSearch('hmdb', exp_settings)
         adducts_l = ['H1']
-        nb_metabs, not_found = db_search.assign_formula(peakels, adducts_l, exp_settings.mz_tol_ppm)
+        db_search.assign_formula(peakels, adducts_l, exp_settings.mz_tol_ppm)
 
         # scoring
         # first simplistic

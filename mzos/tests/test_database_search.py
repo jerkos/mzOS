@@ -1,31 +1,18 @@
-__author__ = 'marc.dubois@omics-services.com'
-
 import unittest
-import zipfile
-import os.path as op
-import os
-import shutil
 
 from mzos.database_finder import DatabaseSearch
 from mzos.feature import Peakel
+from mzos.tests import unzip_hmdb
+from mzos.tests import remove_hmdb
 
 
 class TestDatabaseSearch(unittest.TestCase):
 
     def setUp(self):
-        z = zipfile.ZipFile(op.abspath('mzos/ressources/hmdb.zip'))
-        self.hmdb_path = z.extract('hmdb.sqlite')
-        print("Moving extracted archive...")
-        shutil.move(self.hmdb_path, 'mzos/ressources/hmdb.sqlite')
-        print("Done")
+        unzip_hmdb()
 
     def tearDown(self):
-        print("removing 'hmdb.sqlite'...")
-        try:
-            os.remove(op.normcase('mzos/ressources/hmdb.sqlite'))
-            print("Done")
-        except OSError:
-            pass
+        remove_hmdb()
 
     def test_database_search(self):
         mass_fruc_6p = 260.029718526
@@ -41,4 +28,3 @@ class TestDatabaseSearch(unittest.TestCase):
             for annot in f.annotations:
                 m_names.add(annot.metabolite.name)
         self.assertIn(name, m_names)
-

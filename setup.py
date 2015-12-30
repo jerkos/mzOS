@@ -9,5 +9,6 @@ setup(
     license='',
     author='Marco',
     author_email='cram@hotmail.fr',
-    description='', requires=['bioservices', 'scipy', 'numpy', 'pandas']
+    description='Small library to perform feature annotations/identifications of LC-MS metabolomics dataset.',
+    requires=['bioservices', 'scipy', 'numpy', 'pandas']
 )
