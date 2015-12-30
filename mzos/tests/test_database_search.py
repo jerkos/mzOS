@@ -2,17 +2,16 @@ import unittest
 
 from mzos.database_finder import DatabaseSearch
 from mzos.feature import Peakel
-from mzos.tests import unzip_hmdb
-from mzos.tests import remove_hmdb
+from mzos.tests import WithHMDBMixin
 
 
-class TestDatabaseSearch(unittest.TestCase):
+class TestDatabaseSearch(WithHMDBMixin):
 
     def setUp(self):
-        unzip_hmdb()
+        TestDatabaseSearch.unzip_hmdb()
 
     def tearDown(self):
-        remove_hmdb()
+        TestDatabaseSearch.remove_hmdb()
 
     def test_database_search(self):
         mass_fruc_6p = 260.029718526

@@ -8,17 +8,16 @@ from mzos.stats import StatsModel
 from mzos.bayesian_inference import BayesianInferer
 from mzos.results_exporter import ResultsExporter
 from mzos.database_finder import DatabaseSearch
-from mzos.tests import unzip_hmdb
-from mzos.tests import remove_hmdb
+from mzos.tests import WithHMDBMixin
 
 
-class TestResultExporter(unittest.TestCase):
+class TestResultExporter(WithHMDBMixin):
 
     def setUp(self):
-        unzip_hmdb()
+        TestResultExporter.unzip_hmdb()
 
     def tearDown(self):
-        remove_hmdb()
+        TestResultExporter.remove_hmdb()
 
     def test_result_exporter(self):
         polarity = -1
