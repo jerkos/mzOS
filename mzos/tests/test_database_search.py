@@ -5,7 +5,7 @@ from mzos.feature import Peakel
 from mzos.tests import WithHMDBMixin
 
 
-class TestDatabaseSearch(WithHMDBMixin):
+class TestDatabaseSearch(WithHMDBMixin, unittest.TestCase):
 
     def setUp(self):
         TestDatabaseSearch.unzip_hmdb()

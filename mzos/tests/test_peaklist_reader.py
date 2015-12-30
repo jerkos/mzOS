@@ -4,7 +4,7 @@ from mzos.peaklist_reader import PeakListReader
 from mzos.exp_design import ExperimentalSettings
 
 
-class TestPeakListReader:
+class TestPeakListReader(unittest.TestCase):
     FILE = op.normcase("mzos/ressources/peaks_matrix_NEG.tsv")
 
     def test_read_tsv(self):

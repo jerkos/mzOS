@@ -11,7 +11,7 @@ from mzos.database_finder import DatabaseSearch
 from mzos.tests import WithHMDBMixin
 
 
-class TestResultExporter(WithHMDBMixin):
+class TestResultExporter(WithHMDBMixin, unittest.TestCase):
 
     def setUp(self):
         TestResultExporter.unzip_hmdb()

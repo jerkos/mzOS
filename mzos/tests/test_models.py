@@ -1,6 +1,5 @@
 import unittest
 import os.path as op
-import logging
 
 import scipy as sp
 import numpy as np

@@ -1,4 +1,3 @@
-import unittest
 import zipfile
 import os.path as op
 import os
@@ -6,7 +5,7 @@ import shutil
 import logging
 
 
-class WithHMDBMixin(unittest.TestCase):
+class WithHMDBMixin(object):
 
     @staticmethod
     def unzip_hmdb():
