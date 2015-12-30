@@ -1,4 +1,9 @@
 import unittest
+import logging
+import shutil
+import unittest
+import zipfile
+import os
 import os.path as op
 
 from mzos.exp_design import ExperimentalSettings
@@ -14,10 +19,19 @@ from mzos.tests import WithHMDBMixin
 class TestResultExporter(WithHMDBMixin, unittest.TestCase):
 
     def setUp(self):
-        TestResultExporter.unzip_hmdb()
+        z = zipfile.ZipFile(op.abspath('mzos/ressources/hmdb.zip'))
+        self.hmdb_path = z.extract('hmdb.sqlite')
+        logging.info("Moving extracted archive...")
+        shutil.move(self.hmdb_path, 'mzos/ressources/hmdb.sqlite')
+        logging.info("Done")
 
     def tearDown(self):
-        TestResultExporter.remove_hmdb()
+        logging.info("removing 'hmdb.sqlite'...")
+        try:
+            os.remove(op.normcase('mzos/ressources/hmdb.sqlite'))
+            logging.info("Done")
+        except OSError:
+            logging.error("Unable to remove sqlite file or file does not exist")
 
     def test_result_exporter(self):
         polarity = -1
