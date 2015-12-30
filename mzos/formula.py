@@ -4,7 +4,7 @@ import os.path as op
 from collections import Counter
 
 
-class Element:
+class Element(object):
     """Element object definition.
         name: (str) name
         symbol: (str) symbol
