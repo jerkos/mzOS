@@ -9,7 +9,7 @@ def clusterize_basic(peakels, dist_func, *args):
     """
     Provide a basic clustering based on provided functions
     :param peakels:
-    :param dist_func:
+    :param dist_func: is a callable
     :param args:
     return: list of clusters (as set)
     """
