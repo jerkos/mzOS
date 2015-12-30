@@ -50,14 +50,14 @@ class TestClustering(unittest.TestCase):
 
     def test_clusterize_basic(self):
         clusters = clusterize_basic(self.features, PeakelClusterer.BASIC_RT_CALLABLE, 6.0)
-        print("len clusters basic: {}".format(len(clusters)))
+        print("len clusters basic: {0}".format(len(clusters)))
         self.assertGreaterEqual(4, len(clusters))
 
     def test_clusterize_hierarchical(self):
         rts = [[f.rt] for f in self.features]
         matrix_dist = sp.spatial.distance.pdist(np.array(rts))  # euclidean distance
         clusters = clusterize_hierarchical(self.features, matrix_dist, 3.0)
-        print("len clusters hierarchical: {}".format(len(clusters)))
+        print("len clusters hierarchical: {0}".format(len(clusters)))
         self.assertGreaterEqual(4, len(clusters))
 
     def test_clusterize_dbscan_rt(self):
@@ -67,14 +67,14 @@ class TestClustering(unittest.TestCase):
                 print f.rt
             print '\n'
 
-        print("len clusters dbscan: {}".format(len(clusters)))
+        print("len clusters dbscan: {0}".format(len(clusters)))
         self.assertGreaterEqual(4, len(clusters))
 
     def test_clusterize_hierarchical_int(self):
         ints = [f.area_by_sample_name.values() for f in self.features]
         matrix_dist = sp.spatial.distance.pdist(np.array(ints), metric="correlation")  # euclidean distance
         clusters = clusterize_hierarchical(self.features, matrix_dist, 0.1, clip=True)
-        print("len clusters hierarchical int: {}".format(len(clusters)))
+        print("len clusters hierarchical int: {0}".format(len(clusters)))
         self.assertGreaterEqual(4, len(clusters))
 
     def test_peakel_clusterer_main(self):
@@ -114,8 +114,8 @@ class TestClustering(unittest.TestCase):
         self.assertEqual(nb_isos, 1)
         self.assertEqual(nb_adducts, 1)
         print s
-        self.assertIn('({}=isotope c13)'.format(self.f2.id), s)
-        self.assertIn('({}=[M+Na+])'.format(self.f3.id), s)
+        self.assertIn('({0}=isotope c13)'.format(self.f2.id), s)
+        self.assertIn('({0}=[M+Na+])'.format(self.f3.id), s)
 
         ip = self.f1.get_isotopic_pattern()
         self.assertEqual(len(ip), 2)
@@ -126,12 +126,12 @@ class TestClustering(unittest.TestCase):
 
         f_by_id = {f.id: f for f in self.features}
         s = self.f2.get_bottom_up_attribution_tree(f_by_id)
-        self.assertEqual(s, 'isotope c13 of {} for charge={}'.format(self.f1.id, self.f2.main_attribution.charge))
+        self.assertEqual(s, 'isotope c13 of {0} for charge={1}'.format(self.f1.id, self.f2.main_attribution.charge))
 
         a = Attribution('isotope s34', self.f3.id, charge=2)
         self.f2.add_attribution(a)
         s = Peakel.get_others_bottom_up_attribution_tree(a, f_by_id)
-        self.assertEqual(s, 'isotope s34 of {} for charge={} of [M+Na+] of {} for charge=1'.format(self.f3.id, 2, self.f1.id))
+        self.assertEqual(s, 'isotope s34 of {0} for charge={1} of [M+Na+] of {2} for charge=1'.format(self.f3.id, 2, self.f1.id))
 
         self.f2.get_attributions_by(lambda _: _.attribution)
 

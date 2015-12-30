@@ -74,12 +74,12 @@ def parse_metabolite_card(args):
                 try:
                     metab.append(float(elem.find('monisotopic_moleculate_weight').text))
                 except (ValueError, TypeError):
-                    logging.info("Failed to parse monisotopic_moleculate_weight in {}".format(filepath))
+                    logging.info("Failed to parse monisotopic_moleculate_weight in {0}".format(filepath))
                     metab.append(0.0)
                 try:
                     metab.append(float(elem.find('average_molecular_weight').text))
                 except (ValueError, TypeError):
-                    logging.info("Failed to parse average_molecular_weight in {}".format(filepath))
+                    logging.info("Failed to parse average_molecular_weight in {0}".format(filepath))
                     metab.append(0.0)
                 metab.append(elem.find('description').text)
                 # float(elem.find('description').text)
@@ -98,7 +98,7 @@ def parse_metabolite_card(args):
                 f2 = formula.remove('H', new_obj=True)
                 metab.append(get_theo_ip(emass_path, str(f2), min_rel_int=1.0))
     except (WindowsError, IOError, ValueError, TypeError) as e:
-        logging.warn("Error parsing metabolite card : {} with following exception : \n {}".format(filepath, e))
+        logging.warn("Error parsing metabolite card : {0} with following exception : \n {1}".format(filepath, e))
         return None
     return tuple(metab)
 
@@ -124,7 +124,7 @@ def build_library(sqlite_filepath, cards_directory, emass_path, nb_procs=multipr
     c.execute('create index mass_index on metabolite(mono_mass)')
     c.execute('create index inchi_key_idx on metabolite(inchikey)')
     conn.close()
-    logging.info("Finished, elpased time {} seconds".format(time.clock() - t1))
+    logging.info("Finished, elpased time {0} seconds".format(time.clock() - t1))
 
 
 if __name__ == '__main__':

@@ -26,7 +26,7 @@ class Attribution(object):
         self.charge = charge
 
     def __str__(self):
-        return "{} of {} for charge={}".format(self.attribution, self.parent_id, self.charge)
+        return "{0} of {1} for charge={2}".format(self.attribution, self.parent_id, self.charge)
 
 
 class Annotation(object):

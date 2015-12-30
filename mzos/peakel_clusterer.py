@@ -61,8 +61,8 @@ class PeakelClusterer(object):
         else:
             corr_method_used += " ".join(["correlation intensity", self.REV_CLUST_METHOD[self.corr_int_method]])
         # logger
-        logging.info("rt clustering_method used: {}".format(self.REV_CLUST_METHOD[self.rt_method]))
-        logging.info("correlation clustering method used: {}".format(corr_method_used))
+        logging.info("rt clustering_method used: {0}".format(self.REV_CLUST_METHOD[self.rt_method]))
+        logging.info("correlation clustering method used: {0}".format(corr_method_used))
 
     def set_peakels(self, peakels):
         """
@@ -79,7 +79,7 @@ class PeakelClusterer(object):
         
         """
         if self.rt_method == 1:
-            logging.info("Basic clustering with rt_error:{}".format(error_rt))
+            logging.info("Basic clustering with rt_error:{0}".format(error_rt))
             if not isinstance(error_rt, float):
                 raise TypeError("[clusterize]: args[0] is not a float")
             return clusterize_basic(self.peakels, self.BASIC_RT_CALLABLE, error_rt)
@@ -90,7 +90,7 @@ class PeakelClusterer(object):
             return clusterize_hierarchical(self.peakels, matrix_dist, "", error_rt).values()
 
         elif self.rt_method == 3:
-            logging.info('DB SCAN clustering with error_rt:{}'.format(error_rt))
+            logging.info('DB SCAN clustering with error_rt:{0}'.format(error_rt))
             rts = [[x.rt] for x in self.peakels]
             clusters = clusterize_dbscan(rts, self.peakels, eps=0.35)
             # with open('clusters.txt', 'w') as f:
@@ -175,12 +175,12 @@ class PeakelClusterer(object):
         """
         
         rt_clusters = self.clusterize_by_rt(error_rt)
-        logging.info("Rt clustering done, nb clusters: {}".format(len(rt_clusters)))
+        logging.info("Rt clustering done, nb clusters: {0}".format(len(rt_clusters)))
         if rt_clusters is None:
             logging.error("could not make rt clusters...")
             return []
             
         curated = self._check_update_corrs(rt_clusters, corr_shape_dist, corr_int_dist)
-        logging.info("Intensity clustering done, nb clusters:{}".format(len(curated)))
+        logging.info("Intensity clustering done, nb clusters:{0}".format(len(curated)))
         return curated
 

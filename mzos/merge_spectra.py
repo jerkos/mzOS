@@ -183,17 +183,17 @@ def write_spectrum(header, scan):
       scanType="Full"
       centroided="0"
       msLevel="1"
-      peaksCount="{}"
+      peaksCount="{0}"
       polarity="-"
-      retentionTime="PT{}S"
-      basePeakIntensity="{}"
-      totIonCurrent="{}"
+      retentionTime="PT{1}S"
+      basePeakIntensity="{2}"
+      totIonCurrent="{3}"
       msInstrumentID="1">
     <peaks compressionType="none"
             compressionLen="0"
             precision="64"
             byteOrder="network"
-            contentType="m/z-int">{}</peaks>
+            contentType="m/z-int">{4}</peaks>
     </scan>
   </msRun>
 </mzXML>""".format(scan['peaksCount'],
@@ -215,7 +215,7 @@ def create_file((filepath, mintime, maxtime)):
     good_time_scans = [scan for scan in scans]  # [scan for scan in scans if mintime < scan['retentionTime'] < maxtime]
     new_scan = None
     if not good_time_scans:
-        print("No scan defined in range: {}, {} in file {}".format(mintime, maxtime, filepath))
+        print("No scan defined in range: {0}, {1} in file {2}".format(mintime, maxtime, filepath))
         return new_scan
     elif len(good_time_scans) == 1:
         new_scan = good_time_scans[0]
@@ -233,7 +233,7 @@ if __name__ == '__main__':
     filesplusargs = [(f, 0.4, 1.6) for f in files]
     # print filesplusargs
     for t in filesplusargs:
-        print "Working on {}".format(t[0])
+        print "Working on {0}".format(t[0])
         create_file(t)
     # p = multiprocessing.Pool(processes=4)
     # r = p.map(create_file, filesplusargs, chunksize=2)

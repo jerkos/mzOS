@@ -34,11 +34,11 @@ class ResultsExporter(object):
             if n_isos or n_adds:
                 main_put_attribution += "monoisotope + "
                 if n_isos:
-                    main_put_attribution += "{} isotope(s)".format(n_isos)
+                    main_put_attribution += "{0} isotope(s)".format(n_isos)
                 if n_adds:
                     if n_isos:
                         main_put_attribution += "+"
-                    main_put_attribution += "{} adduct(s)/fragment(s)".format(n_adds)
+                    main_put_attribution += "{0} adduct(s)/fragment(s)".format(n_adds)
         else:
             # we have iso || frag || adducts
             main_put_attribution = feature.main_attribution.attribution
