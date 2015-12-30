@@ -9,11 +9,11 @@ before_install:
   - sudo apt-get install -qq python-numpy python-scipy python-sklearn
 
 install:
-  - pip install .
+  - python setup install
   - pip install coveralls
 
 script:
-  - nosetests
+  - nosetests --with-coverage --cover-package=mzos
 
 after_success:
   - coveralls
