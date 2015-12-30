@@ -7,10 +7,9 @@ python:
 before_install:
   - sudo apt-get update
   - sudo apt-get install libatlas-dev libatlas-base-dev liblapack-dev gfortran
-  #- sudo apt-get install python-numpy python-scipy python-sklearn
 
 install:
-  - pip install -I numpy==1.9.3
+  - pip install -I numpy==1.9.3 # https://github.com/numpy/numpy/issues/6462
   - pip install scipy
   - pip install scikit-learn
   - pip install .
