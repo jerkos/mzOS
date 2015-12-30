@@ -1,4 +1,3 @@
-import unittest
 import logging
 import shutil
 import unittest
