@@ -126,7 +126,7 @@ class DatabaseSearch(object):
     def __init__(self, bank, exp_design):
         self.exp_design = exp_design
         self.metabolites_by_feature = {}
-        self.bank = 'hmdb' if bank not in {'hmdb', 'kegg', 'lmsd'} else bank  # self.exp_design.databases
+        self.bank = 'hmdb' if bank not in {'hmdb', 'kegg', 'lmsd', 'hmdb + lmsd', 'lmsd + hmdb'} else bank  # self.exp_design.databases
         logging.info("Performing database search in {} {}".format(self.bank, 'v3.5'))
 
     def assign_formula(self, features, for_adducts, with_tol_ppm=10.0):
@@ -145,14 +145,14 @@ class DatabaseSearch(object):
 
             pool = multiprocessing.Pool(processes=multiprocessing.cpu_count())
 
-            metabs = []
+            metabolites = []
             if self.bank == 'hmdb':
                 args = [(self.HMDB_FILE, f, formula, with_tol_ppm) for f in features]
-                metabs = pool.map(search_metabolites_for, args, chunksize=20)
+                metabolites = pool.map(search_metabolites_for, args, chunksize=20)
             elif self.bank == 'lmsd':
                 args = [(self.LMSD_FILE, f, formula, with_tol_ppm) for f in features]
-                metabs = pool.map(search_lipids_for, args, chunksize=20)
-            elif self.bank == 'lmsd + hmdb':
+                metabolites = pool.map(search_lipids_for, args, chunksize=20)
+            elif self.bank in {'lmsd + hmdb', 'hmdb + lmsd'}:
                 logging.info('Searching in LMSD...')
                 args_lmsd = [(self.LMSD_FILE, f, formula, with_tol_ppm) for f in features]
                 metabs_lmsd = pool.map(search_lipids_for, args_lmsd, chunksize=20)
@@ -161,10 +161,12 @@ class DatabaseSearch(object):
                 args_hmdb = [(self.HMDB_FILE, f, formula, with_tol_ppm) for f in features]
                 metabs_hmdb = pool.map(search_metabolites_for, args_hmdb, chunksize=20)
 
-                metabs = metabs_lmsd + metabs_hmdb
+                # merge the 2 results set
+                for lmsd_met, hmdb_met in izip(metabs_lmsd, metabs_hmdb):
+                    metabolites.append(lmsd_met + hmdb_met)
 
             # create Annotation objects
-            for f, metabs in izip(features, metabs):
+            for f, metabs in izip(features, metabolites):
                 if not metabs:
                     not_found += 1
                 else:

@@ -19,7 +19,7 @@ class TestDatabaseSearch(WithHMDBMixin, unittest.TestCase):
         peakel.charge = 1
         peakel.polarity = -1
         peakels = [peakel]
-        db_search = DatabaseSearch('hmdb', None)
+        db_search = DatabaseSearch('hmdb + lmsd', None)
         db_search.assign_formula(peakels, ['H1'])
         m_names = set()
         for f in peakels:
