@@ -34,7 +34,7 @@ def get_compounds(reaction_id):
     :param reaction_id:
     :return:
     """
-    print "treating #reaction_id: {}".format(reaction_id)
+    print "treating #reaction_id: {0}".format(reaction_id)
     r = kegg_parser.get(reaction_id)
     reaction = kegg_parser.parse(r)
     reactants, products = reaction["equation"].split("=")
@@ -59,7 +59,7 @@ def get_kegg_reactions():
     rp_record_by_id = ddict(RPrecord)
 
     reac_ids = kegg_parser.reactionIds
-    logging.info("# reacids: {}".format(len(reac_ids)))
+    logging.info("# reacids: {0}".format(len(reac_ids)))
 
     p = multiprocessing.Pool(processes=multiprocessing.cpu_count())
 

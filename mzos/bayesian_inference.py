@@ -36,7 +36,7 @@ class BayesianInferer(object):
 
         logging.info("Loading reaction...")
         self.reactions = self.load_reactions()
-        logging.info("#{} reactions loaded".format(len(self.reactions)))
+        logging.info("#{0} reactions loaded".format(len(self.reactions)))
         self.assigned_compounds = set()
 
     @staticmethod
@@ -67,7 +67,7 @@ class BayesianInferer(object):
 
         # fit distribution
         # self.mu_i, self.sigma_i = norm.fit(rmsds)  # could be a poisson distribution
-        logging.info("Assign #{} features".format(c))
+        logging.info("Assign #{0} features".format(c))
 
     @staticmethod
     def _norm_prob(probs):

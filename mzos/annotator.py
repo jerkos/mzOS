@@ -420,7 +420,7 @@ class PeakelsAnnotator(object):
         """
         self.peakel_clusterer = PeakelClusterer(self.peakels)
         rt_clusters = self.peakel_clusterer.clusterize_by_rt(error_rt=error_rt)
-        logging.info('{} rt clusters found'.format(len(rt_clusters)))
+        logging.info('{0} rt clusters found'.format(len(rt_clusters)))
 
         less_isotopes = []  # will be list of list
         for rt_cluster in rt_clusters:
