@@ -3,6 +3,8 @@ import logging
 import os.path as op
 from collections import Counter
 
+from mzos.utils import get_theo_ip as theo_isotopic_pattern
+
 
 class Element(object):
     """Element object definition.
@@ -484,25 +486,6 @@ class Formula(dict):
                     wd[elem] = nb_e
         return wd
 
-        # def get_theo_ip(self, min_rel_int=5.0):
-        # """
-        #     # todo ask wich adducts to pass in parameter
-        #     formula is a string meaning compound
-        #     :param min_rel_int:
-        #     """
-        #     p = subprocess.Popen(Formula.EMASS_PATH, stdin=subprocess.PIPE, stdout=subprocess.PIPE)
-        #
-        #     out, err = p.communicate(input=str(self))
-        #     if not out:
-        #         logging.warn("Error computing isotopic pattern with formula: {0}.Skip it".format(str(self)))
-        #         return
-        #
-        #     try:
-        #         iso = repr(filter(lambda x: x[1] > min_rel_int,
-        #                           [(lambda x: (float(x[0]), float(x[1])))(l.rstrip().split(" "))
-        #                            for l in out.split('\n')[1:-1]]))
-        #     except IndexError:
-        #         logging.warn("Error parsing isotopic pattern.Skip it")
-        #         return
-        #
-        #     return iso
+    def get_theo_ip(self, min_rel_int=5.0):
+        return theo_isotopic_pattern(str(self), min_rel_int)
+

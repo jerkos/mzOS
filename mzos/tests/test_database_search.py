@@ -1,7 +1,9 @@
 import unittest
 
 from mzos.database_finder import DatabaseSearch
+from mzos.database_finder import get_moz_bounds
 from mzos.feature import Peakel
+from mzos.formula import Formula
 from mzos.tests import WithHMDBMixin
 
 
@@ -26,3 +28,10 @@ class TestDatabaseSearch(WithHMDBMixin, unittest.TestCase):
             for annot in f.annotations:
                 m_names.add(annot.metabolite.name)
         self.assertIn(name, m_names)
+
+    def test_moz_bounds(self):
+        f2 = Peakel(260.029718526 + 1.007276, 0.0, 0.0, 260.029718526)
+        m, m_min, m_max = get_moz_bounds(f2, Formula.from_str('H1'), 10)
+        self.assertAlmostEqual(m, 260.029718526, places=2)
+
+

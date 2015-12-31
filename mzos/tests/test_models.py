@@ -243,6 +243,12 @@ class TestClustering(unittest.TestCase):
                 print p.moz, p.rt, sample_by_peakel[p]
             print '\n'
 
+    def test_theo_ip(self):
+        fstr = 'C6H12O6'
+        f = Formula.from_str(fstr)
+        r = f.get_theo_ip()
+        self.assertIsNotNone(r)
+
     @classmethod
     def tearDownClass(cls):
         import os

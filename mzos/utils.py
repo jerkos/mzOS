@@ -1,16 +1,18 @@
 import subprocess
 import logging
+import os.path as op
+
+EMASS_PATH = op.abspath('mzos/third_party/emass/emass -i mzos/third_party/emass/ISOTOPE.DAT')
 
 
-def get_theo_ip(emass_path, f, min_rel_int=5.0):
+def get_theo_ip(f, min_rel_int=5.0):
     """
     # todo ask wich adducts to pass in parameter
     formula is a string meaning compound
     :param f:
-    :param emass_path:
     :param min_rel_int:
     """
-    p = subprocess.Popen(emass_path, stdin=subprocess.PIPE, stdout=subprocess.PIPE)
+    p = subprocess.Popen(EMASS_PATH, stdin=subprocess.PIPE, stdout=subprocess.PIPE)
 
     out, err = p.communicate(input=f)
     if not out:
