@@ -54,6 +54,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <cmath>
 #include <cwchar>
 #include <cfloat>
+#include <cstdlib>
 
 #include "parser.h"
 #include "getopt.h"

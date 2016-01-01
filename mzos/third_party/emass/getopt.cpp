@@ -31,7 +31,7 @@ int getopt(int argc, char *argv[], const char *opts) {
 
     char c = (unsigned char) argv[optind][sp];   // char after -
     optopt = c;
-    char *cp;
+    const char *cp;
     if (c == ':' || (cp = strchr(opts, c)) == NULL) {
         if (opterr) {
             cerr << argv[0] << error2 << c << endl;
