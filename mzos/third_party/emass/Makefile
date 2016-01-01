@@ -3,7 +3,7 @@ progs = emass
 objs = emass.o parser.o formula.o getopt.o
 headers = emass.h parser.h formula.h getopt.h
 
-CXX = g++
+CXX = gcc
 
 libs = -lm
 #CXXFLAGS = -Wall -W -ansi -pedantic -g -pg
