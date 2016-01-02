@@ -1,3 +1,4 @@
+from __future__ import absolute_import
 import logging
 
 import scipy as sp
@@ -5,6 +6,7 @@ import numpy as np
 from sklearn.metrics.pairwise import pairwise_distances
 
 from mzos.clustering import clusterize_basic, clusterize_hierarchical, clusterize_dbscan
+import six
 
 
 class PeakelClusterer(object):
@@ -23,7 +25,7 @@ class PeakelClusterer(object):
 
     """
     CLUST_METHOD = {"basic": 1, "hierarchical": 2, "dbscan": 3}
-    REV_CLUST_METHOD = {v: k for k, v in CLUST_METHOD.iteritems()}
+    REV_CLUST_METHOD = {v: k for k, v in six.iteritems(CLUST_METHOD)}
 
     DEFAULT_SHAPE_CORR = 0.4
     DEFAULT_INT_CORR = 0.4
@@ -87,7 +89,7 @@ class PeakelClusterer(object):
         elif self.rt_method == 2:
             rts = [[x.rt] for x in self.peakels]
             matrix_dist = sp.spatial.distance.pdist(np.array(rts))  # metric = eclidean by default
-            return clusterize_hierarchical(self.peakels, matrix_dist, "", error_rt).values()
+            return list(clusterize_hierarchical(self.peakels, matrix_dist, "", error_rt).values())
 
         elif self.rt_method == 3:
             logging.info('DB SCAN clustering with error_rt:{0}'.format(error_rt))
@@ -120,7 +122,7 @@ class PeakelClusterer(object):
             clust_list = clusterize_basic(rt_cluster, self.BASIC_CORR_SHAPE_CALLABLE, distance_corr)
         
         elif self.corr_shape_method == 2:
-            ints = map(lambda x: map(lambda y: y.intensity, x.peaks) if len(x.peaks) else [0], rt_cluster)
+            ints = [[y.intensity for y in x.peaks] if len(x.peaks) else [0] for x in rt_cluster]
             matrix_dist = sp.spatial.distance.pdist(np.array(ints), metric='correlation')
             clust_list = clusterize_hierarchical(rt_cluster, matrix_dist, distance_corr, clip=True)
         
@@ -138,7 +140,7 @@ class PeakelClusterer(object):
             clust_list = clusterize_basic(rt_cluster, self.BASIC_CORR_INT_CALLABLE, distance_corr)
         
         elif self.corr_int_method == 2:
-            ints = [x.area_by_sample_name.values() for x in rt_cluster]  #
+            ints = [list(x.area_by_sample_name.values()) for x in rt_cluster]  #
             # matrix_dist = sp.spatial.distance.pdist(np.array(ints), metric='correlation')
             # ude by default all cores on the machine
             matrix_dist = pairwise_distances(np.array(ints), metric='correlation')  # , n_jobs=-1)

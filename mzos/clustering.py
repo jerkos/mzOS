@@ -1,3 +1,4 @@
+from __future__ import absolute_import
 from collections import defaultdict as ddict
 
 from sklearn.cluster import DBSCAN
@@ -58,7 +59,7 @@ def clusterize_hierarchical(peakels, matrix_dist, cut, clip=False):
     clust_by_id = ddict(list)
     for i, v in enumerate(k2):
         clust_by_id[v].append(peakels[i])
-    return clust_by_id.values()
+    return list(clust_by_id.values())
 
 
 def clusterize_dbscan(values, peakels, eps=0.2, min_samples=1):
@@ -74,4 +75,4 @@ def clusterize_dbscan(values, peakels, eps=0.2, min_samples=1):
     clust_by_id = ddict(list)
     for i, label in enumerate(labels):
         clust_by_id[label].append(peakels[i])
-    return clust_by_id.values()
+    return list(clust_by_id.values())

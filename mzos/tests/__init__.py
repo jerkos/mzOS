@@ -1,3 +1,4 @@
+from __future__ import absolute_import
 import zipfile
 import os.path as op
 import os

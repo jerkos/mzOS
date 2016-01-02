@@ -1,3 +1,5 @@
+from __future__ import absolute_import
+from __future__ import print_function
 import unittest
 import os.path as op
 
@@ -50,31 +52,31 @@ class TestClustering(unittest.TestCase):
 
     def test_clusterize_basic(self):
         clusters = clusterize_basic(self.features, PeakelClusterer.BASIC_RT_CALLABLE, 6.0)
-        print("len clusters basic: {0}".format(len(clusters)))
+        print(("len clusters basic: {0}".format(len(clusters))))
         self.assertGreaterEqual(4, len(clusters))
 
     def test_clusterize_hierarchical(self):
         rts = [[f.rt] for f in self.features]
         matrix_dist = sp.spatial.distance.pdist(np.array(rts))  # euclidean distance
         clusters = clusterize_hierarchical(self.features, matrix_dist, 3.0)
-        print("len clusters hierarchical: {0}".format(len(clusters)))
+        print(("len clusters hierarchical: {0}".format(len(clusters))))
         self.assertGreaterEqual(4, len(clusters))
 
     def test_clusterize_dbscan_rt(self):
         clusters = clusterize_dbscan([[x.rt] for x in self.features], self.features, eps=3.0, min_samples=1)
         for c in clusters:
             for f in c:
-                print f.rt
-            print '\n'
+                print(f.rt)
+            print('\n')
 
-        print("len clusters dbscan: {0}".format(len(clusters)))
+        print(("len clusters dbscan: {0}".format(len(clusters))))
         self.assertGreaterEqual(4, len(clusters))
 
     def test_clusterize_hierarchical_int(self):
-        ints = [f.area_by_sample_name.values() for f in self.features]
+        ints = [list(f.area_by_sample_name.values()) for f in self.features]
         matrix_dist = sp.spatial.distance.pdist(np.array(ints), metric="correlation")  # euclidean distance
         clusters = clusterize_hierarchical(self.features, matrix_dist, 0.1, clip=True)
-        print("len clusters hierarchical int: {0}".format(len(clusters)))
+        print(("len clusters hierarchical int: {0}".format(len(clusters))))
         self.assertGreaterEqual(4, len(clusters))
 
     def test_peakel_clusterer_main(self):
@@ -103,17 +105,17 @@ class TestClustering(unittest.TestCase):
 
     def test_feature(self):
         metabolites = self.f1.get_metabolites()
-        print metabolites[0].__dict__
+        print(metabolites[0].__dict__)
         ms_name = [m.name for m in self.f1.get_metabolites()]
         self.assertIn('name', ms_name)
 
         d = self.f2.get_attributions_by_parent_id()
-        self.assertIn(self.f1.id, d.keys())
+        self.assertIn(self.f1.id, list(d.keys()))
 
         s, nb_isos, nb_adducts = self.f1.get_top_down_attribution_tree()
         self.assertEqual(nb_isos, 1)
         self.assertEqual(nb_adducts, 1)
-        print s
+        print(s)
         self.assertIn('({0}=isotope c13)'.format(self.f2.id), s)
         self.assertIn('({0}=[M+Na+])'.format(self.f3.id), s)
 
@@ -240,8 +242,8 @@ class TestClustering(unittest.TestCase):
 
         for c in clusters:
             for p in c:
-                print p.moz, p.rt, sample_by_peakel[p]
-            print '\n'
+                print(p.moz, p.rt, sample_by_peakel[p])
+            print('\n')
 
     def test_theo_ip(self):
         fstr = 'C6H12O6'

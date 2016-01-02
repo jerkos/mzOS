@@ -1,3 +1,4 @@
+from __future__ import absolute_import
 import subprocess
 import logging
 import os.path as op
@@ -20,9 +21,8 @@ def get_theo_ip(f, min_rel_int=5.0):
         return
 
     try:
-        iso = repr(filter(lambda x: x[1] > min_rel_int,
-                          [(lambda x: (float(x[0]), float(x[1])))(l.rstrip().split(" "))
-                           for l in out.split('\n')[1:-1]]))
+        iso = repr([x for x in [(lambda x: (float(x[0]), float(x[1])))(l.rstrip().split(" "))
+                           for l in out.split('\n')[1:-1]] if x[1] > min_rel_int])
     except IndexError:
         logging.warn("Error parsing isotopic pattern.Skip it")
         return

@@ -1,5 +1,6 @@
+from __future__ import absolute_import
 import logging
-from feature import Peakel
+from .feature import Peakel
 # from mongo_db import MetabolomicsExperiment, Feature, Annotation, Abundance
 
 

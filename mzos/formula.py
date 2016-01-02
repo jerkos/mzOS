@@ -1,9 +1,11 @@
+from __future__ import absolute_import
 import re
 import logging
 import os.path as op
 from collections import Counter
 
 from mzos.utils import get_theo_ip as theo_isotopic_pattern
+import six
 
 
 class Element(object):
@@ -27,7 +29,7 @@ class Element(object):
         mass_mo = 0
         mass_av = 0
         max_abundance = 0
-        for isotop in self.isotopes.values():
+        for isotop in list(self.isotopes.values()):
             mass_av += isotop[0] * isotop[1]
             if max_abundance < isotop[1]:
                 mass_mo = isotop[0]
@@ -414,11 +416,11 @@ class Formula(dict):
 
     def __str__(self):
         return "".join(["".join((k, (str(v) if v > 1 else '')))
-                        for k, v in sorted(self.iteritems(), key=lambda _: _[0])])
+                        for k, v in sorted(six.iteritems(self), key=lambda _: _[0])])
 
     def mono_mass(self):
         """return the mono mass of the formula"""
-        return sum(ELEMENTS[elem].mass[0] * nb for elem, nb in self.iteritems())
+        return sum(ELEMENTS[elem].mass[0] * nb for elem, nb in six.iteritems(self))
 
     @staticmethod
     def _check_input(f):
@@ -460,7 +462,7 @@ class Formula(dict):
         # shallow copy if needed
         wd = Formula(self) if new_obj else self
 
-        for elem, nb in fd.iteritems():
+        for elem, nb in six.iteritems(fd):
             wd[elem] = wd.get(elem, 0) + nb
         return wd
 
@@ -477,7 +479,7 @@ class Formula(dict):
 
         wd = Formula(self) if new_obj else self
 
-        for elem, nb in fd.iteritems():
+        for elem, nb in six.iteritems(fd):
             if elem in wd:
                 nb_e = wd[elem] - nb
                 if nb_e <= 0:

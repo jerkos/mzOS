@@ -1,9 +1,11 @@
+from __future__ import absolute_import
 from cmath import isnan
 from math import sqrt, log10
-from feature import PeakelIndex
-from utils import calculate_mass_diff_da
+from .feature import PeakelIndex
+from .utils import calculate_mass_diff_da
 from collections import defaultdict as ddict
 import numpy as np
+import six
 
 mass_H = 1.00794
 mass_electron = 0  # negligeable 9E-31
@@ -47,7 +49,7 @@ class StatsModel(object):
         # retrive min max intensity value by intensity index
         self.min_max_values_by_isotopes_index = dict()
 
-        for (index, values) in feature_by_index.iteritems():
+        for (index, values) in six.iteritems(feature_by_index):
             sorted_values = sorted(values, key=lambda __: __.area)
             self.min_max_values_by_isotopes_index[index] = (sorted_values[0].area, sorted_values[-1].area)
 
@@ -132,7 +134,7 @@ class StatsModel(object):
         isotopic_pattern = feature.get_isotopic_pattern_as_peakel()
 
         sample_rmsd = []
-        for sample in feature.area_by_sample_name.keys():
+        for sample in list(feature.area_by_sample_name.keys()):
             rmsd = 0.0
             max_real_int = max(isotopic_pattern,
                                key=lambda x: x.area_by_sample_name[sample]).area_by_sample_name[sample]

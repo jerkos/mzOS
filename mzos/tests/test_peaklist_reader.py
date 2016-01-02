@@ -1,3 +1,4 @@
+from __future__ import absolute_import
 import unittest
 import os.path as op
 from mzos.peaklist_reader import PeakListReader

@@ -1,11 +1,16 @@
+from __future__ import absolute_import
+from __future__ import print_function
+
 import glob
 from xml.etree.cElementTree import iterparse
-#import time
 import base64
 import struct
 from itertools import chain
 import numpy as np
 import re
+
+from six.moves import range
+from six.moves import zip
 
 
 class Scan(dict):
@@ -21,6 +26,7 @@ class Scan(dict):
 
 def decode_spectrum(string64):
     """
+    :param string64:
 
     """
     data = base64.b64decode(string64)
@@ -31,7 +37,7 @@ def decode_spectrum(string64):
     # data.shape = (-1, 2)
     # return data
     mz_array, int_array = [], []
-    for i in xrange(0, len(data) - 1, 2):
+    for i in range(0, len(data) - 1, 2):
         mz_array.append(data[i])
         int_array.append(data[i + 1])
     return np.array(mz_array), np.array(int_array)
@@ -39,23 +45,25 @@ def decode_spectrum(string64):
 
 def encode_spectrum(mz_array, int_array):
     """
+    :param int_array:
+    :param mz_array:
 
     """
-    t = list(chain.from_iterable(zip(mz_array, int_array)))
+    t = list(chain.from_iterable(list(zip(mz_array, int_array))))
     scanbyte = struct.pack('!' + 'd' * len(t), *t)
     return base64.b64encode(scanbyte)
 
 
 def load_spectra(filepath):
-    #------------------------------------------------------------------------------
+    # ------------------------------------------------------------------------------
     def _get_infos():
         """
         case we have a mzxml file, get run length and number of scans
         sentinel MAX
         """
         p = re.compile('\s+<msRun\sscanCount="(\d+)"\sstartTime="PT(\d+\.\d+|\d+)S"\sendTime="PT(\d+\.\d+)S">')
-        q = re.compile('<mzXML\sxmlns="(.+)"')  #to get the namespace
-        MAX = 10  #ten lines max the skip
+        q = re.compile('<mzXML\sxmlns="(.+)"')  # to get the namespace
+        MAX = 10  # ten lines max the skip
         with open(filepath) as fd:
             line = fd.readline()
             i = 0
@@ -93,10 +101,10 @@ def load_spectra(filepath):
                 print("header parsing failed")
         return header
 
-    #----------------------------------------------------------------------
+    # ----------------------------------------------------------------------
     max_time, min_time, scan_count, prefix = _get_infos()
     header = _get_header()
-    #t = time.clock()
+    # t = time.clock()
     scans = []
 
     context = iterparse(filepath, events=('end',))
@@ -114,7 +122,7 @@ def load_spectra(filepath):
                     'totIonCurrent': float(elem.attrib.get('totIonCurrent', 0.0)),
                     'polarity': elem.attrib.get('polarity', "")}
             if scan['msLevel'] == 1:
-                #get data points
+                # get data points
                 for e in elem.getchildren():
                     if e.tag == "".join([prefix, "peaks"]) and action == 'end':
                         scan['byteOrder'] = e.attrib.get('byteOrder', 'network')
@@ -122,7 +130,7 @@ def load_spectra(filepath):
                         scan['compressionType'] = e.attrib.get('compressionType', 'none')
                         mz_array, int_array = decode_spectrum(e.text)
                         scans.append(Scan(mz_array, int_array, scan))
-                        #treat points
+                        # treat points
                         break
     del context
     return header, scans
@@ -130,6 +138,9 @@ def load_spectra(filepath):
 
 def merge_spectra(scans, size_bin=0.002, method="mean"):
     """
+    :param method:
+    :param scans:
+    :param size_bin:
 
     """
     if len(scans) == 1:
@@ -144,13 +155,13 @@ def merge_spectra(scans, size_bin=0.002, method="mean"):
     diff_mz = maxmz - minmz
     length = int(round(diff_mz / size_bin))
 
-    xbinning = np.array([minmz + i * size_bin for i in xrange(length + 1)])
+    xbinning = np.array([minmz + i * size_bin for i in range(length + 1)])
     intensity = np.zeros(length + 1)
 
     if method == "mean":
         for e in scans:
             bin_ = ((e.mz_array - minmz) / size_bin).astype(int)
-            intensity[bin_] += e.int_array  #/ e['totIonCurrent'])
+            intensity[bin_] += e.int_array  # / e['totIonCurrent'])
         intensity /= float(len(scans))
     elif method == "tic":
         for e in scans:
@@ -163,7 +174,7 @@ def merge_spectra(scans, size_bin=0.002, method="mean"):
             'centroided': '0',
             'scanType': 'Full',
             'retentionTime': np.array([e['retentionTime'] for e in scans]).mean(),
-            #'basePeakMz': xbinning[np.where(intensity == intensity.max())[1]],
+            # 'basePeakMz': xbinning[np.where(intensity == intensity.max())[1]],
             'basePeakIntensity': intensity.max(),
             'totIonCurrent': intensity.sum(),
             'polarity': '-',
@@ -176,6 +187,8 @@ def merge_spectra(scans, size_bin=0.002, method="mean"):
 
 def write_spectrum(header, scan):
     """
+    :param scan:
+    :param header:
     """
     if not isinstance(header, str):
         raise TypeError("writeSpectrum")
@@ -205,17 +218,19 @@ def write_spectrum(header, scan):
     return header
 
 
-def create_file((filepath, mintime, maxtime)):
+def create_file(data):
     """
+    :param data:
 
     """
+    (filepath, mintime, maxtime) = data
     if not isinstance(mintime, float) or not isinstance(maxtime, float):
         raise TypeError("min time and maxtime must be floating numbers")
     header, scans = load_spectra(filepath)
     good_time_scans = [scan for scan in scans]  # [scan for scan in scans if mintime < scan['retentionTime'] < maxtime]
     new_scan = None
     if not good_time_scans:
-        print("No scan defined in range: {0}, {1} in file {2}".format(mintime, maxtime, filepath))
+        print(("No scan defined in range: {0}, {1} in file {2}".format(mintime, maxtime, filepath)))
         return new_scan
     elif len(good_time_scans) == 1:
         new_scan = good_time_scans[0]
@@ -233,7 +248,7 @@ if __name__ == '__main__':
     filesplusargs = [(f, 0.4, 1.6) for f in files]
     # print filesplusargs
     for t in filesplusargs:
-        print "Working on {0}".format(t[0])
+        print("Working on {0}".format(t[0]))
         create_file(t)
     # p = multiprocessing.Pool(processes=4)
     # r = p.map(create_file, filesplusargs, chunksize=2)

@@ -1,3 +1,4 @@
+from __future__ import absolute_import
 from pymongo.connection import Connection
 import humongolus as orm
 import humongolus.field as field

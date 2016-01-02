@@ -1,24 +1,10 @@
-# Copyright (C) 2014  omics-services.com
-#
-#     This program is free software: you can redistribute it and/or modify
-#     it under the terms of the GNU General Public License as published by
-#     the Free Software Foundation, either version 3 of the License, or
-#     (at your option) any later version.
-#
-#     This program is distributed in the hope that it will be useful,
-#     but WITHOUT ANY WARRANTY; without even the implied warranty of
-#     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#     GNU General Public License for more details.
-#
-#     You should have received a copy of the GNU General Public License
-#     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
-__email__ = 'marc.dubois@omics-services.com'
+from __future__ import absolute_import
+from __future__ import print_function
 
 import os.path as op
 import os
 import logging
-import cPickle
+import six.moves.cPickle
 from collections import defaultdict as ddict
 
 from bioservices import KEGGParser
@@ -34,7 +20,7 @@ def get_compounds(reaction_id):
     :param reaction_id:
     :return:
     """
-    print "treating #reaction_id: {0}".format(reaction_id)
+    print("treating #reaction_id: {0}".format(reaction_id))
     r = kegg_parser.get(reaction_id)
     reaction = kegg_parser.parse(r)
     reactants, products = reaction["equation"].split("=")
@@ -83,4 +69,4 @@ if __name__ == "__main__":
 
     with open('ressources/reaction.r', 'wb') as output:
         # output = open("reaction.r", 'wb')
-        cPickle.dump(d, output)
+        six.moves.cPickle.dump(d, output)

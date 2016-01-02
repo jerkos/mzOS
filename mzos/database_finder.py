@@ -1,3 +1,4 @@
+from __future__ import absolute_import
 import logging
 import sqlite3
 import os.path as op
@@ -6,6 +7,7 @@ import multiprocessing
 
 from mzos.feature import Annotation
 from mzos.formula import Formula
+import six
 
 
 class MolecularEntity(object):
@@ -40,7 +42,7 @@ class Metabolite(MolecularEntity):
 
     def __init__(self, *args):
         MolecularEntity.__init__(self)
-        for name, value in dict(izip(Metabolite.COLUMNS, args)).iteritems():
+        for name, value in six.iteritems(dict(izip(Metabolite.COLUMNS, args))):
             if name in Metabolite.MAPPING:
                 setattr(self, Metabolite.MAPPING[name], value)
             else:

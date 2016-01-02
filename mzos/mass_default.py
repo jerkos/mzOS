@@ -1,3 +1,4 @@
+from __future__ import absolute_import
 import os.path as op
 import sqlite3
 import re

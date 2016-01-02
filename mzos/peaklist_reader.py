@@ -1,9 +1,11 @@
+from __future__ import absolute_import
 import csv
 import logging
 
 import numpy as np
 
 from mzos.feature import Peakel
+from six.moves import range
 
 
 class PeakListReader(object):
@@ -33,14 +35,14 @@ class PeakListReader(object):
         gen = os.walk(curr_dir)
         all_dirs = None
         try:
-            all_dirs = gen.next()
+            all_dirs = next(gen)
         except StopIteration:
             pass
         if all_dirs is None or not all_dirs[1]:
             return []
         group_directories = [1]
         for i in range(len(group_directories)):
-            c_dir, dirs, files = gen.next()
+            c_dir, dirs, files = next(gen)
             self.exp_design.create_group(c_dir, files)
 
         return group_directories
@@ -56,7 +58,7 @@ class PeakListReader(object):
 
         #  set the right polarity
         polarity = None
-        if "Mode" in d.keys():
+        if "Mode" in list(d.keys()):
             polarity = 1 if d["Mode"] == 'Positif' else -1
         else:
             p.polarity = self.exp_design.polarity
@@ -72,11 +74,11 @@ class PeakListReader(object):
                 pass
 
         #  assign area of each sample
-        p.area_by_sample_name.update({a: float(b) for a, b in d.items()})
-        p.area = np.median(p.area_by_sample_name.values())
+        p.area_by_sample_name.update({a: float(b) for a, b in list(d.items())})
+        p.area = np.median(list(p.area_by_sample_name.values()))
 
         if not p.area:
-            p.area = np.mean(p.area_by_sample_name.values())
+            p.area = np.mean(list(p.area_by_sample_name.values()))
             logging.debug("an elution peak has the median of "
                           "its area equals to 0 ! Using mean instead: {}.".format(p.area))
         return p

@@ -1,4 +1,4 @@
-__author__ = 'marc.dubois@omics-services.com'
+from __future__ import absolute_import
 
 import pandas
 import os.path as op

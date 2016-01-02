@@ -1,9 +1,12 @@
+from __future__ import absolute_import
 import logging
 from collections import defaultdict as ddict
 from itertools import chain
 
 from mzos.feature import PeakelIndex, Attribution
 from mzos.peakel_clusterer import PeakelClusterer
+import six
+from six.moves import range
 
 
 class PeakelsAnnotator(object):
@@ -61,7 +64,7 @@ class PeakelsAnnotator(object):
         :return:
         """
         theo_mass = mz + ((1.000857 * idx + 0.001091) / charge)
-        d = {x[1]: abs(theo_mass - (mz + x[0])) for x in PeakelsAnnotator.ISOTOPES.items()}
+        d = {x[1]: abs(theo_mass - (mz + x[0])) for x in list(PeakelsAnnotator.ISOTOPES.items())}
         return theo_mass, min(d)
 
     def _look_for_isotopes(self,
@@ -87,7 +90,7 @@ class PeakelsAnnotator(object):
         result_by_charge = {}
 
         # iterate over possible charges
-        for charge in xrange(1, max_charge + 1):
+        for charge in range(1, max_charge + 1):
 
             isotopes = set()
             gap = 0
@@ -104,7 +107,7 @@ class PeakelsAnnotator(object):
             ref_moz = peakel.moz
 
             # iterate over  number of isotopes
-            for j in xrange(1, max_isotopes_nb + 1):
+            for j in range(1, max_isotopes_nb + 1):
                 # generate all possible masses for this isotopes index
                 mass_to_check, isotope_tag = PeakelsAnnotator._get_theoritical_isotope_mass(j, ref_moz, charge)
 
@@ -227,7 +230,7 @@ class PeakelsAnnotator(object):
         for peakel in rt_cluster:
 
             # if this considered peakel is a previously detected isotope
-            detected_as_iso = True if peakel in mos_by_iso.keys() else False
+            detected_as_iso = True if peakel in list(mos_by_iso.keys()) else False
 
             result_by_charge = self._look_for_isotopes(peakel,
                                                        mos_by_iso,
@@ -242,7 +245,7 @@ class PeakelsAnnotator(object):
 
             # best result is the one with the longest
             # what to do when there is draw match ?
-            best_charge_result = max(result_by_charge.keys(), key=lambda y: len(result_by_charge[y]))
+            best_charge_result = max(list(result_by_charge.keys()), key=lambda y: len(result_by_charge[y]))
 
             # select best isotopes
             selected_isos = result_by_charge[best_charge_result]
@@ -290,9 +293,9 @@ class PeakelsAnnotator(object):
                 # end for
 
                 # get the one with the max length
-                max_key_len = max(isos_by_parent.keys(), key=lambda l: len(isos_by_parent[l][0]))
+                max_key_len = max(list(isos_by_parent.keys()), key=lambda l: len(isos_by_parent[l][0]))
                 max_len_value = len(isos_by_parent[max_key_len][0])
-                best_parents = filter(lambda z: len(isos_by_parent[z][0]) == max_len_value, isos_by_parent.keys())
+                best_parents = [z for z in list(isos_by_parent.keys()) if len(isos_by_parent[z][0]) == max_len_value]
 
                 if not best_parents:
                     pass
@@ -339,7 +342,7 @@ class PeakelsAnnotator(object):
         index = PeakelIndex(cluster)
 
         for peakel in cluster:
-            for charge in xrange(1, max_charge + 1):
+            for charge in range(1, max_charge + 1):
                 #
                 for adds, attr in self.adducts_or_fragments:
                     mz = peakel.moz / 1 + adds[0]
@@ -354,7 +357,7 @@ class PeakelsAnnotator(object):
 
         # reverse the dictionary
         adducts_by_mo = ddict(list)
-        for add, possible_mos in parents_by_son.iteritems():
+        for add, possible_mos in six.iteritems(parents_by_son):
             for possible_mo, attrib in possible_mos:
                 adducts_by_mo[possible_mo].append((add, attrib))
 

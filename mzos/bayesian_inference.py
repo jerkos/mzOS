@@ -1,4 +1,5 @@
 from __future__ import division
+from __future__ import absolute_import
 import logging
 import sys
 from collections import defaultdict as ddict
@@ -6,12 +7,15 @@ from collections import Counter
 import random as rdm
 import os.path as op
 import math
-import cPickle
+import six.moves.cPickle
 
 from scipy.stats import norm
 import numpy as np
 
 import mzos.reac as reac
+import six
+from six.moves import range
+from six.moves import zip
 sys.modules['reac'] = reac
 
 
@@ -47,7 +51,7 @@ class BayesianInferer(object):
         """
         # with open(op.normcase("ressources/reaction.reac"), 'rb') as f:
         with open(op.abspath(BayesianInferer.REACTIONS_FILE), 'rb') as f:
-            reactions = cPickle.load(f)
+            reactions = six.moves.cPickle.load(f)
         return reactions
 
     def _assign_without_ambiguity(self):
@@ -226,7 +230,7 @@ class BayesianInferer(object):
         TODO: counting problem with burning samples ?
         """
         # n_s = float(n_samples - n_burning_samples)
-        for f, counter in counter_by_feature.iteritems():
+        for f, counter in six.iteritems(counter_by_feature):
             metabs = f.get_metabolites()
             for m in metabs:
                 counts = counter[m.kegg_id]
@@ -269,7 +273,7 @@ class BayesianInferer(object):
         logging.info("Init probabilities...")
         prob_by_metab_by_feature = self._init_probs()
 
-        for i in xrange(n_samples):
+        for i in range(n_samples):
             assigned_compounds = self.assigned_compounds
             rdm.shuffle(self.features)
             # for f in self.features:  #rdm.shuffle(self.features):
@@ -283,8 +287,8 @@ class BayesianInferer(object):
                                    prob_by_metab_by_feature,
                                    n_samples, n_burning_sample)
 
-        for f, prob_by_metab in prob_by_metab_by_feature.iteritems():
-            for metab_id, prob in prob_by_metab.iteritems():
+        for f, prob_by_metab in six.iteritems(prob_by_metab_by_feature):
+            for metab_id, prob in six.iteritems(prob_by_metab):
                 if math.isnan(prob):
                     # never should happen
                     raise ValueError("nan probability")

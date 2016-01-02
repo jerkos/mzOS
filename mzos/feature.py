@@ -1,7 +1,9 @@
+from __future__ import absolute_import
 from itertools import count
 from itertools import groupby
 from collections import defaultdict as ddict
 import numpy as np
+from six.moves import range
 
 
 class Peak(object):
@@ -78,7 +80,7 @@ class Peakel(object):
         rtmax : maxrt               
         """
         # used in __hash__
-        self.id = Peakel._ids.next()
+        self.id = next(Peakel._ids)
 
         # all seen areas
         self.area_by_sample_name = {}
@@ -274,7 +276,7 @@ class Peakel(object):
         """
         :return:
         """
-        return self.area_by_sample_name.values()
+        return list(self.area_by_sample_name.values())
 
     def get_median_area(self):
         """
@@ -287,8 +289,8 @@ class Peakel(object):
         @param peakel:
         @return:
         """
-        values = [peakel.area_by_sample_name[k] for k in self.area_by_sample_name.keys()]
-        return np.corrcoef(self.area_by_sample_name.values(), values)[1, 0]
+        values = [peakel.area_by_sample_name[k] for k in list(self.area_by_sample_name.keys())]
+        return np.corrcoef(list(self.area_by_sample_name.values()), values)[1, 0]
 
     def corr_shape_against(self, peakel):
         """
@@ -376,7 +378,7 @@ class PeakelIndex(object):
         bin_ = int(moz * self.inv_bin_size)
         tol_da = (mz_tol_ppm * moz) / 1e6
         peaks = []
-        for i in xrange(bin_ - 1, bin_ + 2):
+        for i in range(bin_ - 1, bin_ + 2):
             peaks.extend(self._index.get(i, []))
         if not peaks:
             return None
