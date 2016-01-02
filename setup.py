@@ -1,14 +1,22 @@
-from distutils.core import setup
+from setuptools import setup, find_packages
 
 setup(
     name='mzOS',
     version='0.1',
-    packages=['mzos', 'mzos.tests', 'mzos.ressources', 'mzos.scripts'],
-    packages_data=['mzos.tests.data'],
+    packages=find_packages(),
     url='http://github.com/jerkos/mzOS',
-    license='',
+    license='MIT',
     author='Marco',
     author_email='cram@hotmail.fr',
-    description='Small library to perform feature annotations/identifications of LC-MS metabolomics dataset.',
-    requires=['bioservices', 'scipy', 'numpy', 'six']
+    description='Heuristic based feature annotations/identifications of LC-MS metabolomics dataset.',
+    long_description=open('README.md').read(),
+    requires=['bioservices', 'scipy', 'numpy', 'scikit-learn', 'six'],
+    classifiers=['Development Status :: 3 - Alpha',
+                 'License :: OSI Approved :: MIT License',
+                 'Programming Language :: Python :: 2.7',
+                 'Programming Language :: Python :: 3.3',
+                 'Programming Language :: Python :: 3.4',
+                 'Programming Language :: Python :: 3.5',
+                 'Topic :: Scientific/Engineering :: Bio-Informatics'
+                 ]
 )
