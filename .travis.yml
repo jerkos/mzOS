@@ -1,10 +1,10 @@
 language: python
 
 python:
-  - "2.7_with_system_site_packages"
-  - "3.3_with_system_site_packages"
-  - "3.4_with_system_site_packages"
-  - "3.5_with_system_site_packages"
+  - "2.7"
+  - "3.3"
+  - "3.4"
+  - "3.5"
 # command to install dependencies
 
 before_install:
