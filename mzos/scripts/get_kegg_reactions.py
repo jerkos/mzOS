@@ -12,14 +12,12 @@ from bioservices import KEGGParser
 from mzos.reac import RPrecord
 
 
-kegg_parser = KEGGParser(verbose=False)
-
-
-def get_compounds(reaction_id):
+def get_compounds(args):
     """
-    :param reaction_id:
+    :param args:
     :return:
     """
+    reaction_id, kegg_parser = args
     print("treating #reaction_id: {0}".format(reaction_id))
     r = kegg_parser.get(reaction_id)
     reaction = kegg_parser.parse(r)
@@ -37,8 +35,9 @@ def get_compounds(reaction_id):
     return reactants_ids, products_ids
 
 
-def get_kegg_reactions():
+def get_kegg_reactions(kegg_parser):
     """
+    :param kegg_parser:
     :return:
     """
     import multiprocessing
@@ -49,7 +48,7 @@ def get_kegg_reactions():
 
     p = multiprocessing.Pool(processes=multiprocessing.cpu_count())
 
-    t = p.map(get_compounds, reac_ids, chunksize=10)
+    t = p.map(get_compounds, reac_ids.zip([kegg_parser] * len(reac_ids)), chunksize=10)
 
     for reactants_ids, product_ids in t:
         for id__ in reactants_ids:
@@ -59,14 +58,20 @@ def get_kegg_reactions():
     return rp_record_by_id
 
 
-if __name__ == "__main__":
-    d = get_kegg_reactions()
+def main():
+    kegg_parser = KEGGParser(verbose=False)
+
+    d = get_kegg_reactions(kegg_parser)
     logging.info("writing reation data to file")
 
     if not op.exists(op.normcase('ressources')):
         logging.info("mkdir ressources")
         os.mkdir("ressources")
 
-    with open('ressources/reaction.r', 'wb') as output:
+    with open(op.abspath('mzos/ressources/reaction.reac'), 'wb') as output:
         # output = open("reaction.r", 'wb')
         six.moves.cPickle.dump(d, output)
+
+
+if __name__ == "__main__":
+    main()

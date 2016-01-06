@@ -16,6 +16,7 @@ install:
   - pip install -I numpy==1.9.3 # https://github.com/numpy/numpy/issues/6462
   - pip install scipy
   - pip install scikit-learn
+  - pip install pandas
   - pip install .
   - cd mzos/third_party/emass && make
   - pip install coveralls
