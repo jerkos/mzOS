@@ -15,12 +15,10 @@ class WithHMDBMixin(object):
         :param self:
         :return:
         """
-        abspath = op.abspath('mzos/ressources/hmdb.zip')
-        print abspath
-        z = zipfile.ZipFile(abspath)
+        z = zipfile.ZipFile(op.abspath('mzos/ressources/hmdb.zip'))
         hmdb_path = z.extract('hmdb.sqlite')
         logging.info("Moving extracted archive...")
-        shutil.move(hmdb_path, abspath)
+        shutil.move(hmdb_path, 'mzos/ressources/hmdb.sqlite')
         logging.info("Done")
 
     @staticmethod
