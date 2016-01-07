@@ -15,17 +15,19 @@ class WithHMDBMixin(object):
         :param self:
         :return:
         """
-        z = zipfile.ZipFile(op.abspath('mzos/ressources/hmdb.zip'))
+        abspath = op.abspath('mzos/ressources/hmdb.zip')
+        print abspath
+        z = zipfile.ZipFile(abspath)
         hmdb_path = z.extract('hmdb.sqlite')
         logging.info("Moving extracted archive...")
-        shutil.move(hmdb_path, 'mzos/ressources/hmdb.sqlite')
+        shutil.move(hmdb_path, abspath)
         logging.info("Done")
 
     @staticmethod
     def remove_hmdb():
         logging.info("removing 'hmdb.sqlite'...")
         try:
-            os.remove(op.normcase('mzos/ressources/hmdb.sqlite'))
+            os.remove(op.abspath('mzos/ressources/hmdb.sqlite'))
             logging.info("Done")
         except OSError:
             logging.error("Unable to remove sqlite file or file does not exist")
