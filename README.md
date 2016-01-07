@@ -20,6 +20,7 @@ More details [here](http://jerkos.github.io/mzOS)
 * numpy
 * scipy
 * scikit-learn
+* pandas
 
 ## TODOs:
 
