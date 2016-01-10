@@ -11,9 +11,8 @@ mzOS
 * [x] adducts/fragments annotation using simple heuristics (when conflicts)
 * [x] database search (HMDB, LMSD) from local sqlite file (fast)
 * [x] database assignment scoring based on predicted isotopic distribution and bayesian algorithm. 
-* [ ] functionnal annotation, metabolite pathway enrichment analysis (MPEA)
 
-More details [here](http://jerkos.github.io/mzOS)
+Some documentation is available [here](http://jerkos.github.io/mzOS) (to be completed).
 
 ## Dependancies
 
@@ -22,6 +21,7 @@ More details [here](http://jerkos.github.io/mzOS)
 * scikit-learn
 * pandas
 
-## TODOs:
+## Roadmap
 
-* documentation
+* support more databases
+* export results as a graph

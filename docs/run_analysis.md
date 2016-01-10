@@ -92,12 +92,12 @@ Matrix with several columns:
 
 * **Inchi**: inchi metabolite formula
 
-* **Database_id**: Database Id, HMDB_ID and KEGG_ID
+* **Database_id**: Database Id such as HMDB_ID and KEGG_ID
 
-* **Isotopic pattern matching score**:
+* **Isotopic pattern matching score**: RMSD between observed and theoritical isotopic pattern intensities
 
-* **Annotation assignment probability**:
+* **Annotation assignment probability**: Using network analysis to infer a presence probability using a bayesian algorithm (see metsamp)
 
-* **Annotation pattern composition**: 
+* **Annotation pattern composition**: Isotopic pattern detected to use the *Isotopic pattern matching score*
 
 
