@@ -1,0 +1,7 @@
+site_name: mzOS
+pages:
+- Home: index.md
+- Run mzos script: run_analysis.md
+- What is it doing exactly ?: informations.md
+- Roadmap : roadmap.md
+theme: readthedocs

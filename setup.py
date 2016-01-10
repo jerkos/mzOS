@@ -20,7 +20,7 @@ setup(
     author_email='cram@hotmail.fr',
     description='Heuristic based feature annotations/identifications of LC-MS metabolomics dataset.',
     entry_points=entry_points,
-    long_description=open('README').read(),
+    long_description=open('README.md').read(),
     requires=['bioservices', 'scipy', 'numpy', 'six', 'sklearn', 'pandas'],
     classifiers=['Development Status :: 3 - Alpha',
                  'License :: OSI Approved :: MIT License',
