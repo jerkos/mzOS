@@ -6,7 +6,7 @@ Basically, you run first XCMS (using the classical pipeline), giving as a result
 
 ## Installation
 
-mzOS (last version 0.1.3) install should be pretty straightforward. The last version at the moment is  0.1.3. Simply using
+mzOS install should be pretty straightforward. The last version at the moment is  0.1.3. Simply using
 
 * `pip install mzos`
 
