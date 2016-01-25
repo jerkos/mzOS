@@ -4,6 +4,8 @@ import os
 import logging
 import time
 
+from six.moves import input
+
 from mzos.peaklist_reader import PeakListReader
 from mzos.annotator import PeakelsAnnotator
 from mzos.database_finder import DatabaseSearch
@@ -15,7 +17,10 @@ from mzos.results_exporter import ResultsExporter
 
 
 def get_arg_parser():
-
+    """
+    Deprecated function to pass
+    :return:
+    """
     parser = argparse.ArgumentParser(prog="mzOS", description="Annotation analysis of xcms peaklist")
     parser.add_argument("-x", "--xcms_pkl", type=str, help="path to the xcms peaklist", required=True)
     parser.add_argument("-p", "--polarity", default='negative', choices=['negative', 'positive'],
@@ -28,8 +33,11 @@ def get_arg_parser():
     return parser
 
 
-# @Gooey(advanced=True, config=True, program_name='mzOS')
-def main():
+def run_analysis():
+    """
+    function to run analysis (all the pipeline)
+    :return:
+    """
     arg_parser = get_arg_parser()
     arguments = arg_parser.parse_args(sys.argv[1:])
     if arguments.xcms_pkl is None or not arguments.xcms_pkl:
@@ -92,6 +100,39 @@ def main():
     exporter = ResultsExporter(arguments.output, sorted(peakels, key=lambda _: _.id))
     exporter.write()
     logging.info("Done.")
+
+
+def main():
+    """
+    :return:
+    """
+
+    NEG_ADDUCTS = "NEG_ADDUCTS_IMS.csv"
+    POS_ADDUCTS = "POS_ADDUCTS_IMS.csv"
+    FRAGMENTS = "NEG_ADDUCTS_IMS.csv"
+
+    def continue_on_missing_file(path, cb_on_yes=None, cb_on_no=None):
+        print("The  following configuration is missing {}.".format(path))
+        r = input("Continue [N/y] ?")
+        if not r or r in {'n', 'N', 'No', 'no'}:
+            r = 'n'
+            if cb_on_no is not None:
+                cb_on_no()
+        else:
+            r = 'y'
+            if cb_on_yes is not None:
+                cb_on_yes()
+
+    def cp_config_file(path, data_time):
+        last_modified = os.path.getmtime(path)
+        data_time[path] = last_modified
+
+    data_times = {}
+    current_files = set(os.listdir(os.curdir))
+    if NEG_ADDUCTS not in current_files:
+        cp_config_file(NEG_ADDUCTS, data_times)
+        continue_on_missing_file(NEG_ADDUCTS)
+
 
 if __name__ == '__main__':
     main()
