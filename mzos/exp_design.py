@@ -15,7 +15,6 @@ IONISATION_MODE = enum(NEG=-1, POS=1)
 
 
 class ExperimentalSettings(object):
-
     """
     :param mz_tol_ppm:
     :param ionisation_mode:
@@ -25,26 +24,28 @@ class ExperimentalSettings(object):
     ADDUCTS_NEG = op.abspath("mzos/ressources/NEG_ADDUCTS_IMS.csv")
     FRAGMENTS = op.abspath("mzos/ressources/FRAGMENTS_IMS.csv")
 
-    ISOS = "mzos/ressources/"
+    # ISOS = "mzos/ressources/"
 
-    def __init__(self, mz_tol_ppm, ionisation_mode=None, is_dims_experiment=False, databases=frozenset({'hmdb'})):
+    def __init__(self, mz_tol_ppm, polarity, is_dims_exp,
+                 frag_conf=None, neg_adducts_conf=None, pos_adducts_conf=None):
+
         self.samples = set()
 
-        self.polarity = ionisation_mode  # warning is an ENUM
+        self.polarity = polarity  # warning is an ENUM
         self.mz_tol_ppm = mz_tol_ppm
-        self.is_dims_exp = is_dims_experiment
-        self.databases = databases
+        self.is_dims_exp = is_dims_exp
+        # self.databases = databases
 
         self.group_by_id = ddict(set)
         self.group_by_sample = {}
 
         # setting isos file, same for both polarity
-        self.isos_file = ExperimentalSettings.ISOS
+        # self.isos_file = ExperimentalSettings.ISOS
 
         # setting good frags_file
-        self.frags_file, self.adducts_file = ExperimentalSettings.FRAGMENTS, None
-        self.adducts_file = ExperimentalSettings.ADDUCTS_NEG \
-            if ionisation_mode == IONISATION_MODE.NEG else ExperimentalSettings.ADDUCTS_POS
+        self.frags_file = frag_conf or ExperimentalSettings.FRAGMENTS
+        self.adducts_file = neg_adducts_conf or ExperimentalSettings.ADDUCTS_NEG \
+            if polarity == IONISATION_MODE.NEG else pos_adducts_conf or ExperimentalSettings.ADDUCTS_POS
 
     def get_frags(self):
         """

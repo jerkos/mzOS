@@ -9,15 +9,18 @@ from collections import defaultdict as ddict
 
 from bioservices import KEGGParser
 
-from mzos.reac import RPrecord
+import json
+
+kegg_parser = KEGGParser(verbose=False)
 
 
-def get_compounds(args):
+def get_compounds(reaction_id):
     """
+    :param reaction_id:
     :param args:
     :return:
     """
-    reaction_id, kegg_parser = args
+
     print("treating #reaction_id: {0}".format(reaction_id))
     r = kegg_parser.get(reaction_id)
     reaction = kegg_parser.parse(r)
@@ -35,42 +38,55 @@ def get_compounds(args):
     return reactants_ids, products_ids
 
 
-def get_kegg_reactions(kegg_parser):
+def get_kegg_reactions():
     """
     :param kegg_parser:
     :return:
     """
     import multiprocessing
-    rp_record_by_id = ddict(RPrecord)
+    rp_record_by_id = ddict(lambda: ddict(set))
 
     reac_ids = kegg_parser.reactionIds
-    logging.info("# reacids: {0}".format(len(reac_ids)))
+    print("# reacids: {0}".format(len(reac_ids)))
 
     p = multiprocessing.Pool(processes=multiprocessing.cpu_count())
 
-    t = p.map(get_compounds, reac_ids.zip([kegg_parser] * len(reac_ids)), chunksize=10)
+    t = p.map(get_compounds, reac_ids, chunksize=20)
+    # t = []
+    # for reaction_id in reac_ids:
+    #     t.append(get_compounds((reaction_id, kegg_parser)))
 
     for reactants_ids, product_ids in t:
         for id__ in reactants_ids:
             for id_ in product_ids:
-                rp_record_by_id[id__].as_r.add(id_)
-                rp_record_by_id[id_].as_p.add(id__)
+                rp_record_by_id[id__]['as_r'].add(id_)
+                rp_record_by_id[id_]['as_p'].add(id__)
+
+    # transform value to list
+    for key in rp_record_by_id:
+        v_r = rp_record_by_id[key]['as_r']
+        rp_record_by_id[key]['as_r'] = list(v_r)
+        v_p = rp_record_by_id[key]['as_p']
+        rp_record_by_id[key]['as_p'] = list(v_p)
+    print("len rp record: {}".format(len(rp_record_by_id)))
     return rp_record_by_id
 
 
 def main():
-    kegg_parser = KEGGParser(verbose=False)
+    #kegg_parser = KEGGParser(verbose=False)
 
-    d = get_kegg_reactions(kegg_parser)
+    d = get_kegg_reactions()
     logging.info("writing reation data to file")
 
-    if not op.exists(op.normcase('ressources')):
-        logging.info("mkdir ressources")
-        os.mkdir("ressources")
+    # if not op.exists(op.normcase('ressources')):
+    #     logging.info("mkdir ressources")
+    #     os.mkdir("ressources")
 
-    with open(op.abspath('mzos/ressources/reaction.reac'), 'wb') as output:
+    # with open(op.abspath('mzos/ressources/reaction.reac'), 'wb') as output:
+    with open('reactions.json', 'wb') as output:
         # output = open("reaction.r", 'wb')
-        six.moves.cPickle.dump(d, output)
+        # six.moves.cPickle.dump(d, output)
+        json.dump(d, output)
 
 
 if __name__ == "__main__":

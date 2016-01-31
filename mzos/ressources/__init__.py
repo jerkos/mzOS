@@ -1,1 +1,1 @@
-__author__ = 'omics-services.com'
+# -*- coding: utf-8 -*-

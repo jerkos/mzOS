@@ -2,22 +2,23 @@ from __future__ import division
 from __future__ import absolute_import
 import logging
 import sys
-from collections import defaultdict as ddict
-from collections import Counter
 import random as rdm
 import os.path as op
 import math
-import six.moves.cPickle
+from collections import defaultdict as ddict
+from collections import Counter
 
 from scipy.stats import norm
 import numpy as np
-
-import mzos.reac as reac
 import six
 from six.moves import range
 from six.moves import zip
+
+import mzos.reac as reac
 sys.modules['reac'] = reac
 
+import collections
+import _collections
 
 class BayesianInferer(object):
     """
@@ -28,7 +29,7 @@ class BayesianInferer(object):
     og the analysis of the network
     """
 
-    REACTIONS_FILE = "mzos/ressources/reaction.reac"
+    REACTIONS_FILE =  op.abspath("mzos/ressources/reaction.reac")
 
     def __init__(self, features, experiment):
         """
@@ -49,8 +50,7 @@ class BayesianInferer(object):
         can raise IOError
         :return:
         """
-        # with open(op.normcase("ressources/reaction.reac"), 'rb') as f:
-        with open(op.abspath(BayesianInferer.REACTIONS_FILE), 'rb') as f:
+        with open(BayesianInferer.REACTIONS_FILE, 'rb') as f:
             reactions = six.moves.cPickle.load(f)
         return reactions
 
