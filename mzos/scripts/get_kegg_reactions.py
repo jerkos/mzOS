@@ -1,10 +1,7 @@
 from __future__ import absolute_import
 from __future__ import print_function
 
-import os.path as op
-import os
 import logging
-import six.moves.cPickle
 from collections import defaultdict as ddict
 
 from bioservices import KEGGParser
@@ -17,7 +14,6 @@ kegg_parser = KEGGParser(verbose=False)
 def get_compounds(reaction_id):
     """
     :param reaction_id:
-    :param args:
     :return:
     """
 
@@ -30,7 +26,7 @@ def get_compounds(reaction_id):
         """parse cp ids from kegg
         :param string:
         """
-        return [x for x in string.split(" ") if x.startswith("C")]
+        return [x.strip() for x in string.split(" ") if x.startswith("C")]
 
     reactants_ids = get_cpd_ids(reactants)
     products_ids = get_cpd_ids(products)
@@ -40,7 +36,6 @@ def get_compounds(reaction_id):
 
 def get_kegg_reactions():
     """
-    :param kegg_parser:
     :return:
     """
     import multiprocessing
@@ -52,9 +47,6 @@ def get_kegg_reactions():
     p = multiprocessing.Pool(processes=multiprocessing.cpu_count())
 
     t = p.map(get_compounds, reac_ids, chunksize=20)
-    # t = []
-    # for reaction_id in reac_ids:
-    #     t.append(get_compounds((reaction_id, kegg_parser)))
 
     for reactants_ids, product_ids in t:
         for id__ in reactants_ids:
@@ -73,19 +65,10 @@ def get_kegg_reactions():
 
 
 def main():
-    #kegg_parser = KEGGParser(verbose=False)
-
     d = get_kegg_reactions()
     logging.info("writing reation data to file")
 
-    # if not op.exists(op.normcase('ressources')):
-    #     logging.info("mkdir ressources")
-    #     os.mkdir("ressources")
-
-    # with open(op.abspath('mzos/ressources/reaction.reac'), 'wb') as output:
     with open('reactions.json', 'wb') as output:
-        # output = open("reaction.r", 'wb')
-        # six.moves.cPickle.dump(d, output)
         json.dump(d, output)
 
 

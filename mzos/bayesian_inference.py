@@ -14,11 +14,9 @@ import six
 from six.moves import range
 from six.moves import zip
 
-import mzos.reac as reac
-sys.modules['reac'] = reac
 
-import collections
-import _collections
+from mzos.ressources import REACTIONS
+
 
 class BayesianInferer(object):
     """
@@ -29,7 +27,7 @@ class BayesianInferer(object):
     og the analysis of the network
     """
 
-    REACTIONS_FILE =  op.abspath("mzos/ressources/reaction.reac")
+    REACTIONS_FILE = op.abspath("mzos/ressources/reaction.reac")
 
     def __init__(self, features, experiment):
         """
@@ -40,8 +38,8 @@ class BayesianInferer(object):
         self.experiment = experiment
 
         logging.info("Loading reaction...")
-        self.reactions = self.load_reactions()
-        logging.info("#{0} reactions loaded".format(len(self.reactions)))
+        # self.reactions = self.load_reactions()
+        logging.info("#{0} reactions loaded".format(len(REACTIONS)))  # len(self.reactions)))
         self.assigned_compounds = set()
 
     @staticmethod
@@ -105,7 +103,12 @@ class BayesianInferer(object):
             sum_prob_assignment = 0.0
 
             for metab in metabs:
-                as_r, as_p = self.reactions[metab.kegg_id].get()
+                try:
+                    m_d = REACTIONS[metab.kegg_id]
+                    as_r, as_p = set(m_d['as_r']), set(m_d['as_p'])
+                except KeyError:
+                    as_r, as_p = set(), set()
+                # as_r, as_p = set(m_d['as_r']), set(m_d['as_p'])  #self.reactions[metab.kegg_id].get()
                 u = as_r.union(as_p)
                 intersec_with_already_identified = assigned_features.intersection(u)
                 n = len(intersec_with_already_identified)

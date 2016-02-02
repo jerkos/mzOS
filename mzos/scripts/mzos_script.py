@@ -7,7 +7,6 @@ import logging
 import time
 import shutil
 
-from six.moves import input
 import yaml
 
 from mzos import ressources
@@ -21,21 +20,10 @@ from mzos.bayesian_inference import BayesianInferer
 from mzos.results_exporter import ResultsExporter
 
 
-def get_arg_parser():
-    """
-    Deprecated function to pass
-    :return:
-    """
-    parser = argparse.ArgumentParser(prog="mzOS", description="Annotation analysis of xcms peaklist")
-    parser.add_argument("-x", "--xcms_pkl", type=str, help="path to the xcms peaklist", required=True)
-    parser.add_argument("-p", "--polarity", default='negative', choices=['negative', 'positive'],
-                        help='experiment polarity', required=True)
-    parser.add_argument("--mz_tol_ppm", type=float, default=10.0, help='mass over charge tolerance', required=False)
-    parser.add_argument("--dims", default=False, action='store_true', help='direct infusion MS experiment', required=False)
-    parser.add_argument('--db', default='hmdb', choices=['hmdb', 'lmsd', 'hmdb + lmsd'], required=False)
-    parser.add_argument("--output", type=str, default="annotations.tsv", required=False)
-    parser.add_argument("--bayes", default=True, required=False)
-    return parser
+NEG_ADDUCTS = "NEG_ADDUCTS_IMS.csv"
+POS_ADDUCTS = "POS_ADDUCTS_IMS.csv"
+FRAGMENTS = "FRAGMENTS_IMS.csv"
+MZOS_YML = "mzos.yml"
 
 
 def run_analysis(**kwargs):
@@ -140,11 +128,6 @@ def main():
     """
     :return:
     """
-
-    NEG_ADDUCTS = "NEG_ADDUCTS_IMS.csv"
-    POS_ADDUCTS = "POS_ADDUCTS_IMS.csv"
-    FRAGMENTS = "FRAGMENTS_IMS.csv"
-    MZOS_YML = "mzos.yml"
 
     default_opts = {
         'xcms_pkl': 'peaklist.csv',
