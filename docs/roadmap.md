@@ -8,7 +8,7 @@
 
 * include some other metric in the bayesian algorithm such as mass default (have some ideas ?)
 
-* make results clearer
+* make results file clearer
 
 * make a webservice maybe ?
 

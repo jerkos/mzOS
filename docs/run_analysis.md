@@ -2,7 +2,7 @@
 
 ## Perform analysis 
 
-Installing mzOS made a script available in your current environnement. It is called `mzos`. The aim of this script is to perform an analysis given a XCMS peaklist:
+Installing mzOS made a script available in your current environnement. It is called `mzos_script`. The aim of this script is to perform an analysis given a XCMS peaklist:
 
 * Deisotoping
 * Feature annotation (adducts, fragments)
@@ -10,6 +10,26 @@ Installing mzOS made a script available in your current environnement. It is cal
 * Annotation confidence estimation
 	* using network presence/missing metabolites information (Bayesian inference)
 	* using observed/theoritical isotopic pattern
+
+## First time running
+
+Open a terminal in the folder where you want to perform the analysis.
+
+Running `mzos_script` for the first time will create some configuration files you will have to modify to match your
+experimental settings in the current directory:
+
+* mzos.yml
+* FRAGMENTS.csv
+* ADDUCTS.csv
+
+The first row of csv files describes their content. Some common adducts/fragments are predefined. You will have to 
+adjust it. The yaml file contains the main parameters for internal algorithms such as clustering, deisotoping etc...
+
+
+## Second running
+
+Relaunching the script will launch the analysis using configuration present in the current directory.
+
 
 ## Parameters
 

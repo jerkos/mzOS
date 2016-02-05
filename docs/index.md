@@ -1,8 +1,10 @@
 # Welcome to mzOS project
 
-**mzOS** is a small library to perform deisotoping and feature annotation from an extracted feature list (commonly designed by _peaklist_) in LC-MS (Liquid Chromatography coupled to mass spectrometry) datasets.
+**mzOS** is a small library to perform deisotoping and feature annotation from an extracted feature list (commonly 
+designed by _peaklist_) in LC-MS (Liquid Chromatography coupled to mass spectrometry) datasets.
 
-Basically, you run first XCMS (using the classical pipeline), giving as a result a peaklist file. This is this result file that mzOS uses. Other feature extraction softwares might be supported later (OpenMS). 
+Basically, you run first XCMS (using the classical pipeline), giving as a result a peaklist file. This is this result 
+file that mzOS uses. Other feature extraction softwares might be supported later (OpenMS). 
 
 ## Installation
 
