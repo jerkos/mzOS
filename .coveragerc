@@ -23,7 +23,6 @@ exclude_lines =
     if 0:
     if __name__ == .__main__.:
 omit = 
-        */mzos/tests/*
         */mzos/scripts/*
         */mzos/mass_default.py
         */mzos/mongo_db.py
