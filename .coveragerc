@@ -22,9 +22,3 @@ exclude_lines =
     # Don't complain if non-runnable code isn't run:
     if 0:
     if __name__ == .__main__.:
-omit = 
-        */mzos/scripts/*
-        */mzos/mass_default.py
-        */mzos/mongo_db.py
-        */mzos/pathway_enrichment.py
-        */mzos/merge_spectra.py
