@@ -219,7 +219,7 @@ class Peakel(object):
         """
         :return:
         """
-        return {k: list(v) for k, v in groupby(self.attributions, lambda x: x.parent_id)}
+        return self.get_attributions_by(lambda x: x.parent_id)
 
     def get_attributions_by_charge(self):
         """

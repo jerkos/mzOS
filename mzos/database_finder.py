@@ -113,6 +113,7 @@ def search_lipids_for(args):
         l.inchi_key = inchi or ''
         lipids.append(l)
     conn.close()
+    # todo order by in request
     lipids.sort(key=lambda _: abs(_.mono_mass - mass))
     return lipids
 
@@ -180,5 +181,6 @@ class DatabaseSearch(object):
             try:
                 pool.terminate()
             except OSError:
+                # seen error on windows OS
                 pass
         return m_count, not_found

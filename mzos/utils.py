@@ -3,7 +3,9 @@ import subprocess
 import logging
 import os.path as op
 
-EMASS_PATH = op.abspath('mzos/third_party/emass/emass -i mzos/third_party/emass/ISOTOPE.DAT')
+EMASS_PATH = [op.abspath("mzos/third_party/emass/emass"),
+              "-i",
+              op.abspath("mzos/third_party/emass/ISOTOPE.DAT")]
 
 
 def get_theo_ip(f, min_rel_int=5.0):

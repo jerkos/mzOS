@@ -9,7 +9,7 @@ class TestPeakListReader(unittest.TestCase):
     FILE = op.normcase("mzos/ressources/peaks_matrix_NEG.tsv")
 
     def test_read_tsv(self):
-        pkl_reader = PeakListReader(self.FILE, ExperimentalSettings(mz_tol_ppm=10.0))
+        pkl_reader = PeakListReader(self.FILE, ExperimentalSettings(mz_tol_ppm=10.0, polarity='negative', is_dims_exp=False))
         peakels = pkl_reader.get_peakels()
         self.assertEqual(len(peakels), 3238)
         self.assertTrue(all(isinstance(p.moz, float) for p in peakels))

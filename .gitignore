@@ -1,0 +1,6 @@
+*.pyc
+*.o
+ENV/
+.idea/
+annotations.tsv
+mzos/third_party/emass/emass

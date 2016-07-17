@@ -22,7 +22,7 @@ class TestResultExporter(WithHMDBMixin, unittest.TestCase):
 
     def test_result_exporter(self):
         polarity = -1
-        exp_settings = ExperimentalSettings(10, polarity, is_dims_experiment=False)
+        exp_settings = ExperimentalSettings(10, polarity, is_dims_exp=False)
 
         peakels = PeakListReader(op.normcase("mzos/ressources/peaks_matrix_NEG.tsv"), exp_settings).get_peakels()
 

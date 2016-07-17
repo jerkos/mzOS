@@ -11,7 +11,7 @@ def clusterize_basic(peakels, dist_func, *args):
     Provide a basic clustering based on provided functions, kind of agglomerative
     clustering with mean retention time values for each cluster
     :param peakels:
-    :param dist_func: is a callable
+    :param dist_func: for distance function is a callable
     :param args:
     return: list of clusters (as set)
     """

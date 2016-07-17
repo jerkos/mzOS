@@ -24,10 +24,10 @@ class ExperimentalSettings(object):
     ADDUCTS_NEG = op.abspath("mzos/ressources/NEG_ADDUCTS_IMS.csv")
     FRAGMENTS = op.abspath("mzos/ressources/FRAGMENTS_IMS.csv")
 
-    # ISOS = "mzos/ressources/"
-
     def __init__(self, mz_tol_ppm, polarity, is_dims_exp,
-                 frag_conf=None, neg_adducts_conf=None, pos_adducts_conf=None):
+                 frag_conf=None,
+                 neg_adducts_conf=None,
+                 pos_adducts_conf=None):
 
         self.samples = set()
 

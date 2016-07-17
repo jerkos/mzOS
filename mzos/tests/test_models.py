@@ -159,7 +159,7 @@ class TestClustering(unittest.TestCase):
         self.assertIsNone(p)
 
     def test_exp_design(self):
-        exp = ExperimentalSettings(mz_tol_ppm=10.0)
+        exp = ExperimentalSettings(mz_tol_ppm=10.0, polarity='negative', is_dims_exp=False)
         samples = ['sample1', 'sample2', 'sample3', 'sample4']
         group1 = exp.create_group("Blanks", samples[:2])
         group2 = exp.create_group("Treated", samples[2:])
