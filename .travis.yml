@@ -15,6 +15,7 @@ install:
   - travis_wait pip install scipy
   - travis_wait pip install scikit-learn
   - travis_wait pip install pandas
+  - pip install nose
   - pip install .
   - cd mzos/third_party/emass && make
   - pip install coveralls
