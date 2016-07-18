@@ -3,7 +3,6 @@
 branch = True
 source = mzos
  # omit = pyscaffold/pytest_runner.py
-omit = mzos/__main__.py
 
 [report]
 # Regexes for lines to exclude from consideration
