@@ -24,4 +24,4 @@ script:
   - nosetests --with-coverage --cover-package=mzos
 
 after_success:
-  - coveralls
+  - coveralls debug
