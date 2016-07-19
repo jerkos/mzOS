@@ -3,6 +3,7 @@
 branch = True
 source = mzos
 omit = mzos/__main__.py
+mzos/scripts/mzos_script.py
 
 [report]
 # Regexes for lines to exclude from consideration
