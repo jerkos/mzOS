@@ -1,7 +1,6 @@
 language: python
 
 python:
-  - "2.7"
   - "3.5"
 # command to install dependencies
 
@@ -18,10 +17,11 @@ install:
   - pip install nose
   - pip install .
   - cd mzos/third_party/emass && make
-  - pip install coveralls
+  - pip install coverage
+  - pip install codecov
 
 script:
   - nosetests --with-coverage --cover-package=mzos
 
 after_success:
-  - coveralls
+  - codecov
